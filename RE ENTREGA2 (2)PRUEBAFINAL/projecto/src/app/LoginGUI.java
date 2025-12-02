@@ -17,13 +17,13 @@ public class LoginGUI extends JFrame {
     private JPanel mainPanel;
     
     public LoginGUI() {
-        initializeComponents();
-        setupLayout();
-        setupEventHandlers();
-        setFrameProperties();
+        inicializarComponentes();
+        configurarDisenio();
+        configurarEventos();
+        establecerPropiedadesVentana();
     }
     
-    private void initializeComponents() {
+    private void inicializarComponentes() {
         // Componentes principales
         emailField = new JTextField(20);
         passwordField = new JPasswordField(20);
@@ -37,46 +37,56 @@ public class LoginGUI extends JFrame {
         mainPanel.setBackground(new Color(245, 245, 245));
     }
     
-    private void setupLayout() {
-        // Panel izquierdo con la imagen de bienvenida
-        JPanel leftPanel = createWelcomePanel();
+    private void configurarDisenio() {
+        // Panel 1: Barra superior con título y botones de control
+        JPanel topBar = crearBarraSuperior();
         
-        // Panel derecho con el formulario de login
-        JPanel rightPanel = createLoginPanel();
+        // Panel 2: Panel izquierdo con imagen del perrito (3/4 del ancho)
+        JPanel leftPanel = crearPanelImagen();
+        
+        // Panel 3: Panel derecho con formulario de login (1/4 del ancho)
+        JPanel rightPanel = crearPanelLogin();
+        
+        // Panel contenedor para los paneles inferiores
+        JPanel bottomContainer = new JPanel(new BorderLayout());
+        bottomContainer.add(leftPanel, BorderLayout.CENTER);
+        bottomContainer.add(rightPanel, BorderLayout.EAST);
         
         // Agregar paneles al panel principal
-        mainPanel.add(leftPanel, BorderLayout.WEST);
-        mainPanel.add(rightPanel, BorderLayout.CENTER);
+        mainPanel.add(topBar, BorderLayout.NORTH);
+        mainPanel.add(bottomContainer, BorderLayout.CENTER);
         
         add(mainPanel);
     }
     
-    private JPanel createWelcomePanel() {
-        JPanel welcomePanel = new JPanel();
-        welcomePanel.setLayout(new BorderLayout());
-        welcomePanel.setBackground(new Color(255, 223, 186)); // Color beige claro
-        welcomePanel.setPreferredSize(new Dimension(400, 500));
+    private JPanel crearBarraSuperior() {
+        // Barra superior delgada que ocupa todo el ancho
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(new Color(255, 223, 186));
+        topBar.setPreferredSize(new Dimension(0, 50)); // Altura fija, ancho automático
+        topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         
-        // Panel superior con título y botones de control
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(new Color(255, 223, 186));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
-        
-        // Título de bienvenida
-        JLabel welcomeTitle = new JLabel("Bienvenido a la Plataforma de Streaming", JLabel.CENTER);
+        // Título de bienvenida a la izquierda
+        JLabel welcomeTitle = new JLabel("Bienvenido a la Plataforma de Streaming");
         welcomeTitle.setFont(new Font("Arial", Font.BOLD, 16));
-        topPanel.add(welcomeTitle, BorderLayout.CENTER);
+        topBar.add(welcomeTitle, BorderLayout.WEST);
         
-        // Panel de botones de control (cerrar, minimizar, maximizar)
+        // Panel de botones de control a la derecha
         JPanel controlButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         controlButtonsPanel.setBackground(new Color(255, 223, 186));
         
         // Botón minimizar (amarillo)
-        JButton minimizeButton = createWindowControlButton(new Color(255, 189, 68));
+        JButton minimizeButton = crearBotonControlVentana(new Color(255, 189, 68));
+        minimizeButton.setText("−");
+        minimizeButton.setFont(new Font("Arial", Font.BOLD, 16));
+        minimizeButton.setForeground(Color.WHITE);
         minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
         
         // Botón maximizar (verde)
-        JButton maximizeButton = createWindowControlButton(new Color(39, 201, 63));
+        JButton maximizeButton = crearBotonControlVentana(new Color(39, 201, 63));
+        maximizeButton.setText("□");
+        maximizeButton.setFont(new Font("Arial", Font.BOLD, 12));
+        maximizeButton.setForeground(Color.WHITE);
         maximizeButton.addActionListener(e -> {
             if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
                 setExtendedState(JFrame.NORMAL);
@@ -86,36 +96,37 @@ public class LoginGUI extends JFrame {
         });
         
         // Botón cerrar (azul)
-        JButton closeButton = createWindowControlButton(new Color(0, 122, 255));
+        JButton closeButton = crearBotonControlVentana(new Color(0, 122, 255));
+        closeButton.setText("×");
+        closeButton.setFont(new Font("Arial", Font.BOLD, 14));
+        closeButton.setForeground(Color.WHITE);
         closeButton.addActionListener(e -> System.exit(0));
         
         controlButtonsPanel.add(minimizeButton);
         controlButtonsPanel.add(maximizeButton);
         controlButtonsPanel.add(closeButton);
         
-        topPanel.add(controlButtonsPanel, BorderLayout.EAST);
+        topBar.add(controlButtonsPanel, BorderLayout.EAST);
         
-        // Panel para la imagen del perrito
-        JPanel imagePanel = new JPanel();
+        return topBar;
+    }
+    
+    private JPanel crearPanelImagen() {
+        // Panel izquierdo con la imagen del perrito (ocupa 3/4 del espacio)
+        JPanel imagePanel = new JPanel(new BorderLayout());
         imagePanel.setBackground(new Color(255, 223, 186));
-        imagePanel.setLayout(new BorderLayout());
+        imagePanel.setPreferredSize(new Dimension(600, 400)); // Altura reducida
         
         // Cargar imagen usando ResourceManager con fallback automático
-        ImageIcon dogStreamingIcon = GestionRecursos.loadImageWithFallback("perrito.png", 300, 250);
+        ImageIcon dogStreamingIcon = GestionRecursos.loadImageWithFallback("perrito.png", 500, 380);
         JLabel imageLabel = new JLabel(dogStreamingIcon);
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
         imagePanel.add(imageLabel, BorderLayout.CENTER);
         
-        
-        welcomePanel.add(topPanel, BorderLayout.NORTH);
-        welcomePanel.add(imagePanel, BorderLayout.CENTER);
-         
-        
-        
-        return welcomePanel;
+        return imagePanel;
     }
     
-    private JButton createWindowControlButton(Color color) {
+    private JButton crearBotonControlVentana(Color color) {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(12, 12));
         button.setBackground(color);
@@ -130,46 +141,37 @@ public class LoginGUI extends JFrame {
         return button;
     }
 
-    private JPanel createLoginPanel() {
+    private JPanel crearPanelLogin() {
+        // Panel derecho con formulario de login (ocupa 1/4 del espacio)
         JPanel loginPanel = new JPanel();
         loginPanel.setLayout(new GridBagLayout());
         loginPanel.setBackground(Color.WHITE);
-        loginPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+        loginPanel.setPreferredSize(new Dimension(300, 400)); // Altura reducida
+        loginPanel.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
-        // Mensaje de instrucciones (simulando el tooltip)
-        JLabel instructionLabel = new JLabel("<html><center>Solicite los datos de<br/>acuerdo a su modelo,<br/>ajustando las<br/>validaciones<br/>necesarias</center></html>");
-        instructionLabel.setFont(new Font("Arial", Font.ITALIC, 11));
-        instructionLabel.setForeground(new Color(100, 100, 100));
-        instructionLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        instructionLabel.setBackground(new Color(255, 182, 193));
-        instructionLabel.setOpaque(true);
-        instructionLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-        loginPanel.add(instructionLabel, gbc);
-        
         // Campo E-mail
         gbc.gridwidth = 1;
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0; gbc.gridy = 0;
         loginPanel.add(new JLabel("E-mail:"), gbc);
         
-        gbc.gridx = 1; gbc.gridy = 1;
-        emailField.setPreferredSize(new Dimension(200, 30));
+        gbc.gridx = 1; gbc.gridy = 0;
+        emailField.setPreferredSize(new Dimension(150, 30));
         loginPanel.add(emailField, gbc);
         
         // Campo Password
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 1;
         loginPanel.add(new JLabel("Password:"), gbc);
         
-        gbc.gridx = 1; gbc.gridy = 2;
-        passwordField.setPreferredSize(new Dimension(200, 30));
+        gbc.gridx = 1; gbc.gridy = 1;
+        passwordField.setPreferredSize(new Dimension(150, 30));
         loginPanel.add(passwordField, gbc);
         
         // Botón Ingresar
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
         
@@ -177,10 +179,13 @@ public class LoginGUI extends JFrame {
         loginButton.setForeground(Color.WHITE);
         loginButton.setFont(new Font("Arial", Font.BOLD, 14));
         loginButton.setPreferredSize(new Dimension(120, 40));
+        loginButton.setOpaque(true);
+        loginButton.setBorderPainted(false);
+        loginButton.setFocusPainted(false);
         loginPanel.add(loginButton, gbc);
         
         // Mensaje "¿Aún no sos usuario?" y botón Regístrate
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
         JPanel registerPanel = new JPanel(new FlowLayout());
@@ -190,35 +195,28 @@ public class LoginGUI extends JFrame {
         registerButton.setBackground(new Color(51, 153, 255));
         registerButton.setForeground(Color.WHITE);
         registerButton.setFont(new Font("Arial", Font.BOLD, 12));
+        registerButton.setOpaque(true);
+        registerButton.setBorderPainted(false);
+        registerButton.setFocusPainted(false);
         registerPanel.add(registerButton);
         
         loginPanel.add(registerPanel, gbc);
         
         // Label para mensajes de estado
-        gbc.gridy = 5;
+        gbc.gridy = 4;
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         statusLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         loginPanel.add(statusLabel, gbc);
         
-        // Nota sobre validaciones (simulando los tooltips amarillos)
-        JLabel validationNote = new JLabel("<html><center>Verificar el formato del mail<br/>y que los datos estén completos</center></html>");
-        validationNote.setFont(new Font("Arial", Font.ITALIC, 10));
-        validationNote.setForeground(new Color(100, 100, 100));
-        validationNote.setBackground(new Color(255, 255, 153));
-        validationNote.setOpaque(true);
-        validationNote.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        gbc.gridy = 6;
-        loginPanel.add(validationNote, gbc);
-        
         return loginPanel;
     }
     
-    private void setupEventHandlers() {
+    private void configurarEventos() {
         // Acción del botón de login
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performLogin();
+                realizarLogin();
             }
         });
         
@@ -226,7 +224,7 @@ public class LoginGUI extends JFrame {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                openRegistrationWindow();
+                abrirVentanaRegistro();
             }
         });
         
@@ -234,23 +232,23 @@ public class LoginGUI extends JFrame {
         passwordField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performLogin();
+                realizarLogin();
             }
         });
     }
     
-    private void performLogin() {
+    private void realizarLogin() {
         String email = emailField.getText().trim();
         String password = new String(passwordField.getPassword());
         
         // Validaciones básicas
         if (email.isEmpty() || password.isEmpty()) {
-            showErrorMessage("E-mail y Password son campos obligatorios");
+            mostrarMensajeError("E-mail y Password son campos obligatorios");
             return;
         }
         
-        if (!isValidEmail(email)) {
-            showErrorMessage("Formato de E-mail inválido");
+        if (!esEmailValido(email)) {
+            mostrarMensajeError("Formato de E-mail inválido");
             return;
         }
         
@@ -262,28 +260,24 @@ public class LoginGUI extends JFrame {
             Usuario usuario = Logica.login(email, password);
             
             if (usuario != null) {
-                showSuccessMessage("¡Bienvenido/a, " + usuario.getUsername() + "!");
+                mostrarMensajeExito("¡Bienvenido/a, " + usuario.getUsername() + "!");
                 // Aquí puedes abrir la ventana principal
-                openMainWindow(usuario);
+                abrirVentanaPrincipal(usuario);
                 this.dispose(); // Cerrar ventana de login
             } else {
-                showErrorMessage("E-mail o Password incorrectos");
+                mostrarMensajeError("E-mail o Password incorrectos");
             }
             
         } catch (Exception ex) {
-            showErrorMessage("Error de conexión: " + ex.getMessage());
+            mostrarMensajeError("Error de conexión: " + ex.getMessage());
         }
     }
     
-    private void openRegistrationWindow() {
-        // TODO: Implementar ventana de registro
-        JOptionPane.showMessageDialog(this, 
-            "Funcionalidad de registro en desarrollo...\nPor ahora use la consola para registrar usuarios.", 
-            "Registro", 
-            JOptionPane.INFORMATION_MESSAGE);
+    private void abrirVentanaRegistro() {
+        RegistroGUI.abrirVentanaRegistro();
     }
     
-    private void openMainWindow(Usuario usuario) {
+    private void abrirVentanaPrincipal(Usuario usuario) {
         // TODO: Implementar ventana principal
         JOptionPane.showMessageDialog(this, 
             "¡Login exitoso!\nBienvenido " + usuario.getUsername() + "!\n\nVentana principal en desarrollo...", 
@@ -294,11 +288,11 @@ public class LoginGUI extends JFrame {
         System.exit(0);
     }
     
-    private boolean isValidEmail(String email) {
+    private boolean esEmailValido(String email) {
         return email.contains("@") && email.contains(".") && email.length() > 5;
     }
     
-    private void showErrorMessage(String message) {
+    private void mostrarMensajeError(String message) {
         statusLabel.setText(message);
         statusLabel.setForeground(Color.RED);
         // Opcional: hacer que el mensaje desaparezca después de unos segundos
@@ -307,12 +301,12 @@ public class LoginGUI extends JFrame {
         timer.start();
     }
     
-    private void showSuccessMessage(String message) {
+    private void mostrarMensajeExito(String message) {
         statusLabel.setText(message);
         statusLabel.setForeground(new Color(0, 150, 0));
     }
     
-    private void setFrameProperties() {
+    private void establecerPropiedadesVentana() {
         setTitle("Plataforma de Streaming - Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);

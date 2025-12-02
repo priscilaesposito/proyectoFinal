@@ -115,4 +115,21 @@ public class UsuarioDAOjdbc implements UsuarioDAO {
         }
         return null;
     }
+    
+    @Override
+    public boolean existeEmail(String email) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM USUARIO WHERE EMAIL = ?";
+        try (Connection conn = BaseDeDatos.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, email);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
 }

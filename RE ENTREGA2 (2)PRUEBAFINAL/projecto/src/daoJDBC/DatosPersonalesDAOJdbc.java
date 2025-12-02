@@ -68,5 +68,25 @@ public class DatosPersonalesDAOJdbc implements DatosPersonalesDAO {
             throw new SQLException("Error en la busqueda ", e);
         }
     }
+    
+    @Override
+    public Usuario buscarPorDNI(int dni) throws SQLException {
+        String sql = "SELECT * FROM DATOS_PERSONALES WHERE DNI = ?";
+
+        try (Connection conn = BaseDeDatos.conectar();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, dni);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return tomarDatos(rs);
+                }
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new SQLException("Error al buscar por DNI", e);
+        }
+    }
 
 }

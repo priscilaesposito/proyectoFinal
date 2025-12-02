@@ -420,4 +420,91 @@ private static void mostrardatosresenia(Resenia r) {
             throw new Exception("Error inesperado durante el login: " + e.getMessage());
         }
     }
+    
+    /**
+     * Verificar si un nombre de usuario ya existe
+     */
+    public static boolean existeUsuario(String username) throws Exception {
+        try {
+            Usuario u = usuarioDAO.buscar(username);
+            return u != null;
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar usuario: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Verificar si un email ya existe
+     */
+    public static boolean existeEmail(String email) throws Exception {
+        try {
+            return usuarioDAO.existeEmail(email);
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar email: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Verificar si un DNI ya existe
+     */
+    public static boolean existeDNI(String dni) throws Exception {
+        try {
+            int dniInt = Integer.parseInt(dni);
+            return datosPersonalesDAO.existeDNI(dniInt);
+        } catch (NumberFormatException e) {
+            throw new Exception("DNI inválido");
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar DNI: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Registrar un nuevo usuario con todos sus datos
+     */
+    public static boolean registrarUsuario(String nombre, String apellido, String dni, 
+                                          int edad, String direccion, String telefono,
+                                          String username, String email, String password) throws Exception {
+        try {
+            // Primero registrar datos personales
+            Usuario datosPersonales = new Usuario();
+            datosPersonales.setNombre(nombre);
+            datosPersonales.setApellido(apellido);
+            datosPersonales.setDNI(Integer.parseInt(dni));
+            
+            // Validar datos personales
+            gestionUsuario.validacionDatosPersonales(datosPersonales);
+            
+            // Registrar datos personales en la BD
+            datosPersonalesDAO.registrar(datosPersonales);
+            
+            // Obtener el ID generado (buscar por DNI)
+            Usuario dpRegistrado = datosPersonalesDAO.buscarPorDNI(Integer.parseInt(dni));
+            
+            if (dpRegistrado != null) {
+                // Crear usuario
+                Usuario usuario = new Usuario();
+                usuario.setUsername(username);
+                usuario.setCorreo(email);
+                usuario.setContrasenia(password);
+                usuario.setID_DATOS_PERSONALES(dpRegistrado.getID_DATOS_PERSONALES());
+                
+                // Validar datos de usuario
+                gestionUsuario.ValidacionUsuario(usuario);
+                
+                // Registrar usuario
+                usuarioDAO.registrar(usuario);
+                
+                return true;
+            }
+            
+            return false;
+            
+        } catch (IllegalArgumentException e) {
+            throw new Exception("Error de validación: " + e.getMessage());
+        } catch (SQLException e) {
+            throw new Exception("Error al registrar en la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Error inesperado: " + e.getMessage());
+        }
+    }
 }

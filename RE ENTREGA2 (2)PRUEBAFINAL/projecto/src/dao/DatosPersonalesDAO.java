@@ -13,4 +13,6 @@ public interface DatosPersonalesDAO {
     List<Usuario> listarTodos() throws SQLException;
 
     boolean existeDNI(int dni) throws SQLException;
+    
+    Usuario buscarPorDNI(int dni) throws SQLException;
 }
