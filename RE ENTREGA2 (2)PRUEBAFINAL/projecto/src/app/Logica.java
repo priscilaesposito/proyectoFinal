@@ -354,5 +354,70 @@ private static void mostrardatosresenia(Resenia r) {
         nuevoUsuario.setCorreo(scanner.nextLine());
         System.out.println("Ingrese Contrasenia:");
         nuevoUsuario.setContrasenia(scanner.nextLine());
-}
+    }
+
+    /**
+     * Función para realizar el login de un usuario (consola)
+     * Solicita email y password, valida las credenciales y proporciona feedback
+     */
+    public static Usuario login() throws Exception {
+        System.out.println("\n=== LOGIN - PLATAFORMA DE STREAMING ===");
+        
+        try {
+            // Solicitar credenciales
+            Usuario usuario = new Usuario();
+            System.out.println("Ingrese Correo:");
+            usuario.setCorreo(scanner.nextLine());
+            System.out.println("Ingrese Contrasenia:");
+            usuario.setContrasenia(scanner.nextLine());
+            
+            // Validacion
+            if (usuario.getCorreo().isEmpty() || usuario.getContrasenia().isEmpty()) {
+                System.err.println("\n[ERROR] Completar todos los campos.");
+                return null;
+            }
+            
+            // Intentar validar usuario
+            Usuario usuarioValidado = usuarioDAO.validar(usuario.getCorreo(), usuario.getContrasenia());
+            
+            if (usuarioValidado != null) {
+                System.out.println("\n¡Bienvenido/a, " + usuarioValidado.getUsername() + "!");
+                return usuarioValidado;
+            } else {
+                System.err.println("\n[ERROR] E-mail o Password incorrectos.");
+                return null;
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("\n[ERROR DE CONEXIÓN] No se pudo verificar las credenciales: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.err.println("\n[ERROR] Error inesperado durante el login: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * Función para realizar el login de un usuario (interfaz gráfica)
+     * Recibe email y password como parámetros
+     */
+    public static Usuario login(String email, String password) throws Exception {
+        try {
+            // Validaciones básicas
+            if (email == null || email.trim().isEmpty() || 
+                password == null || password.trim().isEmpty()) {
+                return null;
+            }
+            
+            // Intentar validar usuario usando el DAO
+            Usuario usuarioValidado = usuarioDAO.validar(email.trim(), password);
+            
+            return usuarioValidado; // Retorna el usuario si es válido, null si no
+            
+        } catch (SQLException e) {
+            throw new Exception("Error de conexión a la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Error inesperado durante el login: " + e.getMessage());
+        }
+    }
 }
