@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "app.Main",
+            "projectName": "RE ENTREGA2 (2)PRUEBAFINAL_d7387c5c"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "app.Main",
+            "projectName": "RE ENTREGA2 (2)PRUEBAFINA;_d7387c4b"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "app.Main",
+            "projectName": "projecto",
+            "cwd": "${workspaceFolder}/projecto",
+            "classPaths": [
+                "${workspaceFolder}/projecto/bin",
+                "${workspaceFolder}/projecto/lib/*"
+            ]
+        }
+    ]
+}
