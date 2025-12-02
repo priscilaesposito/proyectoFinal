@@ -44,6 +44,9 @@ public class RegistroGUI extends JFrame {
     }
     
     private void configurarDisenio() {
+        // Barra superior
+        JPanel topBar = crearBarraSuperior();
+        
         // Panel con todo el contenido
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(Color.WHITE);
@@ -54,9 +57,78 @@ public class RegistroGUI extends JFrame {
         
         contentPanel.add(formPanel, BorderLayout.CENTER);
         
+        mainPanel.add(topBar, BorderLayout.NORTH);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
         
         add(mainPanel);
+    }
+    
+    private JPanel crearBarraSuperior() {
+        // Barra superior delgada que ocupa todo el ancho
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(Color.WHITE);
+        topBar.setPreferredSize(new Dimension(0, 50)); // Altura fija, ancho automático
+        topBar.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK),
+            BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        
+        // Título a la izquierda
+        JLabel title = new JLabel("Plataforma de Streaming - Registración");
+        title.setFont(new Font("Arial", Font.BOLD, 16));
+        topBar.add(title, BorderLayout.WEST);
+        
+        // Panel de botones de control a la derecha
+        JPanel controlButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        controlButtonsPanel.setBackground(Color.WHITE);
+        
+        // Botón minimizar (amarillo)
+        JButton minimizeButton = crearBotonControlVentana(new Color(255, 189, 68));
+        minimizeButton.setText("−");
+        minimizeButton.setFont(new Font("Arial", Font.BOLD, 16));
+        minimizeButton.setForeground(Color.WHITE);
+        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
+        
+        // Botón maximizar (verde)
+        JButton maximizeButton = crearBotonControlVentana(new Color(39, 201, 63));
+        maximizeButton.setText("□");
+        maximizeButton.setFont(new Font("Arial", Font.BOLD, 12));
+        maximizeButton.setForeground(Color.WHITE);
+        maximizeButton.addActionListener(e -> {
+            if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                setExtendedState(JFrame.NORMAL);
+            } else {
+                setExtendedState(JFrame.MAXIMIZED_BOTH);
+            }
+        });
+        
+        // Botón cerrar (azul)
+        JButton closeButton = crearBotonControlVentana(new Color(0, 122, 255));
+        closeButton.setText("×");
+        closeButton.setFont(new Font("Arial", Font.BOLD, 14));
+        closeButton.setForeground(Color.WHITE);
+        closeButton.addActionListener(e -> dispose());
+        
+        controlButtonsPanel.add(minimizeButton);
+        controlButtonsPanel.add(maximizeButton);
+        controlButtonsPanel.add(closeButton);
+        
+        topBar.add(controlButtonsPanel, BorderLayout.EAST);
+        
+        return topBar;
+    }
+    
+    private JButton crearBotonControlVentana(Color color) {
+        JButton button = new JButton();
+        button.setPreferredSize(new Dimension(12, 12));
+        button.setBackground(color);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
+        button.setBorderPainted(false);
+        
+        return button;
     }
     
     private JPanel crearPanelFormulario() {

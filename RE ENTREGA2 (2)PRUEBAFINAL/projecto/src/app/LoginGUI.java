@@ -62,9 +62,12 @@ public class LoginGUI extends JFrame {
     private JPanel crearBarraSuperior() {
         // Barra superior delgada que ocupa todo el ancho
         JPanel topBar = new JPanel(new BorderLayout());
-        topBar.setBackground(new Color(255, 223, 186));
+        topBar.setBackground(Color.WHITE);
         topBar.setPreferredSize(new Dimension(0, 50)); // Altura fija, ancho automático
-        topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        topBar.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK),
+            BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
         
         // Título de bienvenida a la izquierda
         JLabel welcomeTitle = new JLabel("Bienvenido a la Plataforma de Streaming");
@@ -73,7 +76,7 @@ public class LoginGUI extends JFrame {
         
         // Panel de botones de control a la derecha
         JPanel controlButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
-        controlButtonsPanel.setBackground(new Color(255, 223, 186));
+        controlButtonsPanel.setBackground(Color.WHITE);
         
         // Botón minimizar (amarillo)
         JButton minimizeButton = crearBotonControlVentana(new Color(255, 189, 68));
