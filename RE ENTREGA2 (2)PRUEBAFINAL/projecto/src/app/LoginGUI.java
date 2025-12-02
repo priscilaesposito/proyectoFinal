@@ -57,10 +57,43 @@ public class LoginGUI extends JFrame {
         welcomePanel.setBackground(new Color(255, 223, 186)); // Color beige claro
         welcomePanel.setPreferredSize(new Dimension(400, 500));
         
+        // Panel superior con título y botones de control
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(new Color(255, 223, 186));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
+        
         // Título de bienvenida
         JLabel welcomeTitle = new JLabel("Bienvenido a la Plataforma de Streaming", JLabel.CENTER);
         welcomeTitle.setFont(new Font("Arial", Font.BOLD, 16));
-        welcomeTitle.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
+        topPanel.add(welcomeTitle, BorderLayout.CENTER);
+        
+        // Panel de botones de control (cerrar, minimizar, maximizar)
+        JPanel controlButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        controlButtonsPanel.setBackground(new Color(255, 223, 186));
+        
+        // Botón minimizar (amarillo)
+        JButton minimizeButton = createWindowControlButton(new Color(255, 189, 68));
+        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
+        
+        // Botón maximizar (verde)
+        JButton maximizeButton = createWindowControlButton(new Color(39, 201, 63));
+        maximizeButton.addActionListener(e -> {
+            if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                setExtendedState(JFrame.NORMAL);
+            } else {
+                setExtendedState(JFrame.MAXIMIZED_BOTH);
+            }
+        });
+        
+        // Botón cerrar (azul)
+        JButton closeButton = createWindowControlButton(new Color(0, 122, 255));
+        closeButton.addActionListener(e -> System.exit(0));
+        
+        controlButtonsPanel.add(minimizeButton);
+        controlButtonsPanel.add(maximizeButton);
+        controlButtonsPanel.add(closeButton);
+        
+        topPanel.add(controlButtonsPanel, BorderLayout.EAST);
         
         // Panel para la imagen del perrito
         JPanel imagePanel = new JPanel();
@@ -68,18 +101,33 @@ public class LoginGUI extends JFrame {
         imagePanel.setLayout(new BorderLayout());
         
         // Cargar imagen usando ResourceManager con fallback automático
-        ImageIcon dogStreamingIcon = GestionRecursos.loadImageWithFallback("dog_streaming.jpg", 300, 250);
+        ImageIcon dogStreamingIcon = GestionRecursos.loadImageWithFallback("perrito.png", 300, 250);
         JLabel imageLabel = new JLabel(dogStreamingIcon);
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
         imagePanel.add(imageLabel, BorderLayout.CENTER);
         
         
-        welcomePanel.add(welcomeTitle, BorderLayout.NORTH);
+        welcomePanel.add(topPanel, BorderLayout.NORTH);
         welcomePanel.add(imagePanel, BorderLayout.CENTER);
          
         
         
         return welcomePanel;
+    }
+    
+    private JButton createWindowControlButton(Color color) {
+        JButton button = new JButton();
+        button.setPreferredSize(new Dimension(12, 12));
+        button.setBackground(color);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
+        
+        // Hacer el botón circular
+        button.setBorderPainted(false);
+        
+        return button;
     }
 
     private JPanel createLoginPanel() {
