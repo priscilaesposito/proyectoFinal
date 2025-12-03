@@ -7,50 +7,37 @@ import model.Usuario;
 import model.Pelicula;
 import app.Logica;
 
-public class VentanaPrincipalGUI extends JFrame {
+public class PeliculasGUI extends JFrame {
     
     private Usuario usuario;
     private boolean esPrimerLogin;
     private List<Pelicula> peliculasActuales;
     
-    // Componentes de la interfaz
     private JPanel mainPanel;
-    private JPanel topBar;
     private JPanel contentPanel;
-    private JLabel loadingLabel;
     
-    public VentanaPrincipalGUI(Usuario usuario) {
+    public PeliculasGUI(Usuario usuario, List<Pelicula> peliculas, boolean esPrimerLogin) {
         this.usuario = usuario;
+        this.peliculasActuales = peliculas;
+        this.esPrimerLogin = esPrimerLogin;
         
         inicializarComponentes();
-        configurarDisenio();
+        mostrarPeliculas();
         establecerPropiedadesVentana();
-        
-        // Cargar películas en segundo plano
-        cargarPeliculasEnBackground();
     }
     
     private void inicializarComponentes() {
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
         
-        // Label de carga
-        loadingLabel = new JLabel("Cargando contenido...", SwingConstants.CENTER);
-        loadingLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        loadingLabel.setForeground(new Color(0, 122, 255));
-    }
-    
-    private void configurarDisenio() {
-        // Barra superior con datos de usuario, logout y buscador
-        topBar = crearBarraSuperior();
+        // Barra superior con datos de usuario
+        JPanel topBar = crearBarraSuperior();
         mainPanel.add(topBar, BorderLayout.NORTH);
         
-        // Panel de contenido (inicialmente muestra pantalla de carga)
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(Color.WHITE);
-        contentPanel.add(crearPantallaCarga(), BorderLayout.CENTER);
-        
         mainPanel.add(contentPanel, BorderLayout.CENTER);
+        
         add(mainPanel);
     }
     
@@ -63,7 +50,6 @@ public class VentanaPrincipalGUI extends JFrame {
             BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
         
-        // Panel: Datos del usuario
         JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         userInfoPanel.setBackground(new Color(245, 245, 245));
         
@@ -76,90 +62,19 @@ public class VentanaPrincipalGUI extends JFrame {
         emailLabel.setForeground(Color.GRAY);
         userInfoPanel.add(emailLabel);
         
-        // Agregar solo el panel de usuario a la barra superior
         topBar.add(userInfoPanel, BorderLayout.WEST);
         
         return topBar;
     }
     
-    private JPanel crearPantallaCarga() {
-        JPanel loadingPanel = new JPanel(new GridBagLayout());
-        loadingPanel.setBackground(Color.WHITE);
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(20, 20, 20, 20);
-        
-        // Icono de carga (spinner)
-        JLabel spinnerLabel = new JLabel("⏳");
-        spinnerLabel.setFont(new Font("Arial", Font.PLAIN, 48));
-        loadingPanel.add(spinnerLabel, gbc);
-        
-        gbc.gridy = 1;
-        loadingPanel.add(loadingLabel, gbc);
-        
-        gbc.gridy = 2;
-        JLabel messageLabel = new JLabel("Por favor espere mientras cargamos el contenido...");
-        messageLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        messageLabel.setForeground(Color.GRAY);
-        loadingPanel.add(messageLabel, gbc);
-        
-        return loadingPanel;
-    }
-    
-    private void cargarPeliculasEnBackground() {
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                // Verificar si es primer login
-                esPrimerLogin = Logica.esPrimerLogin(usuario.getID_USUARIO());
-                
-                // Cargar películas según sea primer login o no
-                if (esPrimerLogin) {
-                    peliculasActuales = Logica.obtenerTop10Peliculas();
-                } else {
-                    peliculasActuales = Logica.obtener10PeliculasRandom(usuario.getID_USUARIO());
-                }
-                
-                return null;
-            }
-            
-            @Override
-            protected void done() {
-                try {
-                    get(); // Verificar si hubo errores
-                    mostrarPeliculas();
-                    
-                    // Marcar como no primer login si era el primero
-                    if (esPrimerLogin) {
-                        Logica.registrarPrimerLogin(usuario.getID_USUARIO());
-                    }
-                    
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(VentanaPrincipalGUI.this,
-                        "Error al cargar películas: " + e.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                }
-            }
-        };
-        
-        worker.execute();
-    }
-    
     private void mostrarPeliculas() {
-        // Limpiar panel de contenido
         contentPanel.removeAll();
         
-        // Crear panel con las películas
         JPanel peliculasPanel = new JPanel();
         peliculasPanel.setLayout(new BoxLayout(peliculasPanel, BoxLayout.Y_AXIS));
         peliculasPanel.setBackground(Color.WHITE);
         peliculasPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        // Título
         String tituloSeccion = esPrimerLogin ? 
             "🌟 Top 10 Películas Mejor Rankeadas - ¡Califícalas!" :
             "🎬 Películas Recomendadas Para Ti";
@@ -170,13 +85,11 @@ public class VentanaPrincipalGUI extends JFrame {
         peliculasPanel.add(tituloLabel);
         peliculasPanel.add(Box.createVerticalStrut(20));
         
-        // Agregar cada película
         for (Pelicula pelicula : peliculasActuales) {
             peliculasPanel.add(crearPanelPelicula(pelicula));
             peliculasPanel.add(Box.createVerticalStrut(15));
         }
         
-        // Agregar scroll
         JScrollPane scrollPane = new JScrollPane(peliculasPanel);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -195,7 +108,6 @@ public class VentanaPrincipalGUI extends JFrame {
         ));
         peliculaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
         
-        // Panel izquierdo: Información de la película
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBackground(new Color(250, 250, 250));
@@ -232,7 +144,6 @@ public class VentanaPrincipalGUI extends JFrame {
         infoPanel.add(Box.createVerticalStrut(5));
         infoPanel.add(ratingLabel);
         
-        // Panel derecho: Calificación
         JPanel ratingPanel = crearPanelCalificacion(pelicula);
         
         peliculaPanel.add(infoPanel, BorderLayout.CENTER);
@@ -250,7 +161,6 @@ public class VentanaPrincipalGUI extends JFrame {
         instruccion.setFont(new Font("Arial", Font.PLAIN, 12));
         instruccion.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        // Panel de estrellas
         JPanel starPanel = new JPanel(new FlowLayout());
         starPanel.setBackground(new Color(250, 250, 250));
         
@@ -294,9 +204,6 @@ public class VentanaPrincipalGUI extends JFrame {
                     "¡Gracias por calificar \"" + pelicula.getMetadatos().getTitulo() + "\"!",
                     "Calificación guardada",
                     JOptionPane.INFORMATION_MESSAGE);
-                
-                // Recargar películas si ya calificó todas las actuales
-                verificarYRecargarPeliculas();
             }
             
         } catch (Exception ex) {
@@ -307,11 +214,6 @@ public class VentanaPrincipalGUI extends JFrame {
         }
     }
     
-    private void verificarYRecargarPeliculas() {
-        // Por ahora no recargar automáticamente
-        // Podría implementarse un contador de calificaciones
-    }
-    
     private void establecerPropiedadesVentana() {
         setTitle("Plataforma de Streaming - " + usuario.getUsername());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -319,9 +221,9 @@ public class VentanaPrincipalGUI extends JFrame {
         setLocationRelativeTo(null);
     }
     
-    public static void abrirVentanaPrincipal(Usuario usuario) {
+    public static void abrirVentanaPeliculas(Usuario usuario, List<Pelicula> peliculas, boolean esPrimerLogin) {
         SwingUtilities.invokeLater(() -> {
-            new VentanaPrincipalGUI(usuario).setVisible(true);
+            new PeliculasGUI(usuario, peliculas, esPrimerLogin).setVisible(true);
         });
     }
 }
