@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import dao.Conexion;
 import db.BaseDeDatos;
+import gui.LoginGUI;
 
 public class Main {
 

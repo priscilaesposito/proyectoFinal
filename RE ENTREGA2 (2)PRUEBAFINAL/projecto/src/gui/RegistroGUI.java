@@ -1,6 +1,9 @@
-package app;
+package gui;
 
 import javax.swing.*;
+
+import app.Logica;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
