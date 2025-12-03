@@ -321,7 +321,7 @@ public class PeliculasVista extends JFrame {
         generoPanel.setMinimumSize(new Dimension(150, 30));
         generoPanel.setMaximumSize(new Dimension(150, 30));
         
-        JLabel genreHeader = new JLabel("Genero");
+        JLabel genreHeader = new JLabel("Género");
         genreHeader.setFont(new Font("Arial", Font.BOLD, 14));
         generoPanel.add(genreHeader);
         

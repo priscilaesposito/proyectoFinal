@@ -37,7 +37,7 @@ public class CalificarPeliculaVista extends JDialog {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         mainPanel.setBackground(Color.WHITE);
         
-        JLabel tituloLabel = new JLabel("Titulo de la Pelicula");
+        JLabel tituloLabel = new JLabel("Título de la Película");
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 18));
         mainPanel.add(tituloLabel, BorderLayout.NORTH);
         

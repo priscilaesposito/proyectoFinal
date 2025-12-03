@@ -62,7 +62,7 @@ public class RegistroVista extends JFrame {
             BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
         
-        JLabel title = new JLabel("Plataforma de Streaming - Registración");
+        JLabel title = new JLabel("Plataforma de Streaming - Registro");
         title.setFont(new Font("Arial", Font.BOLD, 16));
         topBar.add(title, BorderLayout.WEST);
         
@@ -213,7 +213,7 @@ public class RegistroVista extends JFrame {
     }
     
     private void establecerPropiedadesVentana() {
-        setTitle("Plataforma de Streaming - Registración");
+        setTitle("Plataforma de Streaming - Registro");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         pack();
