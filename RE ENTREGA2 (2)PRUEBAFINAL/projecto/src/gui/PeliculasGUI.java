@@ -121,13 +121,13 @@ public class PeliculasGUI extends JFrame {
     private JPanel crearBarraSuperior() {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(new Color(245, 245, 245));
-        topBar.setPreferredSize(new Dimension(0, 80));
+        topBar.setPreferredSize(new Dimension(0, 100));
         topBar.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(200, 200, 200)),
             BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
         
-        // Panel izquierdo: Datos del usuario
+        // Panel superior: Datos del usuario
         JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         userInfoPanel.setBackground(new Color(245, 245, 245));
         
@@ -139,6 +139,34 @@ public class PeliculasGUI extends JFrame {
         emailLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         emailLabel.setForeground(Color.GRAY);
         userInfoPanel.add(emailLabel);
+        
+        // Panel inferior: Búsqueda, ordenamiento y cerrar sesión
+        JPanel controlsPanel = new JPanel(new BorderLayout());
+        controlsPanel.setBackground(new Color(245, 245, 245));
+        
+        // Panel izquierdo: Ordenamiento
+        JPanel sortPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        sortPanel.setBackground(new Color(245, 245, 245));
+        
+        JLabel sortLabel = new JLabel("Ordenar por:");
+        sortLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        sortPanel.add(sortLabel);
+        
+        JButton sortByTitleButton = new JButton("Título");
+        sortByTitleButton.setFont(new Font("Arial", Font.PLAIN, 12));
+        sortByTitleButton.setBackground(new Color(230, 230, 230));
+        sortByTitleButton.setFocusPainted(false);
+        sortByTitleButton.addActionListener(e -> ordenarPorTitulo());
+        sortPanel.add(sortByTitleButton);
+        
+        JButton sortByGenreButton = new JButton("Género");
+        sortByGenreButton.setFont(new Font("Arial", Font.PLAIN, 12));
+        sortByGenreButton.setBackground(new Color(230, 230, 230));
+        sortByGenreButton.setFocusPainted(false);
+        sortByGenreButton.addActionListener(e -> ordenarPorGenero());
+        sortPanel.add(sortByGenreButton);
+        
+        controlsPanel.add(sortPanel, BorderLayout.WEST);
         
         // Panel central: Buscador
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -165,6 +193,8 @@ public class PeliculasGUI extends JFrame {
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
         
+        controlsPanel.add(searchPanel, BorderLayout.CENTER);
+        
         // Panel derecho: Botón de cerrar sesión
         JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         logoutPanel.setBackground(new Color(245, 245, 245));
@@ -180,11 +210,33 @@ public class PeliculasGUI extends JFrame {
         
         logoutPanel.add(logoutButton);
         
-        topBar.add(userInfoPanel, BorderLayout.WEST);
-        topBar.add(searchPanel, BorderLayout.CENTER);
-        topBar.add(logoutPanel, BorderLayout.EAST);
+        controlsPanel.add(logoutPanel, BorderLayout.EAST);
+        
+        // Combinar paneles
+        JPanel combinedPanel = new JPanel(new BorderLayout());
+        combinedPanel.setBackground(new Color(245, 245, 245));
+        combinedPanel.add(userInfoPanel, BorderLayout.NORTH);
+        combinedPanel.add(controlsPanel, BorderLayout.CENTER);
+        
+        topBar.add(combinedPanel, BorderLayout.CENTER);
         
         return topBar;
+    }
+    
+    private void ordenarPorTitulo() {
+        peliculasActuales.sort((p1, p2) -> 
+            p1.getMetadatos().getTitulo().compareToIgnoreCase(p2.getMetadatos().getTitulo())
+        );
+        mostrarPeliculas();
+    }
+    
+    private void ordenarPorGenero() {
+        peliculasActuales.sort((p1, p2) -> {
+            String genero1 = p1.getGeneros().isEmpty() ? "" : p1.getGeneros().get(0);
+            String genero2 = p2.getGeneros().isEmpty() ? "" : p2.getGeneros().get(0);
+            return genero1.compareToIgnoreCase(genero2);
+        });
+        mostrarPeliculas();
     }
     
     private void mostrarPeliculas() {
@@ -316,12 +368,10 @@ public class PeliculasGUI extends JFrame {
                             posterLabel.setIcon(icon);
                             posterLabel.setText("");
                         } else {
-                            posterLabel.setText("🎬");
-                            posterLabel.setFont(new Font("Arial", Font.PLAIN, 48));
+                            mostrarImagenNoDisponible(posterLabel);
                         }
                     } catch (Exception e) {
-                        posterLabel.setText("🎬");
-                        posterLabel.setFont(new Font("Arial", Font.PLAIN, 48));
+                        mostrarImagenNoDisponible(posterLabel);
                     }
                 }
             };
@@ -330,11 +380,16 @@ public class PeliculasGUI extends JFrame {
             posterLabel.setFont(new Font("Arial", Font.PLAIN, 32));
             worker.execute();
         } else {
-            posterLabel.setText("🎬");
-            posterLabel.setFont(new Font("Arial", Font.PLAIN, 48));
+            mostrarImagenNoDisponible(posterLabel);
         }
         
         return posterLabel;
+    }
+    
+    private void mostrarImagenNoDisponible(JLabel label) {
+        label.setText("<html><center>Imagen No<br>Disponible</center></html>");
+        label.setFont(new Font("Arial", Font.BOLD, 14));
+        label.setForeground(Color.GRAY);
     }
     
     private JPanel crearPanelCalificacion(Pelicula pelicula) {
