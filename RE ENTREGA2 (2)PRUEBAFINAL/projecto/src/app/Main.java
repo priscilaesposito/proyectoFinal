@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import dao.Conexion;
 import db.BaseDeDatos;
-import gui.LoginGUI;
+import controlador.LoginControlador;
 
 public class Main {
 
@@ -84,9 +84,9 @@ public class Main {
             }
             
             if (useGUI) {
-                System.out.println("Iniciando interfaz gráfica...");
-                // Iniciar interfaz gráfica
-                LoginGUI.startGUI();
+                System.out.println("Iniciando interfaz gráfica con patrón MVC...");
+                // Iniciar interfaz gráfica usando el patrón MVC
+                LoginControlador.iniciarAplicacion();
             } else {
                 // Modo consola (código original)
                 runConsoleMode();
