@@ -135,36 +135,13 @@ public class PeliculasGUI extends JFrame {
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         userInfoPanel.add(welcomeLabel);
         
-        JLabel emailLabel = new JLabel(" (" + usuario.getCorreo() + ")");
-        emailLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        emailLabel.setForeground(Color.GRAY);
-        userInfoPanel.add(emailLabel);
-        
         // Panel inferior: Búsqueda, ordenamiento y cerrar sesión
         JPanel controlsPanel = new JPanel(new BorderLayout());
         controlsPanel.setBackground(new Color(245, 245, 245));
         
-        // Panel izquierdo: Ordenamiento
+        // Panel izquierdo vacío (ordenamiento ahora en cabecera)
         JPanel sortPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         sortPanel.setBackground(new Color(245, 245, 245));
-        
-        JLabel sortLabel = new JLabel("Ordenar por:");
-        sortLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        sortPanel.add(sortLabel);
-        
-        JButton sortByTitleButton = new JButton("Título");
-        sortByTitleButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        sortByTitleButton.setBackground(new Color(230, 230, 230));
-        sortByTitleButton.setFocusPainted(false);
-        sortByTitleButton.addActionListener(e -> ordenarPorTitulo());
-        sortPanel.add(sortByTitleButton);
-        
-        JButton sortByGenreButton = new JButton("Género");
-        sortByGenreButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        sortByGenreButton.setBackground(new Color(230, 230, 230));
-        sortByGenreButton.setFocusPainted(false);
-        sortByGenreButton.addActionListener(e -> ordenarPorGenero());
-        sortPanel.add(sortByGenreButton);
         
         controlsPanel.add(sortPanel, BorderLayout.WEST);
         
@@ -223,33 +200,49 @@ public class PeliculasGUI extends JFrame {
         return topBar;
     }
     
-    private void ordenarPorTitulo() {
-        peliculasActuales.sort((p1, p2) -> 
-            p1.getMetadatos().getTitulo().compareToIgnoreCase(p2.getMetadatos().getTitulo())
-        );
+    private void ordenarPorTitulo(boolean ascendente) {
+        if (ascendente) {
+            peliculasActuales.sort((p1, p2) -> 
+                p1.getMetadatos().getTitulo().compareToIgnoreCase(p2.getMetadatos().getTitulo())
+            );
+        } else {
+            peliculasActuales.sort((p1, p2) -> 
+                p2.getMetadatos().getTitulo().compareToIgnoreCase(p1.getMetadatos().getTitulo())
+            );
+        }
         mostrarPeliculas();
     }
     
-    private void ordenarPorGenero() {
-        peliculasActuales.sort((p1, p2) -> {
-            String genero1 = p1.getGeneros().isEmpty() ? "" : p1.getGeneros().get(0);
-            String genero2 = p2.getGeneros().isEmpty() ? "" : p2.getGeneros().get(0);
-            return genero1.compareToIgnoreCase(genero2);
-        });
+    private void ordenarPorGenero(boolean ascendente) {
+        if (ascendente) {
+            peliculasActuales.sort((p1, p2) -> {
+                String genero1 = p1.getGeneros().isEmpty() ? "" : p1.getGeneros().get(0);
+                String genero2 = p2.getGeneros().isEmpty() ? "" : p2.getGeneros().get(0);
+                return genero1.compareToIgnoreCase(genero2);
+            });
+        } else {
+            peliculasActuales.sort((p1, p2) -> {
+                String genero1 = p1.getGeneros().isEmpty() ? "" : p1.getGeneros().get(0);
+                String genero2 = p2.getGeneros().isEmpty() ? "" : p2.getGeneros().get(0);
+                return genero2.compareToIgnoreCase(genero1);
+            });
+        }
         mostrarPeliculas();
     }
     
     private void mostrarPeliculas() {
         contentPanel.removeAll();
         
+        // Crear panel con las películas en formato tabla
         JPanel peliculasPanel = new JPanel();
         peliculasPanel.setLayout(new BoxLayout(peliculasPanel, BoxLayout.Y_AXIS));
         peliculasPanel.setBackground(Color.WHITE);
         peliculasPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
+        // Título
         String tituloSeccion = esPrimerLogin ? 
             "🌟 Top 10 Películas Mejor Rankeadas - ¡Califícalas!" :
-            "🎬 Películas Recomendadas Para Ti";
+            "Seguro viste alguna de estas películas, haznos saber que te pareció dejando una reseña";
         
         JLabel tituloLabel = new JLabel(tituloSeccion);
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 20));
@@ -257,11 +250,21 @@ public class PeliculasGUI extends JFrame {
         peliculasPanel.add(tituloLabel);
         peliculasPanel.add(Box.createVerticalStrut(20));
         
+        // Cabecera de la tabla
+        JPanel headerPanel = crearCabeceraTabla();
+        headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        peliculasPanel.add(headerPanel);
+        peliculasPanel.add(Box.createVerticalStrut(10));
+        
+        // Agregar cada película como fila
         for (Pelicula pelicula : peliculasActuales) {
-            peliculasPanel.add(crearPanelPelicula(pelicula));
-            peliculasPanel.add(Box.createVerticalStrut(15));
+            JPanel filaPanel = crearFilaPelicula(pelicula);
+            filaPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            peliculasPanel.add(filaPanel);
+            peliculasPanel.add(Box.createVerticalStrut(5));
         }
         
+        // Agregar scroll
         JScrollPane scrollPane = new JScrollPane(peliculasPanel);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -271,74 +274,218 @@ public class PeliculasGUI extends JFrame {
         contentPanel.repaint();
     }
     
-    private JPanel crearPanelPelicula(Pelicula pelicula) {
-        JPanel peliculaPanel = new JPanel(new BorderLayout(15, 10));
-        peliculaPanel.setBackground(new Color(250, 250, 250));
-        peliculaPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 220, 220)),
-            BorderFactory.createEmptyBorder(15, 15, 15, 15)
+    private JPanel crearCabeceraTabla() {
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
+        headerPanel.setBackground(new Color(240, 240, 240));
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 2, 0, Color.BLACK),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
         ));
-        peliculaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+        headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         
-        // Panel izquierdo: Poster
-        JLabel posterLabel = crearPosterLabel(pelicula);
-        peliculaPanel.add(posterLabel, BorderLayout.WEST);
+        // Poster
+        JLabel posterHeader = new JLabel("Poster");
+        posterHeader.setFont(new Font("Arial", Font.BOLD, 14));
+        posterHeader.setPreferredSize(new Dimension(140, 30));
+        posterHeader.setMinimumSize(new Dimension(140, 30));
+        posterHeader.setMaximumSize(new Dimension(140, 30));
+        headerPanel.add(posterHeader);
         
-        // Panel central: Información de la película
-        JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setBackground(new Color(250, 250, 250));
+        headerPanel.add(Box.createHorizontalStrut(10));
         
-        JLabel tituloLabel = new JLabel(pelicula.getMetadatos().getTitulo());
-        tituloLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        tituloLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Título con botones de ordenamiento
+        JPanel tituloPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        tituloPanel.setBackground(new Color(240, 240, 240));
+        tituloPanel.setPreferredSize(new Dimension(200, 30));
+        tituloPanel.setMinimumSize(new Dimension(200, 30));
+        tituloPanel.setMaximumSize(new Dimension(200, 30));
         
-        JLabel directorLabel = new JLabel("Director: " + pelicula.getMetadatos().getDirector());
-        directorLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        directorLabel.setForeground(Color.GRAY);
-        directorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel titleHeader = new JLabel("Título");
+        titleHeader.setFont(new Font("Arial", Font.BOLD, 14));
+        tituloPanel.add(titleHeader);
         
-        JLabel generoLabel = new JLabel("Género: " + String.join(", ", pelicula.getGeneros()));
-        generoLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        generoLabel.setForeground(Color.GRAY);
-        generoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Panel vertical para flechas de título
+        JPanel flechasTituloPanel = new JPanel();
+        flechasTituloPanel.setLayout(new BoxLayout(flechasTituloPanel, BoxLayout.Y_AXIS));
+        flechasTituloPanel.setBackground(new Color(240, 240, 240));
         
-        JLabel anioLabel = new JLabel("Año: " + pelicula.getAnio());
-        anioLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        anioLabel.setForeground(Color.GRAY);
-        anioLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JButton tituloAscButton = new JButton("▲");
+        tituloAscButton.setFont(new Font("Arial", Font.PLAIN, 8));
+        tituloAscButton.setPreferredSize(new Dimension(18, 15));
+        tituloAscButton.setMaximumSize(new Dimension(18, 15));
+        tituloAscButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        tituloAscButton.setFocusPainted(false);
+        tituloAscButton.addActionListener(e -> ordenarPorTitulo(true));
         
-        JLabel ratingLabel = new JLabel("⭐ Rating: " + String.format("%.1f", pelicula.getRatingPromedio()) + "/10");
-        ratingLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        ratingLabel.setForeground(new Color(255, 165, 0));
-        ratingLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JButton tituloDescButton = new JButton("▼");
+        tituloDescButton.setFont(new Font("Arial", Font.PLAIN, 8));
+        tituloDescButton.setPreferredSize(new Dimension(18, 15));
+        tituloDescButton.setMaximumSize(new Dimension(18, 15));
+        tituloDescButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        tituloDescButton.setFocusPainted(false);
+        tituloDescButton.addActionListener(e -> ordenarPorTitulo(false));
         
-        infoPanel.add(tituloLabel);
-        infoPanel.add(Box.createVerticalStrut(5));
-        infoPanel.add(directorLabel);
-        infoPanel.add(generoLabel);
-        infoPanel.add(anioLabel);
-        infoPanel.add(Box.createVerticalStrut(5));
-        infoPanel.add(ratingLabel);
+        flechasTituloPanel.add(tituloAscButton);
+        flechasTituloPanel.add(tituloDescButton);
+        tituloPanel.add(flechasTituloPanel);
         
-        // Panel derecho: Calificación
-        JPanel ratingPanel = crearPanelCalificacion(pelicula);
+        headerPanel.add(tituloPanel);
         
-        peliculaPanel.add(infoPanel, BorderLayout.CENTER);
-        peliculaPanel.add(ratingPanel, BorderLayout.EAST);
+        headerPanel.add(Box.createHorizontalStrut(10));
         
-        return peliculaPanel;
+        // Género con botones de ordenamiento
+        JPanel generoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        generoPanel.setBackground(new Color(240, 240, 240));
+        generoPanel.setPreferredSize(new Dimension(150, 30));
+        generoPanel.setMinimumSize(new Dimension(150, 30));
+        generoPanel.setMaximumSize(new Dimension(150, 30));
+        
+        JLabel genreHeader = new JLabel("Genero");
+        genreHeader.setFont(new Font("Arial", Font.BOLD, 14));
+        generoPanel.add(genreHeader);
+        
+        // Panel vertical para flechas de género
+        JPanel flechasGeneroPanel = new JPanel();
+        flechasGeneroPanel.setLayout(new BoxLayout(flechasGeneroPanel, BoxLayout.Y_AXIS));
+        flechasGeneroPanel.setBackground(new Color(240, 240, 240));
+        
+        JButton generoAscButton = new JButton("▲");
+        generoAscButton.setFont(new Font("Arial", Font.PLAIN, 8));
+        generoAscButton.setPreferredSize(new Dimension(18, 15));
+        generoAscButton.setMaximumSize(new Dimension(18, 15));
+        generoAscButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        generoAscButton.setFocusPainted(false);
+        generoAscButton.addActionListener(e -> ordenarPorGenero(true));
+        
+        JButton generoDescButton = new JButton("▼");
+        generoDescButton.setFont(new Font("Arial", Font.PLAIN, 8));
+        generoDescButton.setPreferredSize(new Dimension(18, 15));
+        generoDescButton.setMaximumSize(new Dimension(18, 15));
+        generoDescButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        generoDescButton.setFocusPainted(false);
+        generoDescButton.addActionListener(e -> ordenarPorGenero(false));
+        
+        flechasGeneroPanel.add(generoAscButton);
+        flechasGeneroPanel.add(generoDescButton);
+        generoPanel.add(flechasGeneroPanel);
+        
+        headerPanel.add(generoPanel);
+        
+        headerPanel.add(Box.createHorizontalStrut(10));
+        
+        // Resumen
+        JLabel resumeHeader = new JLabel("Resumen");
+        resumeHeader.setFont(new Font("Arial", Font.BOLD, 14));
+        headerPanel.add(resumeHeader);
+        
+        headerPanel.add(Box.createHorizontalGlue());
+        
+        // Acción
+        JLabel actionHeader = new JLabel("");
+        actionHeader.setPreferredSize(new Dimension(100, 30));
+        actionHeader.setMinimumSize(new Dimension(100, 30));
+        actionHeader.setMaximumSize(new Dimension(100, 30));
+        headerPanel.add(actionHeader);
+        
+        return headerPanel;
     }
     
-    private JLabel crearPosterLabel(Pelicula pelicula) {
+    private JPanel crearFilaPelicula(Pelicula pelicula) {
+        JPanel filaPanel = new JPanel();
+        filaPanel.setLayout(new BoxLayout(filaPanel, BoxLayout.X_AXIS));
+        filaPanel.setBackground(Color.WHITE);
+        filaPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        filaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+        
+        // Poster (más pequeño para la tabla)
+        JLabel posterLabel = crearPosterLabelTabla(pelicula);
+        filaPanel.add(posterLabel);
+        
+        filaPanel.add(Box.createHorizontalStrut(10));
+        
+        // Título
+        JLabel tituloLabel = new JLabel("<html>" + pelicula.getMetadatos().getTitulo() + "</html>");
+        tituloLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        tituloLabel.setPreferredSize(new Dimension(200, 100));
+        tituloLabel.setMinimumSize(new Dimension(200, 100));
+        tituloLabel.setVerticalAlignment(JLabel.TOP);
+        filaPanel.add(tituloLabel);
+        
+        filaPanel.add(Box.createHorizontalStrut(10));
+        
+        // Género
+        String generos = String.join(", ", pelicula.getGeneros());
+        JLabel generoLabel = new JLabel(generos);
+        generoLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        generoLabel.setForeground(Color.GRAY);
+        generoLabel.setPreferredSize(new Dimension(150, 100));
+        generoLabel.setMinimumSize(new Dimension(150, 100));
+        generoLabel.setVerticalAlignment(JLabel.TOP);
+        filaPanel.add(generoLabel);
+        
+        filaPanel.add(Box.createHorizontalStrut(10));
+        
+        // Resumen con ancho fijo para wrap automático
+        String resumen = pelicula.getMetadatos().getSipnosis();
+        if (resumen == null || resumen.isEmpty()) {
+            resumen = "Texto del resumen";
+        }
+        
+        // Usar JTextArea para mejor manejo de texto multilínea
+        JTextArea resumenArea = new JTextArea(resumen);
+        resumenArea.setFont(new Font("Arial", Font.PLAIN, 11));
+        resumenArea.setForeground(Color.DARK_GRAY);
+        resumenArea.setBackground(Color.WHITE);
+        resumenArea.setLineWrap(true);
+        resumenArea.setWrapStyleWord(true);
+        resumenArea.setEditable(false);
+        resumenArea.setFocusable(false);
+        resumenArea.setBorder(null);
+        resumenArea.setPreferredSize(new Dimension(380, 100));
+        resumenArea.setMaximumSize(new Dimension(380, 100));
+        filaPanel.add(resumenArea);
+        
+        filaPanel.add(Box.createHorizontalGlue());
+        
+        // Botón Calificar
+        JButton calificarButton = new JButton("Calificar");
+        calificarButton.setFont(new Font("Arial", Font.BOLD, 12));
+        calificarButton.setBackground(new Color(0, 122, 255));
+        calificarButton.setForeground(Color.WHITE);
+        calificarButton.setOpaque(true);
+        calificarButton.setBorderPainted(false);
+        calificarButton.setFocusPainted(false);
+        calificarButton.setPreferredSize(new Dimension(100, 35));
+        calificarButton.setMinimumSize(new Dimension(100, 35));
+        calificarButton.setMaximumSize(new Dimension(100, 35));
+        calificarButton.addActionListener(e -> {
+            boolean calificada = CalificarPeliculaGUI.mostrar(this, pelicula, usuario);
+            if (calificada) {
+                // Deshabilitar el botón después de calificar
+                calificarButton.setEnabled(false);
+                calificarButton.setText("Calificada");
+                calificarButton.setBackground(Color.GRAY);
+            }
+        });
+        
+        filaPanel.add(calificarButton);
+        
+        return filaPanel;
+    }
+    
+    private JLabel crearPosterLabelTabla(Pelicula pelicula) {
         JLabel posterLabel = new JLabel();
-        posterLabel.setPreferredSize(new Dimension(120, 180));
-        posterLabel.setMinimumSize(new Dimension(120, 180));
-        posterLabel.setMaximumSize(new Dimension(120, 180));
+        posterLabel.setPreferredSize(new Dimension(60, 80));
+        posterLabel.setMinimumSize(new Dimension(60, 80));
+        posterLabel.setMaximumSize(new Dimension(60, 80));
         posterLabel.setHorizontalAlignment(JLabel.CENTER);
         posterLabel.setVerticalAlignment(JLabel.CENTER);
         posterLabel.setOpaque(true);
-        posterLabel.setBackground(new Color(230, 230, 230));
+        posterLabel.setBackground(new Color(240, 240, 240));
         posterLabel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
         
         // Cargar poster en segundo plano
@@ -351,7 +498,7 @@ public class PeliculasGUI extends JFrame {
                         URL url = new URL(posterUrl);
                         BufferedImage img = ImageIO.read(url);
                         if (img != null) {
-                            Image scaledImg = img.getScaledInstance(120, 180, Image.SCALE_SMOOTH);
+                            Image scaledImg = img.getScaledInstance(60, 80, Image.SCALE_SMOOTH);
                             return new ImageIcon(scaledImg);
                         }
                     } catch (Exception e) {
@@ -368,143 +515,28 @@ public class PeliculasGUI extends JFrame {
                             posterLabel.setIcon(icon);
                             posterLabel.setText("");
                         } else {
-                            mostrarImagenNoDisponible(posterLabel);
+                            mostrarImagenNoDisponiblePequenia(posterLabel);
                         }
                     } catch (Exception e) {
-                        mostrarImagenNoDisponible(posterLabel);
+                        mostrarImagenNoDisponiblePequenia(posterLabel);
                     }
                 }
             };
             
             posterLabel.setText("⏳");
-            posterLabel.setFont(new Font("Arial", Font.PLAIN, 32));
+            posterLabel.setFont(new Font("Arial", Font.PLAIN, 20));
             worker.execute();
         } else {
-            mostrarImagenNoDisponible(posterLabel);
+            mostrarImagenNoDisponiblePequenia(posterLabel);
         }
         
         return posterLabel;
     }
     
-    private void mostrarImagenNoDisponible(JLabel label) {
-        label.setText("<html><center>Imagen No<br>Disponible</center></html>");
-        label.setFont(new Font("Arial", Font.BOLD, 14));
+    private void mostrarImagenNoDisponiblePequenia(JLabel label) {
+        label.setText("<html><center><small>Imagen No<br>Disponible</small></center></html>");
+        label.setFont(new Font("Arial", Font.PLAIN, 9));
         label.setForeground(Color.GRAY);
-    }
-    
-    private JPanel crearPanelCalificacion(Pelicula pelicula) {
-        JPanel ratingPanel = new JPanel();
-        ratingPanel.setLayout(new BoxLayout(ratingPanel, BoxLayout.Y_AXIS));
-        ratingPanel.setBackground(new Color(250, 250, 250));
-        
-        JLabel instruccion = new JLabel("Tu calificación:");
-        instruccion.setFont(new Font("Arial", Font.PLAIN, 12));
-        instruccion.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        JPanel starPanel = new JPanel(new FlowLayout());
-        starPanel.setBackground(new Color(250, 250, 250));
-        
-        JComboBox<Integer> ratingCombo = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-        ratingCombo.setSelectedIndex(7); // Default 8/10
-        
-        JButton calificarButton = new JButton("Calificar");
-        calificarButton.setFont(new Font("Arial", Font.BOLD, 12));
-        calificarButton.setBackground(new Color(40, 167, 69));
-        calificarButton.setForeground(Color.WHITE);
-        calificarButton.setOpaque(true);
-        calificarButton.setBorderPainted(false);
-        calificarButton.setFocusPainted(false);
-        
-        calificarButton.addActionListener(e -> {
-            int calificacion = (Integer) ratingCombo.getSelectedItem();
-            calificarPelicula(pelicula, calificacion);
-        });
-        
-        starPanel.add(ratingCombo);
-        starPanel.add(calificarButton);
-        
-        ratingPanel.add(instruccion);
-        ratingPanel.add(Box.createVerticalStrut(5));
-        ratingPanel.add(starPanel);
-        
-        return ratingPanel;
-    }
-    
-    private void calificarPelicula(Pelicula pelicula, int calificacion) {
-        // Crear diálogo para ingresar la reseña
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
-        JLabel instruccion = new JLabel("Ingrese su calificación y reseña:");
-        instruccion.setFont(new Font("Arial", Font.BOLD, 12));
-        
-        JPanel ratingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ratingPanel.add(new JLabel("Calificación:"));
-        JLabel ratingValue = new JLabel(calificacion + "/10");
-        ratingValue.setFont(new Font("Arial", Font.BOLD, 14));
-        ratingValue.setForeground(new Color(255, 165, 0));
-        ratingPanel.add(ratingValue);
-        
-        JLabel reseniaLabel = new JLabel("Reseña:");
-        JTextArea reseniaArea = new JTextArea(5, 30);
-        reseniaArea.setLineWrap(true);
-        reseniaArea.setWrapStyleWord(true);
-        reseniaArea.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.GRAY),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
-        JScrollPane scrollPane = new JScrollPane(reseniaArea);
-        
-        panel.add(instruccion, BorderLayout.NORTH);
-        panel.add(ratingPanel, BorderLayout.CENTER);
-        
-        JPanel reseniaPanel = new JPanel(new BorderLayout(5, 5));
-        reseniaPanel.add(reseniaLabel, BorderLayout.NORTH);
-        reseniaPanel.add(scrollPane, BorderLayout.CENTER);
-        panel.add(reseniaPanel, BorderLayout.SOUTH);
-        
-        int result = JOptionPane.showConfirmDialog(
-            this,
-            panel,
-            "Calificar: " + pelicula.getMetadatos().getTitulo(),
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.PLAIN_MESSAGE
-        );
-        
-        if (result == JOptionPane.OK_OPTION) {
-            String resenia = reseniaArea.getText().trim();
-            
-            // Validar que se haya ingresado la reseña
-            if (resenia.isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                    "Debe ingresar una reseña para calificar la película.",
-                    "Campo requerido",
-                    JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            
-            try {
-                boolean exito = Logica.calificarPelicula(
-                    usuario.getID_USUARIO(), 
-                    pelicula.getID(), 
-                    calificacion, 
-                    resenia
-                );
-                
-                if (exito) {
-                    JOptionPane.showMessageDialog(this,
-                        "¡Gracias por calificar \"" + pelicula.getMetadatos().getTitulo() + "\"!",
-                        "Calificación guardada",
-                        JOptionPane.INFORMATION_MESSAGE);
-                }
-                
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this,
-                    "Error al guardar calificación: " + ex.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            }
-        }
     }
     
     private void buscarPelicula(String termino) {
@@ -541,11 +573,11 @@ public class PeliculasGUI extends JFrame {
                 try {
                     get();
                     
-                    if (resultado != null) {
-                        mostrarResultadoBusqueda(resultado);
+                    if (resultado != null && !resultado.optString("Response", "False").equals("False")) {
+                        ResultadoBusquedaGUI.mostrar(PeliculasGUI.this, resultado);
                     } else {
                         JOptionPane.showMessageDialog(PeliculasGUI.this,
-                            "No se encontró la película \"" + termino + "\"",
+                            "No se encontró la película \"" + termino + "\".\nNo se encuentra disponible.",
                             "Sin resultados",
                             JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -561,21 +593,6 @@ public class PeliculasGUI extends JFrame {
         
         worker.execute();
         loadingDialog.setVisible(true);
-    }
-    
-    private void mostrarResultadoBusqueda(org.json.JSONObject pelicula) {
-        String info = "🎬 " + pelicula.getString("Title") + "\n\n" +
-                     "📅 Año: " + pelicula.getString("Year") + "\n" +
-                     "🎭 Género: " + pelicula.getString("Genre") + "\n" +
-                     "🎬 Director: " + pelicula.getString("Director") + "\n" +
-                     "⭐ Rating IMDb: " + pelicula.optString("imdbRating", "N/A") + "/10\n" +
-                     "⏱️ Duración: " + pelicula.optString("Runtime", "N/A") + "\n\n" +
-                     "📖 Sinopsis:\n" + pelicula.getString("Plot");
-        
-        JOptionPane.showMessageDialog(this,
-            info,
-            "Resultado de Búsqueda",
-            JOptionPane.INFORMATION_MESSAGE);
     }
     
     private void cerrarSesion() {
