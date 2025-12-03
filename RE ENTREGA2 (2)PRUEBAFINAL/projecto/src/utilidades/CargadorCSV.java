@@ -4,16 +4,29 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
 import dao.Conexion;
 import db.BaseDeDatos;
+import model.Pelicula;
+import daoJDBC.PeliculaDAOjdbc;
 
 public class CargadorCSV {
     
     private static final String CSV_PATH = System.getProperty("user.home") + 
-        "/PriEsposito/proyectoFinal/RE ENTREGA2 (2)PRUEBAFINAL/projecto/peliculas.csv";
+        "/PriEsposito/proyectoFinal/RE ENTREGA2 (2)PRUEBAFINAL/projecto/movies_database.csv";
     
-    public static void cargarPeliculasDesdeCSV() {
-        System.out.println("Cargando películas desde CSV...");
+    /**
+     * Carga películas desde movies_database.csv.
+     * - Importa una por una guardando en BD
+     * - Mantiene objetos en memoria
+     * - Retorna lista ordenada por rating_promedio descendente
+     */
+    public static List<Pelicula> cargarPeliculasDesdeCSV() {
+        System.out.println("Cargando películas desde movies_database.csv...");
+        
+        List<Pelicula> peliculasEnMemoria = new ArrayList<>();
+        PeliculaDAOjdbc peliculaDAO = new PeliculaDAOjdbc();
         
         try (BufferedReader br = new BufferedReader(new FileReader(CSV_PATH));
              Connection conn = Conexion.conectar()) {
@@ -40,7 +53,7 @@ public class CargadorCSV {
                 }
                 
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setString(1, datos[0]); // GENERO
+                    pstmt.setString(1, datos[0]); // GENERO (primer género)
                     pstmt.setString(2, datos[1]); // TITULO
                     pstmt.setString(3, datos[2]); // RESUMEN
                     pstmt.setString(4, datos[3]); // DIRECTOR
@@ -51,17 +64,33 @@ public class CargadorCSV {
                     
                     pstmt.executeUpdate();
                     contador++;
+                    
+                    System.out.println("  [" + contador + "] Cargada: " + datos[1] + " (Rating: " + datos[5] + ")");
+                    
                 } catch (Exception e) {
                     System.err.println("Error al insertar película: " + datos[1]);
                 }
             }
             
-            System.out.println("✅ " + contador + " películas cargadas desde CSV");
+            
+            // Cargar todas las películas en memoria desde la BD
+            System.out.println("📥 Cargando películas en memoria...");
+            peliculasEnMemoria = peliculaDAO.listarTodos();
+            
+            // Ordenar por rating_promedio descendente usando mecanismo de Java
+            peliculasEnMemoria.sort((p1, p2) -> {
+                float rating1 = p1.getRatingPromedio();
+                float rating2 = p2.getRatingPromedio();
+                return Float.compare(rating2, rating1); // Descendente
+            });
+            
             
         } catch (Exception e) {
             System.err.println("Error al cargar CSV: " + e.getMessage());
             e.printStackTrace();
         }
+        
+        return peliculasEnMemoria;
     }
     
     private static String[] parsearLineaCSV(String linea) {

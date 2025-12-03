@@ -143,16 +143,21 @@ public class VentanaPrincipalGUI extends JFrame {
                 
                 // Si es primer acceso del usuario, verificar si hay que cargar el CSV
                 if (esPrimerLogin) {
-                    loadingLabel.setText("Cargando películas desde archivo...");
+                    loadingLabel.setText("Importando películas desde movies_database.csv...");
                     
                     // Verificar si ya hay películas en la BD
                     if (!CargadorCSV.existenPeliculasEnBD()) {
-                        // Cargar películas desde CSV
-                        CargadorCSV.cargarPeliculasDesdeCSV();
+                        // Cargar películas desde CSV (importa una por una, guarda en memoria y ordena)
+                        List<Pelicula> todasOrdenadas = CargadorCSV.cargarPeliculasDesdeCSV();
+                        
+                        loadingLabel.setText("Seleccionando top 10 películas mejor rankeadas...");
+                        // Tomar las primeras 10 (ya están ordenadas descendente por rating)
+                        peliculasActuales = todasOrdenadas.subList(0, Math.min(10, todasOrdenadas.size()));
+                    } else {
+                        // Si ya existen películas, obtener top 10 de BD
+                        loadingLabel.setText("Seleccionando top 10 películas mejor rankeadas...");
+                        peliculasActuales = Logica.obtenerTop10Peliculas();
                     }
-                    
-                    loadingLabel.setText("Seleccionando mejores películas...");
-                    peliculasActuales = Logica.obtenerTop10Peliculas();
                 } else {
                     loadingLabel.setText("Buscando películas para ti...");
                     peliculasActuales = Logica.obtener10PeliculasRandom(usuario.getID_USUARIO());
