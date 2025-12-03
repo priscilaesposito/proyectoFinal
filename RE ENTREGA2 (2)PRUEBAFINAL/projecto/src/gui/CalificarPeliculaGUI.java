@@ -48,25 +48,10 @@ public class CalificarPeliculaGUI extends JDialog {
         calificacionLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         ratingPanel.add(calificacionLabel);
         
-        // Crear panel con estrellas
-        JPanel estrellasPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
-        estrellasPanel.setBackground(Color.WHITE);
-        
         Integer[] ratings = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         ratingCombo = new JComboBox<>(ratings);
         ratingCombo.setSelectedIndex(7); // Default 8/10
         ratingCombo.setFont(new Font("Arial", Font.PLAIN, 12));
-        
-        // Crear estrellas visuales (solo decorativas)
-        for (int i = 0; i < 5; i++) {
-            JLabel estrella = new JLabel("☆");
-            estrella.setFont(new Font("Arial", Font.PLAIN, 24));
-            estrella.setForeground(new Color(255, 215, 0));
-            estrellasPanel.add(estrella);
-        }
-        
-        ratingPanel.add(estrellasPanel);
-        ratingPanel.add(Box.createHorizontalStrut(10));
         ratingPanel.add(ratingCombo);
         
         centerPanel.add(ratingPanel);
@@ -101,6 +86,8 @@ public class CalificarPeliculaGUI extends JDialog {
         guardarBtn.setBackground(new Color(0, 122, 255));
         guardarBtn.setForeground(Color.WHITE);
         guardarBtn.setFocusPainted(false);
+        guardarBtn.setOpaque(true);
+        guardarBtn.setBorderPainted(false);
         guardarBtn.setPreferredSize(new Dimension(100, 35));
         guardarBtn.addActionListener(e -> guardarCalificacion());
         
