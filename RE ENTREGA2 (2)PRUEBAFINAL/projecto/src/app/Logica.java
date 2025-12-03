@@ -10,6 +10,7 @@ import dao.PeliculaDAO;
 
 import daoJDBC.DatosPersonalesDAOJdbc;
 import daoJDBC.UsuarioDAOjdbc;
+import db.ConsultaPeliculasOMDb;
 import daoJDBC.PeliculaDAOjdbc;
 import model.Usuario;
 import gestion.Administrador;
