@@ -1,0 +1,20 @@
+# Compiled class files
+*.class
+
+# Compiled binary directory
+**/bin/
+
+# Log files
+*.log
+
+# IDE files
+.idea/
+*.iml
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Database files (they might be user-specific)
+# Note: plataforma_streaming.db is kept for convenience
