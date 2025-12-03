@@ -619,4 +619,84 @@ private static void mostrardatosresenia(Resenia r) {
         
         return new JSONArray(); // Retorna array vacío si no hay resultados
     }
+    
+    /**
+     * Verificar si es el primer login del usuario
+     */
+    public static boolean esPrimerLogin(int idUsuario) throws Exception {
+        try (java.sql.Connection conn = db.BaseDeDatos.conectar();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(
+                 "SELECT COUNT(*) FROM PRIMER_LOGIN WHERE ID_USUARIO = ?")) {
+            
+            pstmt.setInt(1, idUsuario);
+            java.sql.ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getInt(1) == 0; // True si no hay registro
+            }
+            return true;
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar primer login: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Registrar que el usuario ya hizo su primer login
+     */
+    public static void registrarPrimerLogin(int idUsuario) throws Exception {
+        try (java.sql.Connection conn = db.BaseDeDatos.conectar();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(
+                 "INSERT INTO PRIMER_LOGIN (ID_USUARIO, FECHA_PRIMER_LOGIN) VALUES (?, ?)")) {
+            
+            pstmt.setInt(1, idUsuario);
+            pstmt.setString(2, LocalDateTime.now().toString());
+            pstmt.executeUpdate();
+            
+        } catch (SQLException e) {
+            throw new Exception("Error al registrar primer login: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Obtener top 10 películas mejor rankeadas
+     */
+    public static List<Pelicula> obtenerTop10Peliculas() throws Exception {
+        try {
+            return peliculaDAO.obtenerTop10PorRating();
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener top películas: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Obtener 10 películas random que el usuario no ha calificado
+     */
+    public static List<Pelicula> obtener10PeliculasRandom(int idUsuario) throws Exception {
+        try {
+            return peliculaDAO.obtener10RandomNoCalificadas(idUsuario);
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener películas random: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Guardar calificación de película
+     */
+    public static boolean calificarPelicula(int idUsuario, int idPelicula, int calificacion, String comentario) throws Exception {
+        try {
+            Resenia resenia = new Resenia();
+            resenia.setID_Usuario(idUsuario);
+            resenia.setID_Pelicula(idPelicula);
+            resenia.setCalificacion(calificacion);
+            resenia.setComentario(comentario != null ? comentario : "");
+            resenia.setAprobado(1); // Auto-aprobar calificaciones simples
+            resenia.setFechaHora(LocalDateTime.now().toString());
+            
+            listasyResenias.aniadirResenias(resenia);
+            return true;
+            
+        } catch (SQLException e) {
+            throw new Exception("Error al guardar calificación: " + e.getMessage());
+        }
+    }
 }

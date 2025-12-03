@@ -62,6 +62,15 @@ public class BaseDeDatos {
                     "REFERENCES PELICULA (ID)" +
                     ");";
             stmt.executeUpdate(sqlResenia);
+            
+            // Tabla para tracking de primer login
+            String sqlPrimerLogin = "CREATE TABLE IF NOT EXISTS PRIMER_LOGIN (" +
+                    "ID_USUARIO INTEGER NOT NULL PRIMARY KEY, " +
+                    "FECHA_PRIMER_LOGIN DATETIME NOT NULL, " +
+                    "CONSTRAINT PRIMER_LOGIN_USUARIO_FK FOREIGN KEY (ID_USUARIO) " +
+                    "REFERENCES USUARIO(ID)" +
+                    ");";
+            stmt.executeUpdate(sqlPrimerLogin);
 
         } catch (SQLException e) {
             System.out.println("Error al crear las tablas: " + e.getMessage());

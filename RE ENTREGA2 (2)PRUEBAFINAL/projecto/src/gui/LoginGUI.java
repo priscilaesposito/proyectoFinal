@@ -284,14 +284,7 @@ public class LoginGUI extends JFrame {
     }
     
     private void abrirVentanaPrincipal(Usuario usuario) {
-        // TODO: Implementar ventana principal
-        JOptionPane.showMessageDialog(this, 
-            "¡Login exitoso!\nBienvenido " + usuario.getUsername() + "!\n\nVentana principal en desarrollo...", 
-            "Bienvenido", 
-            JOptionPane.INFORMATION_MESSAGE);
-        
-        // Por ahora, cerrar la aplicación después del mensaje
-        System.exit(0);
+        VentanaPrincipalGUI.abrirVentanaPrincipal(usuario);
     }
     
     private boolean esEmailValido(String email) {
