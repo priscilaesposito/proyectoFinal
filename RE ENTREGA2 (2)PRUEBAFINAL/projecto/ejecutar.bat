@@ -6,14 +6,26 @@ echo.
 echo Iniciando aplicacion...
 echo.
 
-REM Intentar con java en PATH primero
-java -version >nul 2>&1
+REM Mostrar version de Java disponible
+echo Verificando Java instalado...
+java -version 2>&1
 if %errorlevel%==0 (
-    echo Ejecutando con Java del sistema...
+    echo.
+    echo Ejecutando aplicacion...
+    echo.
     java -jar sistema-peliculas.jar
 ) else (
-    echo Java no encontrado en PATH, usando instalacion local...
-    "C:\Program Files\Java\jdk-25\bin\java" -jar sistema-peliculas.jar
+    echo.
+    echo ERROR: Java no esta instalado o no esta en el PATH.
+    echo.
+    echo SOLUCION:
+    echo 1. Descarga Java desde: https://adoptium.net/
+    echo 2. Durante la instalacion, marca la opcion "Set JAVA_HOME variable"
+    echo 3. Reinicia esta ventana de comandos y ejecuta de nuevo
+    echo.
+    echo Alternativamente, ejecuta manualmente:
+    echo   "C:\Program Files\Java\jdk-XX\bin\java" -jar sistema-peliculas.jar
+    echo   (reemplaza XX con tu version de Java, ej: jdk-23 o jdk-24)
 )
 
 echo.
