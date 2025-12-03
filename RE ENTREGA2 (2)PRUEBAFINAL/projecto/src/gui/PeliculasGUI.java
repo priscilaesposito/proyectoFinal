@@ -2,6 +2,9 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.net.URL;
+import javax.imageio.ImageIO;
 import java.util.List;
 import model.Usuario;
 import model.Pelicula;
@@ -143,14 +146,19 @@ public class PeliculasGUI extends JFrame {
     }
     
     private JPanel crearPanelPelicula(Pelicula pelicula) {
-        JPanel peliculaPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel peliculaPanel = new JPanel(new BorderLayout(15, 10));
         peliculaPanel.setBackground(new Color(250, 250, 250));
         peliculaPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(220, 220, 220)),
             BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
-        peliculaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+        peliculaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
         
+        // Panel izquierdo: Poster
+        JLabel posterLabel = crearPosterLabel(pelicula);
+        peliculaPanel.add(posterLabel, BorderLayout.WEST);
+        
+        // Panel central: Información de la película
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBackground(new Color(250, 250, 250));
@@ -187,12 +195,72 @@ public class PeliculasGUI extends JFrame {
         infoPanel.add(Box.createVerticalStrut(5));
         infoPanel.add(ratingLabel);
         
+        // Panel derecho: Calificación
         JPanel ratingPanel = crearPanelCalificacion(pelicula);
         
         peliculaPanel.add(infoPanel, BorderLayout.CENTER);
         peliculaPanel.add(ratingPanel, BorderLayout.EAST);
         
         return peliculaPanel;
+    }
+    
+    private JLabel crearPosterLabel(Pelicula pelicula) {
+        JLabel posterLabel = new JLabel();
+        posterLabel.setPreferredSize(new Dimension(120, 180));
+        posterLabel.setMinimumSize(new Dimension(120, 180));
+        posterLabel.setMaximumSize(new Dimension(120, 180));
+        posterLabel.setHorizontalAlignment(JLabel.CENTER);
+        posterLabel.setVerticalAlignment(JLabel.CENTER);
+        posterLabel.setOpaque(true);
+        posterLabel.setBackground(new Color(230, 230, 230));
+        posterLabel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+        
+        // Cargar poster en segundo plano
+        String posterUrl = pelicula.getPoster();
+        if (posterUrl != null && !posterUrl.isEmpty() && !posterUrl.equals("N/A")) {
+            SwingWorker<ImageIcon, Void> worker = new SwingWorker<ImageIcon, Void>() {
+                @Override
+                protected ImageIcon doInBackground() throws Exception {
+                    try {
+                        URL url = new URL(posterUrl);
+                        BufferedImage img = ImageIO.read(url);
+                        if (img != null) {
+                            Image scaledImg = img.getScaledInstance(120, 180, Image.SCALE_SMOOTH);
+                            return new ImageIcon(scaledImg);
+                        }
+                    } catch (Exception e) {
+                        // Si falla, retornar null
+                    }
+                    return null;
+                }
+                
+                @Override
+                protected void done() {
+                    try {
+                        ImageIcon icon = get();
+                        if (icon != null) {
+                            posterLabel.setIcon(icon);
+                            posterLabel.setText("");
+                        } else {
+                            posterLabel.setText("🎬");
+                            posterLabel.setFont(new Font("Arial", Font.PLAIN, 48));
+                        }
+                    } catch (Exception e) {
+                        posterLabel.setText("🎬");
+                        posterLabel.setFont(new Font("Arial", Font.PLAIN, 48));
+                    }
+                }
+            };
+            
+            posterLabel.setText("⏳");
+            posterLabel.setFont(new Font("Arial", Font.PLAIN, 32));
+            worker.execute();
+        } else {
+            posterLabel.setText("🎬");
+            posterLabel.setFont(new Font("Arial", Font.PLAIN, 48));
+        }
+        
+        return posterLabel;
     }
     
     private JPanel crearPanelCalificacion(Pelicula pelicula) {
