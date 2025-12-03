@@ -131,7 +131,7 @@ public class PeliculasGUI extends JFrame {
         JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         userInfoPanel.setBackground(new Color(245, 245, 245));
         
-        JLabel welcomeLabel = new JLabel("Bienvenido/a, " + usuario.getUsername());
+        JLabel welcomeLabel = new JLabel("Bienvenido/a, " + usuario.getNombre() + " " + usuario.getApellido());
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         userInfoPanel.add(welcomeLabel);
         
@@ -608,7 +608,7 @@ public class PeliculasGUI extends JFrame {
     }
     
     private void establecerPropiedadesVentana() {
-        setTitle("Plataforma de Streaming - " + usuario.getUsername());
+        setTitle("Plataforma de Streaming - " + usuario.getNombre() + " " + usuario.getApellido());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 700);
         setLocationRelativeTo(null);
