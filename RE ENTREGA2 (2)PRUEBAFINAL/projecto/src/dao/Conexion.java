@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.io.File;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
 
 public class Conexion {
     // Nombre del archivo de base de datos
@@ -19,19 +21,22 @@ public class Conexion {
         
         // Intentar en el directorio donde se ejecuta el JAR
         try {
-            String jarPath = Conexion.class.getProtectionDomain()
-                .getCodeSource().getLocation().toURI().getPath();
-            File jarDir = new File(jarPath).getParentFile();
-            
-            // Si se ejecuta desde un JAR, buscar en el mismo directorio
-            if (jarDir != null) {
-                dbFile = new File(jarDir, DB_NAME);
-                if (dbFile.exists()) {
-                    return dbFile.getAbsolutePath();
+            CodeSource codeSource = Conexion.class.getProtectionDomain().getCodeSource();
+            if (codeSource != null && codeSource.getLocation() != null) {
+                String jarPath = codeSource.getLocation().toURI().getPath();
+                File jarDir = new File(jarPath).getParentFile();
+                
+                // Si se ejecuta desde un JAR, buscar en el mismo directorio
+                if (jarDir != null) {
+                    dbFile = new File(jarDir, DB_NAME);
+                    if (dbFile.exists()) {
+                        return dbFile.getAbsolutePath();
+                    }
                 }
             }
-        } catch (Exception e) {
-            // Ignorar errores al obtener la ruta del JAR
+        } catch (URISyntaxException | SecurityException e) {
+            // Registrar el error para debugging pero continuar con fallback
+            System.err.println("Aviso: No se pudo determinar la ubicación del JAR: " + e.getMessage());
         }
         
         // Por defecto, usar el directorio actual (creará la BD aquí si no existe)
