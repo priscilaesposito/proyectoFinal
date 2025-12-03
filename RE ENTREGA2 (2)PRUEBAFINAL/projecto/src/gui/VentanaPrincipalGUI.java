@@ -6,6 +6,7 @@ import java.util.List;
 import model.Usuario;
 import model.Pelicula;
 import app.Logica;
+import utilidades.CargadorCSV;
 
 public class VentanaPrincipalGUI extends JFrame {
     
@@ -64,20 +65,27 @@ public class VentanaPrincipalGUI extends JFrame {
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                // Pequeña pausa para asegurar que la pantalla de carga sea visible
-                Thread.sleep(500);
-                
                 // Verificar si es primer login
                 esPrimerLogin = Logica.esPrimerLogin(usuario.getID_USUARIO());
                 
-                // Cargar películas según sea primer login o no
+                // Si es primer acceso del usuario, verificar si hay que cargar el CSV
                 if (esPrimerLogin) {
+                    loadingLabel.setText("Cargando películas desde archivo...");
+                    
+                    // Verificar si ya hay películas en la BD
+                    if (!CargadorCSV.existenPeliculasEnBD()) {
+                        // Cargar películas desde CSV
+                        CargadorCSV.cargarPeliculasDesdeCSV();
+                    }
+                    
+                    loadingLabel.setText("Seleccionando mejores películas...");
                     peliculasActuales = Logica.obtenerTop10Peliculas();
                 } else {
+                    loadingLabel.setText("Buscando películas para ti...");
                     peliculasActuales = Logica.obtener10PeliculasRandom(usuario.getID_USUARIO());
                 }
                 
-                // Pequeña pausa adicional para que el usuario vea la pantalla de carga
+                // Pequeña pausa para que el usuario vea el mensaje
                 Thread.sleep(500);
                 
                 return null;
