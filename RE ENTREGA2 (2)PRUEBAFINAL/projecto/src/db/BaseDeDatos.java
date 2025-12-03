@@ -71,9 +71,30 @@ public class BaseDeDatos {
                     "REFERENCES USUARIO(ID)" +
                     ");";
             stmt.executeUpdate(sqlPrimerLogin);
+            
+            // Agregar columnas faltantes a la tabla PELICULA si no existen
+            agregarColumnaSiNoExiste(connection, "PELICULA", "RATING_PROMEDIO", "REAL");
+            agregarColumnaSiNoExiste(connection, "PELICULA", "ANIO", "INTEGER");
+            agregarColumnaSiNoExiste(connection, "PELICULA", "POSTER", "TEXT(500)");
 
         } catch (SQLException e) {
             System.out.println("Error al crear las tablas: " + e.getMessage());
+        }
+    }
+    
+    private static void agregarColumnaSiNoExiste(Connection connection, String tabla, String columna, String tipo) {
+        try (Statement stmt = connection.createStatement()) {
+            // Intentar agregar la columna
+            String sql = "ALTER TABLE " + tabla + " ADD COLUMN " + columna + " " + tipo;
+            stmt.executeUpdate(sql);
+            System.out.println("Columna " + columna + " agregada a la tabla " + tabla);
+        } catch (SQLException e) {
+            // Si la columna ya existe, SQLite lanzará una excepción - esto es normal
+            if (e.getMessage().contains("duplicate column name")) {
+                // Columna ya existe, no hacer nada
+            } else {
+                System.out.println("Error al agregar columna " + columna + ": " + e.getMessage());
+            }
         }
     }
 }
