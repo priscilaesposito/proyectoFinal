@@ -44,12 +44,13 @@ public class PeliculasGUI extends JFrame {
     private JPanel crearBarraSuperior() {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(new Color(245, 245, 245));
-        topBar.setPreferredSize(new Dimension(0, 60));
+        topBar.setPreferredSize(new Dimension(0, 80));
         topBar.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(200, 200, 200)),
             BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
         
+        // Panel izquierdo: Datos del usuario
         JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         userInfoPanel.setBackground(new Color(245, 245, 245));
         
@@ -62,7 +63,49 @@ public class PeliculasGUI extends JFrame {
         emailLabel.setForeground(Color.GRAY);
         userInfoPanel.add(emailLabel);
         
+        // Panel central: Buscador
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        searchPanel.setBackground(new Color(245, 245, 245));
+        
+        JTextField searchField = new JTextField(25);
+        searchField.setPreferredSize(new Dimension(300, 35));
+        searchField.setFont(new Font("Arial", Font.PLAIN, 14));
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        
+        JButton searchButton = new JButton("🔍 Buscar");
+        searchButton.setFont(new Font("Arial", Font.BOLD, 14));
+        searchButton.setBackground(new Color(0, 122, 255));
+        searchButton.setForeground(Color.WHITE);
+        searchButton.setOpaque(true);
+        searchButton.setBorderPainted(false);
+        searchButton.setFocusPainted(false);
+        searchButton.addActionListener(e -> buscarPelicula(searchField.getText().trim()));
+        
+        searchPanel.add(new JLabel("Buscar película: "));
+        searchPanel.add(searchField);
+        searchPanel.add(searchButton);
+        
+        // Panel derecho: Botón de cerrar sesión
+        JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        logoutPanel.setBackground(new Color(245, 245, 245));
+        
+        JButton logoutButton = new JButton("Cerrar Sesión");
+        logoutButton.setFont(new Font("Arial", Font.BOLD, 12));
+        logoutButton.setBackground(new Color(220, 53, 69));
+        logoutButton.setForeground(Color.WHITE);
+        logoutButton.setOpaque(true);
+        logoutButton.setBorderPainted(false);
+        logoutButton.setFocusPainted(false);
+        logoutButton.addActionListener(e -> cerrarSesion());
+        
+        logoutPanel.add(logoutButton);
+        
         topBar.add(userInfoPanel, BorderLayout.WEST);
+        topBar.add(searchPanel, BorderLayout.CENTER);
+        topBar.add(logoutPanel, BorderLayout.EAST);
         
         return topBar;
     }
@@ -191,26 +234,162 @@ public class PeliculasGUI extends JFrame {
     }
     
     private void calificarPelicula(Pelicula pelicula, int calificacion) {
-        try {
-            boolean exito = Logica.calificarPelicula(
-                usuario.getID_USUARIO(), 
-                pelicula.getID(), 
-                calificacion, 
-                ""
-            );
+        // Crear diálogo para ingresar la reseña
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        JLabel instruccion = new JLabel("Ingrese su calificación y reseña:");
+        instruccion.setFont(new Font("Arial", Font.BOLD, 12));
+        
+        JPanel ratingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ratingPanel.add(new JLabel("Calificación:"));
+        JLabel ratingValue = new JLabel(calificacion + "/10");
+        ratingValue.setFont(new Font("Arial", Font.BOLD, 14));
+        ratingValue.setForeground(new Color(255, 165, 0));
+        ratingPanel.add(ratingValue);
+        
+        JLabel reseniaLabel = new JLabel("Reseña:");
+        JTextArea reseniaArea = new JTextArea(5, 30);
+        reseniaArea.setLineWrap(true);
+        reseniaArea.setWrapStyleWord(true);
+        reseniaArea.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.GRAY),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+        JScrollPane scrollPane = new JScrollPane(reseniaArea);
+        
+        panel.add(instruccion, BorderLayout.NORTH);
+        panel.add(ratingPanel, BorderLayout.CENTER);
+        
+        JPanel reseniaPanel = new JPanel(new BorderLayout(5, 5));
+        reseniaPanel.add(reseniaLabel, BorderLayout.NORTH);
+        reseniaPanel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(reseniaPanel, BorderLayout.SOUTH);
+        
+        int result = JOptionPane.showConfirmDialog(
+            this,
+            panel,
+            "Calificar: " + pelicula.getMetadatos().getTitulo(),
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+        );
+        
+        if (result == JOptionPane.OK_OPTION) {
+            String resenia = reseniaArea.getText().trim();
             
-            if (exito) {
+            // Validar que se haya ingresado la reseña
+            if (resenia.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                    "¡Gracias por calificar \"" + pelicula.getMetadatos().getTitulo() + "\"!",
-                    "Calificación guardada",
-                    JOptionPane.INFORMATION_MESSAGE);
+                    "Debe ingresar una reseña para calificar la película.",
+                    "Campo requerido",
+                    JOptionPane.WARNING_MESSAGE);
+                return;
             }
             
-        } catch (Exception ex) {
+            try {
+                boolean exito = Logica.calificarPelicula(
+                    usuario.getID_USUARIO(), 
+                    pelicula.getID(), 
+                    calificacion, 
+                    resenia
+                );
+                
+                if (exito) {
+                    JOptionPane.showMessageDialog(this,
+                        "¡Gracias por calificar \"" + pelicula.getMetadatos().getTitulo() + "\"!",
+                        "Calificación guardada",
+                        JOptionPane.INFORMATION_MESSAGE);
+                }
+                
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                    "Error al guardar calificación: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+    private void buscarPelicula(String termino) {
+        if (termino.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                "Error al guardar calificación: " + ex.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
+                "Por favor ingrese un término de búsqueda",
+                "Búsqueda",
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Mostrar diálogo de búsqueda
+        JDialog loadingDialog = new JDialog(this, "Buscando...", true);
+        loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        loadingDialog.setSize(300, 100);
+        loadingDialog.setLocationRelativeTo(this);
+        
+        JLabel loadingMsg = new JLabel("Buscando en OMDb: " + termino + "...", SwingConstants.CENTER);
+        loadingDialog.add(loadingMsg);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            private org.json.JSONObject resultado;
+            
+            @Override
+            protected Void doInBackground() throws Exception {
+                resultado = Logica.buscarPeliculaOMDb(termino);
+                return null;
+            }
+            
+            @Override
+            protected void done() {
+                loadingDialog.dispose();
+                
+                try {
+                    get();
+                    
+                    if (resultado != null) {
+                        mostrarResultadoBusqueda(resultado);
+                    } else {
+                        JOptionPane.showMessageDialog(PeliculasGUI.this,
+                            "No se encontró la película \"" + termino + "\"",
+                            "Sin resultados",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(PeliculasGUI.this,
+                        "Error en la búsqueda: " + e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        
+        worker.execute();
+        loadingDialog.setVisible(true);
+    }
+    
+    private void mostrarResultadoBusqueda(org.json.JSONObject pelicula) {
+        String info = "🎬 " + pelicula.getString("Title") + "\n\n" +
+                     "📅 Año: " + pelicula.getString("Year") + "\n" +
+                     "🎭 Género: " + pelicula.getString("Genre") + "\n" +
+                     "🎬 Director: " + pelicula.getString("Director") + "\n" +
+                     "⭐ Rating IMDb: " + pelicula.optString("imdbRating", "N/A") + "/10\n" +
+                     "⏱️ Duración: " + pelicula.optString("Runtime", "N/A") + "\n\n" +
+                     "📖 Sinopsis:\n" + pelicula.getString("Plot");
+        
+        JOptionPane.showMessageDialog(this,
+            info,
+            "Resultado de Búsqueda",
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void cerrarSesion() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "¿Está seguro que desea cerrar sesión?",
+            "Cerrar Sesión",
+            JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            this.dispose();
+            LoginGUI.startGUI();
         }
     }
     

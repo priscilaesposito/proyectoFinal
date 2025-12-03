@@ -13,105 +13,60 @@ public class VentanaPrincipalGUI extends JFrame {
     private boolean esPrimerLogin;
     private List<Pelicula> peliculasActuales;
     
-    // Componentes de la interfaz
     private JPanel mainPanel;
-    private JPanel topBar;
-    private JPanel contentPanel;
     private JLabel loadingLabel;
     
     public VentanaPrincipalGUI(Usuario usuario) {
         this.usuario = usuario;
         
         inicializarComponentes();
-        configurarDisenio();
         establecerPropiedadesVentana();
         
-        // Cargar películas en segundo plano
-        cargarPeliculasEnBackground();
+        // Hacer visible la ventana primero
+        setVisible(true);
+        
+        // Cargar películas en segundo plano después de un pequeño delay
+        Timer timer = new Timer(100, e -> cargarPeliculasEnBackground());
+        timer.setRepeats(false);
+        timer.start();
     }
     
     private void inicializarComponentes() {
-        mainPanel = new JPanel(new BorderLayout());
+        mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(Color.WHITE);
-        
-        // Label de carga
-        loadingLabel = new JLabel("Cargando contenido...", SwingConstants.CENTER);
-        loadingLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        loadingLabel.setForeground(new Color(0, 122, 255));
-    }
-    
-    private void configurarDisenio() {
-        // Barra superior con datos de usuario, logout y buscador
-        topBar = crearBarraSuperior();
-        mainPanel.add(topBar, BorderLayout.NORTH);
-        
-        // Panel de contenido (inicialmente muestra pantalla de carga)
-        contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(Color.WHITE);
-        contentPanel.add(crearPantallaCarga(), BorderLayout.CENTER);
-        
-        mainPanel.add(contentPanel, BorderLayout.CENTER);
-        add(mainPanel);
-    }
-    
-    private JPanel crearBarraSuperior() {
-        JPanel topBar = new JPanel(new BorderLayout());
-        topBar.setBackground(new Color(245, 245, 245));
-        topBar.setPreferredSize(new Dimension(0, 60));
-        topBar.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(10, 20, 10, 20)
-        ));
-        
-        // Panel: Datos del usuario
-        JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        userInfoPanel.setBackground(new Color(245, 245, 245));
-        
-        JLabel welcomeLabel = new JLabel("Bienvenido/a, " + usuario.getUsername());
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        userInfoPanel.add(welcomeLabel);
-        
-        JLabel emailLabel = new JLabel(" (" + usuario.getCorreo() + ")");
-        emailLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        emailLabel.setForeground(Color.GRAY);
-        userInfoPanel.add(emailLabel);
-        
-        // Agregar solo el panel de usuario a la barra superior
-        topBar.add(userInfoPanel, BorderLayout.WEST);
-        
-        return topBar;
-    }
-    
-    private JPanel crearPantallaCarga() {
-        JPanel loadingPanel = new JPanel(new GridBagLayout());
-        loadingPanel.setBackground(Color.WHITE);
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(20, 20, 20, 20);
         
-        // Icono de carga (spinner)
+        // Icono de carga
         JLabel spinnerLabel = new JLabel("⏳");
-        spinnerLabel.setFont(new Font("Arial", Font.PLAIN, 48));
-        loadingPanel.add(spinnerLabel, gbc);
+        spinnerLabel.setFont(new Font("Arial", Font.PLAIN, 64));
+        mainPanel.add(spinnerLabel, gbc);
         
         gbc.gridy = 1;
-        loadingPanel.add(loadingLabel, gbc);
+        loadingLabel = new JLabel("Cargando contenido...", SwingConstants.CENTER);
+        loadingLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        loadingLabel.setForeground(new Color(0, 122, 255));
+        mainPanel.add(loadingLabel, gbc);
         
         gbc.gridy = 2;
-        JLabel messageLabel = new JLabel("Por favor espere mientras cargamos el contenido...");
+        JLabel messageLabel = new JLabel("Por favor espere mientras cargamos las películas...");
         messageLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         messageLabel.setForeground(Color.GRAY);
-        loadingPanel.add(messageLabel, gbc);
+        mainPanel.add(messageLabel, gbc);
         
-        return loadingPanel;
+        add(mainPanel);
     }
     
     private void cargarPeliculasEnBackground() {
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
+                // Pequeña pausa para asegurar que la pantalla de carga sea visible
+                Thread.sleep(500);
+                
                 // Verificar si es primer login
                 esPrimerLogin = Logica.esPrimerLogin(usuario.getID_USUARIO());
                 
@@ -122,6 +77,9 @@ public class VentanaPrincipalGUI extends JFrame {
                     peliculasActuales = Logica.obtener10PeliculasRandom(usuario.getID_USUARIO());
                 }
                 
+                // Pequeña pausa adicional para que el usuario vea la pantalla de carga
+                Thread.sleep(500);
+                
                 return null;
             }
             
@@ -129,12 +87,15 @@ public class VentanaPrincipalGUI extends JFrame {
             protected void done() {
                 try {
                     get(); // Verificar si hubo errores
-                    mostrarPeliculas();
                     
                     // Marcar como no primer login si era el primero
                     if (esPrimerLogin) {
                         Logica.registrarPrimerLogin(usuario.getID_USUARIO());
                     }
+                    
+                    // Cerrar ventana de carga y abrir ventana de películas
+                    dispose();
+                    PeliculasGUI.abrirVentanaPeliculas(usuario, peliculasActuales, esPrimerLogin);
                     
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(VentanaPrincipalGUI.this,
@@ -142,6 +103,8 @@ public class VentanaPrincipalGUI extends JFrame {
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
+                    dispose();
+                    LoginGUI.startGUI();
                 }
             }
         };
@@ -149,179 +112,17 @@ public class VentanaPrincipalGUI extends JFrame {
         worker.execute();
     }
     
-    private void mostrarPeliculas() {
-        // Limpiar panel de contenido
-        contentPanel.removeAll();
-        
-        // Crear panel con las películas
-        JPanel peliculasPanel = new JPanel();
-        peliculasPanel.setLayout(new BoxLayout(peliculasPanel, BoxLayout.Y_AXIS));
-        peliculasPanel.setBackground(Color.WHITE);
-        peliculasPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
-        // Título
-        String tituloSeccion = esPrimerLogin ? 
-            "🌟 Top 10 Películas Mejor Rankeadas - ¡Califícalas!" :
-            "🎬 Películas Recomendadas Para Ti";
-        
-        JLabel tituloLabel = new JLabel(tituloSeccion);
-        tituloLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        tituloLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        peliculasPanel.add(tituloLabel);
-        peliculasPanel.add(Box.createVerticalStrut(20));
-        
-        // Agregar cada película
-        for (Pelicula pelicula : peliculasActuales) {
-            peliculasPanel.add(crearPanelPelicula(pelicula));
-            peliculasPanel.add(Box.createVerticalStrut(15));
-        }
-        
-        // Agregar scroll
-        JScrollPane scrollPane = new JScrollPane(peliculasPanel);
-        scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        
-        contentPanel.add(scrollPane, BorderLayout.CENTER);
-        contentPanel.revalidate();
-        contentPanel.repaint();
-    }
-    
-    private JPanel crearPanelPelicula(Pelicula pelicula) {
-        JPanel peliculaPanel = new JPanel(new BorderLayout(10, 10));
-        peliculaPanel.setBackground(new Color(250, 250, 250));
-        peliculaPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 220, 220)),
-            BorderFactory.createEmptyBorder(15, 15, 15, 15)
-        ));
-        peliculaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-        
-        // Panel izquierdo: Información de la película
-        JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setBackground(new Color(250, 250, 250));
-        
-        JLabel tituloLabel = new JLabel(pelicula.getMetadatos().getTitulo());
-        tituloLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        tituloLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        JLabel directorLabel = new JLabel("Director: " + pelicula.getMetadatos().getDirector());
-        directorLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        directorLabel.setForeground(Color.GRAY);
-        directorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        JLabel generoLabel = new JLabel("Género: " + String.join(", ", pelicula.getGeneros()));
-        generoLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        generoLabel.setForeground(Color.GRAY);
-        generoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        JLabel anioLabel = new JLabel("Año: " + pelicula.getAnio());
-        anioLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        anioLabel.setForeground(Color.GRAY);
-        anioLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        JLabel ratingLabel = new JLabel("⭐ Rating: " + String.format("%.1f", pelicula.getRatingPromedio()) + "/10");
-        ratingLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        ratingLabel.setForeground(new Color(255, 165, 0));
-        ratingLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        infoPanel.add(tituloLabel);
-        infoPanel.add(Box.createVerticalStrut(5));
-        infoPanel.add(directorLabel);
-        infoPanel.add(generoLabel);
-        infoPanel.add(anioLabel);
-        infoPanel.add(Box.createVerticalStrut(5));
-        infoPanel.add(ratingLabel);
-        
-        // Panel derecho: Calificación
-        JPanel ratingPanel = crearPanelCalificacion(pelicula);
-        
-        peliculaPanel.add(infoPanel, BorderLayout.CENTER);
-        peliculaPanel.add(ratingPanel, BorderLayout.EAST);
-        
-        return peliculaPanel;
-    }
-    
-    private JPanel crearPanelCalificacion(Pelicula pelicula) {
-        JPanel ratingPanel = new JPanel();
-        ratingPanel.setLayout(new BoxLayout(ratingPanel, BoxLayout.Y_AXIS));
-        ratingPanel.setBackground(new Color(250, 250, 250));
-        
-        JLabel instruccion = new JLabel("Tu calificación:");
-        instruccion.setFont(new Font("Arial", Font.PLAIN, 12));
-        instruccion.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        // Panel de estrellas
-        JPanel starPanel = new JPanel(new FlowLayout());
-        starPanel.setBackground(new Color(250, 250, 250));
-        
-        JComboBox<Integer> ratingCombo = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-        ratingCombo.setSelectedIndex(7); // Default 8/10
-        
-        JButton calificarButton = new JButton("Calificar");
-        calificarButton.setFont(new Font("Arial", Font.BOLD, 12));
-        calificarButton.setBackground(new Color(40, 167, 69));
-        calificarButton.setForeground(Color.WHITE);
-        calificarButton.setOpaque(true);
-        calificarButton.setBorderPainted(false);
-        calificarButton.setFocusPainted(false);
-        
-        calificarButton.addActionListener(e -> {
-            int calificacion = (Integer) ratingCombo.getSelectedItem();
-            calificarPelicula(pelicula, calificacion);
-        });
-        
-        starPanel.add(ratingCombo);
-        starPanel.add(calificarButton);
-        
-        ratingPanel.add(instruccion);
-        ratingPanel.add(Box.createVerticalStrut(5));
-        ratingPanel.add(starPanel);
-        
-        return ratingPanel;
-    }
-    
-    private void calificarPelicula(Pelicula pelicula, int calificacion) {
-        try {
-            boolean exito = Logica.calificarPelicula(
-                usuario.getID_USUARIO(), 
-                pelicula.getID(), 
-                calificacion, 
-                ""
-            );
-            
-            if (exito) {
-                JOptionPane.showMessageDialog(this,
-                    "¡Gracias por calificar \"" + pelicula.getMetadatos().getTitulo() + "\"!",
-                    "Calificación guardada",
-                    JOptionPane.INFORMATION_MESSAGE);
-                
-                // Recargar películas si ya calificó todas las actuales
-                verificarYRecargarPeliculas();
-            }
-            
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this,
-                "Error al guardar calificación: " + ex.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    private void verificarYRecargarPeliculas() {
-        // Por ahora no recargar automáticamente
-        // Podría implementarse un contador de calificaciones
-    }
-    
     private void establecerPropiedadesVentana() {
-        setTitle("Plataforma de Streaming - " + usuario.getUsername());
+        setTitle("Cargando...");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 700);
+        setSize(500, 300);
         setLocationRelativeTo(null);
+        setResizable(false);
     }
     
     public static void abrirVentanaPrincipal(Usuario usuario) {
         SwingUtilities.invokeLater(() -> {
-            new VentanaPrincipalGUI(usuario).setVisible(true);
+            new VentanaPrincipalGUI(usuario);
         });
     }
 }
