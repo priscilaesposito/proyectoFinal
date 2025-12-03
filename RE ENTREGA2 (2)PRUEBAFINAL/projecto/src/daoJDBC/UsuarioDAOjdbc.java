@@ -84,6 +84,24 @@ public class UsuarioDAOjdbc implements UsuarioDAO {
         }
         return null;
     }
+    
+    @Override
+    public Usuario validarPorEmail(String email, String contrasenia) throws SQLException{
+        String sql = SELECT_USUARIO_CON_DATOS + "WHERE U.EMAIL = ? AND U.CONTRASENIA = ?";
+        try (Connection conn = BaseDeDatos.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, email);
+            pstmt.setString(2, contrasenia);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToUsuario(rs);
+                }
+            }
+        }
+        return null;
+    }
 
     private Usuario mapResultSetToUsuario(ResultSet rs) throws SQLException {
         

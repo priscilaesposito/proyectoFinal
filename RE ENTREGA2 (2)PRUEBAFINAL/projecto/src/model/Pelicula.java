@@ -3,6 +3,9 @@ package model;
 public class Pelicula extends Titulo {
     private Video video;
     private int ID;
+    private float ratingPromedio;
+    private int anio;
+    private String poster;
 
     // Constructor que inicializa el objeto Video
     public Pelicula() {
@@ -23,6 +26,30 @@ public class Pelicula extends Titulo {
 
     public void setVideo(Video video) {
         this.video = video;
+    }
+
+    public float getRatingPromedio() {
+        return ratingPromedio;
+    }
+
+    public void setRatingPromedio(float ratingPromedio) {
+        this.ratingPromedio = ratingPromedio;
+    }
+
+    public int getAnio() {
+        return anio;
+    }
+
+    public void setAnio(int anio) {
+        this.anio = anio;
+    }
+
+    public String getPoster() {
+        return poster;
+    }
+
+    public void setPoster(String poster) {
+        this.poster = poster;
     }
 
 }

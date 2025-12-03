@@ -16,7 +16,7 @@ public class PeliculaDAOjdbc implements PeliculaDAO {
 
     @Override
     public void registrar(Pelicula pelicula) throws SQLException {
-        String sql = "INSERT INTO PELICULA (GENERO, TITULO, RESUMEN, DIRECTOR, DURACION) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO PELICULA (GENERO, TITULO, RESUMEN, DIRECTOR, DURACION, RATING_PROMEDIO, ANIO, POSTER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = BaseDeDatos.conectar();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -32,6 +32,9 @@ public class PeliculaDAOjdbc implements PeliculaDAO {
             pstmt.setString(3, pelicula.getMetadatos().getSipnosis());
             pstmt.setString(4, pelicula.getMetadatos().getDirector());
             pstmt.setDouble(5, pelicula.getVideo().getDuracion());
+            pstmt.setFloat(6, pelicula.getRatingPromedio());
+            pstmt.setInt(7, pelicula.getAnio());
+            pstmt.setString(8, pelicula.getPoster());
 
             pstmt.executeUpdate();
 
@@ -84,6 +87,10 @@ public class PeliculaDAOjdbc implements PeliculaDAO {
 
         p.getMetadatos().setSipnosis(rs.getString("RESUMEN"));
         p.getMetadatos().setDirector(rs.getString("DIRECTOR"));
+        p.getVideo().setDuracion(rs.getDouble("DURACION"));
+        p.setRatingPromedio(rs.getFloat("RATING_PROMEDIO"));
+        p.setAnio(rs.getInt("ANIO"));
+        p.setPoster(rs.getString("POSTER"));
         
         return p;
     }

@@ -30,7 +30,10 @@ public class BaseDeDatos {
                     "TITULO TEXT (100) NOT NULL, " +
                     "RESUMEN TEXT (500), " +
                     "DIRECTOR TEXT (100) NOT NULL, " +
-                    "DURACION REAL NOT NULL" +
+                    "DURACION REAL NOT NULL, " +
+                    "RATING_PROMEDIO REAL, " +
+                    "ANIO INTEGER, " +
+                    "POSTER TEXT (500)" +
                     ");";
             stmt.executeUpdate(sqlPelicula);
 

@@ -6,22 +6,28 @@ import java.sql.SQLException;
 
 import dao.DatosPersonalesDAO;
 import dao.UsuarioDAO;
+import dao.PeliculaDAO;
 
 import daoJDBC.DatosPersonalesDAOJdbc;
 import daoJDBC.UsuarioDAOjdbc;
+import daoJDBC.PeliculaDAOjdbc;
 import model.Usuario;
 import gestion.Administrador;
 import gestion.GestionUsuario;
 import gestion.ListasyResenias;
 import gestion.TL2;
 import model.Resenia;
+import model.Pelicula;
 
 import java.time.LocalDateTime;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class Logica{
 
     private static UsuarioDAO usuarioDAO = new UsuarioDAOjdbc();
     private static DatosPersonalesDAO datosPersonalesDAO = new DatosPersonalesDAOJdbc();
+    private static PeliculaDAO peliculaDAO = new PeliculaDAOjdbc();
     private static Scanner scanner = new Scanner(System.in);
     private static GestionUsuario gestionUsuario = new GestionUsuario();
     private static TL2 TL2 = new TL2();
@@ -409,8 +415,8 @@ private static void mostrardatosresenia(Resenia r) {
                 return null;
             }
             
-            // Intentar validar usuario usando el DAO
-            Usuario usuarioValidado = usuarioDAO.validar(email.trim(), password);
+            // Intentar validar usuario usando el DAO con email
+            Usuario usuarioValidado = usuarioDAO.validarPorEmail(email.trim(), password);
             
             return usuarioValidado; // Retorna el usuario si es válido, null si no
             
@@ -480,24 +486,24 @@ private static void mostrardatosresenia(Resenia r) {
             // Obtener el ID generado (buscar por DNI)
             Usuario dpRegistrado = datosPersonalesDAO.buscarPorDNI(Integer.parseInt(dni));
             
-            if (dpRegistrado != null) {
-                // Crear usuario
-                Usuario usuario = new Usuario();
-                usuario.setUsername(username);
-                usuario.setCorreo(email);
-                usuario.setContrasenia(password);
-                usuario.setID_DATOS_PERSONALES(dpRegistrado.getID_DATOS_PERSONALES());
-                
-                // Validar datos de usuario
-                gestionUsuario.ValidacionUsuario(usuario);
-                
-                // Registrar usuario
-                usuarioDAO.registrar(usuario);
-                
-                return true;
+            if (dpRegistrado == null) {
+                throw new Exception("Error al recuperar los datos personales registrados");
             }
             
-            return false;
+            // Crear usuario
+            Usuario usuario = new Usuario();
+            usuario.setUsername(username);
+            usuario.setCorreo(email);
+            usuario.setContrasenia(password);
+            usuario.setID_DATOS_PERSONALES(dpRegistrado.getID_DATOS_PERSONALES());
+            
+            // Validar datos de usuario
+            gestionUsuario.ValidacionUsuario(usuario);
+            
+            // Registrar usuario
+            usuarioDAO.registrar(usuario);
+            
+            return true;
             
         } catch (IllegalArgumentException e) {
             throw new Exception("Error de validación: " + e.getMessage());
@@ -506,5 +512,110 @@ private static void mostrardatosresenia(Resenia r) {
         } catch (Exception e) {
             throw new Exception("Error inesperado: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Buscar película en OMDb por título
+     */
+    public static JSONObject buscarPeliculaOMDb(String titulo) throws Exception {
+        return ConsultaPeliculasOMDb.buscarPelicula(titulo);
+    }
+    
+    /**
+     * Buscar múltiples películas en OMDb
+     */
+    public static JSONObject buscarVariasPeliculasOMDb(String searchTerm) throws Exception {
+        return ConsultaPeliculasOMDb.buscarVariasPeliculas(searchTerm);
+    }
+    
+    /**
+     * Buscar película en OMDb y guardarla en la base de datos
+     */
+    public static boolean buscarYGuardarPeliculaOMDb(String titulo) throws Exception {
+        try {
+            JSONObject datosOMDb = ConsultaPeliculasOMDb.buscarPelicula(titulo);
+            
+            if (datosOMDb == null) {
+                throw new Exception("No se encontró la película en OMDb");
+            }
+            
+            // Crear objeto Pelicula
+            Pelicula pelicula = new Pelicula();
+            
+            // Mapear datos básicos
+            pelicula.getMetadatos().setTitulo(datosOMDb.getString("Title"));
+            pelicula.getMetadatos().setSipnosis(datosOMDb.optString("Plot", "Sin sinopsis"));
+            pelicula.getMetadatos().setDirector(datosOMDb.optString("Director", "Desconocido"));
+            
+            // Extraer año
+            String year = datosOMDb.optString("Year", "0");
+            try {
+                // Por si es serie (viene como "2010–2020")
+                pelicula.setAnio(Integer.parseInt(year.split("–")[0]));
+            } catch (NumberFormatException e) {
+                pelicula.setAnio(0);
+            }
+            
+            // Rating promedio de IMDb
+            String imdbRating = datosOMDb.optString("imdbRating", "0");
+            if (!imdbRating.equals("N/A") && !imdbRating.isEmpty()) {
+                try {
+                    pelicula.setRatingPromedio(Float.parseFloat(imdbRating));
+                } catch (NumberFormatException e) {
+                    pelicula.setRatingPromedio(0.0f);
+                }
+            }
+            
+            // Poster URL
+            pelicula.setPoster(datosOMDb.optString("Poster", ""));
+            
+            // Géneros (viene como "Action, Adventure, Drama")
+            String generos = datosOMDb.optString("Genre", "");
+            if (!generos.isEmpty() && !generos.equals("N/A")) {
+                for (String genero : generos.split(", ")) {
+                    pelicula.anadirGeneros(genero.trim());
+                }
+            } else {
+                pelicula.anadirGeneros("Sin género");
+            }
+            
+            // Duración (viene como "142 min")
+            String runtime = datosOMDb.optString("Runtime", "0 min");
+            if (!runtime.equals("N/A")) {
+                try {
+                    int duracion = Integer.parseInt(runtime.split(" ")[0]);
+                    pelicula.getVideo().setDuracion(duracion);
+                } catch (NumberFormatException e) {
+                    pelicula.getVideo().setDuracion(0);
+                }
+            }
+            
+            // Validar y guardar
+            Administrador.validarRegistroPelicula(pelicula);
+            peliculaDAO.registrar(pelicula);
+            
+            return true;
+            
+        } catch (IllegalArgumentException e) {
+            throw new Exception("Error de validación: " + e.getMessage());
+        } catch (SQLException e) {
+            throw new Exception("Error al guardar en la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Error al buscar/guardar película: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Listar películas desde OMDb por término de búsqueda
+     * Retorna un array de películas encontradas
+     */
+    public static JSONArray listarPeliculasOMDb(String searchTerm) throws Exception {
+        JSONObject resultado = ConsultaPeliculasOMDb.buscarVariasPeliculas(searchTerm);
+        
+        if (resultado != null && resultado.has("Search")) {
+            return resultado.getJSONArray("Search");
+        }
+        
+        return new JSONArray(); // Retorna array vacío si no hay resultados
     }
 }

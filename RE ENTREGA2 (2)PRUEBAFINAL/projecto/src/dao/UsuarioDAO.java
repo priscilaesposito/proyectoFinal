@@ -14,6 +14,8 @@ public interface UsuarioDAO {
     List<Usuario> listarTodos() throws SQLException;
 
     Usuario validar(String nombreUsuario, String contrasenia) throws SQLException;
+    
+    Usuario validarPorEmail(String email, String contrasenia) throws SQLException;
      
     Usuario buscar(String nombreUsuario) throws SQLException;
     
