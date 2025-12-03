@@ -24,6 +24,13 @@ public class CalificarPeliculaGUI extends JDialog {
     }
     
     private void inicializarComponentes() {
+        JPanel containerPanel = new JPanel(new BorderLayout());
+        containerPanel.setBackground(Color.WHITE);
+        
+        // Barra superior con botones de control
+        JPanel topBar = crearBarraSuperior();
+        containerPanel.add(topBar, BorderLayout.NORTH);
+        
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         mainPanel.setBackground(Color.WHITE);
@@ -96,7 +103,71 @@ public class CalificarPeliculaGUI extends JDialog {
         btnPanel.add(guardarBtn);
         mainPanel.add(btnPanel, BorderLayout.SOUTH);
         
-        setContentPane(mainPanel);
+        containerPanel.add(mainPanel, BorderLayout.CENTER);
+        setContentPane(containerPanel);
+    }
+    
+    private JPanel crearBarraSuperior() {
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(Color.WHITE);
+        topBar.setPreferredSize(new Dimension(0, 40));
+        topBar.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK),
+            BorderFactory.createEmptyBorder(8, 15, 8, 15)
+        ));
+        
+        JLabel titleLabel = new JLabel("Calificar Película");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        topBar.add(titleLabel, BorderLayout.WEST);
+        
+        // Panel de botones de control
+        JPanel controlButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        controlButtonsPanel.setBackground(Color.WHITE);
+        
+        // Botón minimizar (amarillo)
+        JButton minimizeButton = crearBotonControlVentana(new Color(255, 189, 68));
+        minimizeButton.setText("−");
+        minimizeButton.setFont(new Font("Arial", Font.BOLD, 16));
+        minimizeButton.setForeground(Color.WHITE);
+        minimizeButton.addActionListener(e -> {
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window instanceof JFrame) {
+                ((JFrame) window).setState(JFrame.ICONIFIED);
+            }
+        });
+        
+        // Botón maximizar (verde)
+        JButton maximizeButton = crearBotonControlVentana(new Color(39, 201, 63));
+        maximizeButton.setText("□");
+        maximizeButton.setFont(new Font("Arial", Font.BOLD, 12));
+        maximizeButton.setForeground(Color.WHITE);
+        maximizeButton.setEnabled(false); // Los JDialog no se maximizan
+        
+        // Botón cerrar (azul)
+        JButton closeButton = crearBotonControlVentana(new Color(0, 122, 255));
+        closeButton.setText("×");
+        closeButton.setFont(new Font("Arial", Font.BOLD, 14));
+        closeButton.setForeground(Color.WHITE);
+        closeButton.addActionListener(e -> dispose());
+        
+        controlButtonsPanel.add(minimizeButton);
+        controlButtonsPanel.add(maximizeButton);
+        controlButtonsPanel.add(closeButton);
+        
+        topBar.add(controlButtonsPanel, BorderLayout.EAST);
+        
+        return topBar;
+    }
+    
+    private JButton crearBotonControlVentana(Color color) {
+        JButton button = new JButton();
+        button.setPreferredSize(new Dimension(12, 12));
+        button.setBackground(color);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
+        return button;
     }
     
     private void guardarCalificacion() {
@@ -138,7 +209,7 @@ public class CalificarPeliculaGUI extends JDialog {
     }
     
     private void establecerPropiedades() {
-        setSize(500, 350);
+        setSize(500, 390);
         setLocationRelativeTo(getParent());
         setResizable(false);
     }
