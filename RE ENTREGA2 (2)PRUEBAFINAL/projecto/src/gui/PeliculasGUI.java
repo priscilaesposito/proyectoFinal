@@ -33,15 +33,89 @@ public class PeliculasGUI extends JFrame {
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
         
-        // Barra superior con datos de usuario
+        // Barra superior con botones de control
+        JPanel topBarControl = crearBarraSuperiorControl();
+        mainPanel.add(topBarControl, BorderLayout.NORTH);
+        
+        // Panel container para barra de usuario y contenido
+        JPanel containerPanel = new JPanel(new BorderLayout());
+        containerPanel.setBackground(Color.WHITE);
+        
+        // Barra con datos de usuario y búsqueda
         JPanel topBar = crearBarraSuperior();
-        mainPanel.add(topBar, BorderLayout.NORTH);
+        containerPanel.add(topBar, BorderLayout.NORTH);
         
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(Color.WHITE);
-        mainPanel.add(contentPanel, BorderLayout.CENTER);
+        containerPanel.add(contentPanel, BorderLayout.CENTER);
+        
+        mainPanel.add(containerPanel, BorderLayout.CENTER);
         
         add(mainPanel);
+    }
+    
+    private JPanel crearBarraSuperiorControl() {
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(Color.WHITE);
+        topBar.setPreferredSize(new Dimension(0, 50));
+        topBar.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK),
+            BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        
+        JLabel titleLabel = new JLabel("Plataforma de Streaming");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        topBar.add(titleLabel, BorderLayout.WEST);
+        
+        // Panel de botones de control
+        JPanel controlButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        controlButtonsPanel.setBackground(Color.WHITE);
+        
+        // Botón minimizar (amarillo)
+        JButton minimizeButton = crearBotonControlVentana(new Color(255, 189, 68));
+        minimizeButton.setText("−");
+        minimizeButton.setFont(new Font("Arial", Font.BOLD, 16));
+        minimizeButton.setForeground(Color.WHITE);
+        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
+        
+        // Botón maximizar (verde)
+        JButton maximizeButton = crearBotonControlVentana(new Color(39, 201, 63));
+        maximizeButton.setText("□");
+        maximizeButton.setFont(new Font("Arial", Font.BOLD, 12));
+        maximizeButton.setForeground(Color.WHITE);
+        maximizeButton.addActionListener(e -> {
+            if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                setExtendedState(JFrame.NORMAL);
+            } else {
+                setExtendedState(JFrame.MAXIMIZED_BOTH);
+            }
+        });
+        
+        // Botón cerrar (azul)
+        JButton closeButton = crearBotonControlVentana(new Color(0, 122, 255));
+        closeButton.setText("×");
+        closeButton.setFont(new Font("Arial", Font.BOLD, 14));
+        closeButton.setForeground(Color.WHITE);
+        closeButton.addActionListener(e -> System.exit(0));
+        
+        controlButtonsPanel.add(minimizeButton);
+        controlButtonsPanel.add(maximizeButton);
+        controlButtonsPanel.add(closeButton);
+        
+        topBar.add(controlButtonsPanel, BorderLayout.EAST);
+        
+        return topBar;
+    }
+    
+    private JButton crearBotonControlVentana(Color color) {
+        JButton button = new JButton();
+        button.setPreferredSize(new Dimension(12, 12));
+        button.setBackground(color);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
+        return button;
     }
     
     private JPanel crearBarraSuperior() {
