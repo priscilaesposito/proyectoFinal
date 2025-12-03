@@ -3,6 +3,7 @@ package utilidades;
 import java.util.Scanner;
 import org.json.JSONObject;
 import db.ConsultaPeliculasOMDb;
+import db.BaseDeDatos;
 import dao.PeliculaDAO;
 import daoJDBC.PeliculaDAOjdbc;
 import model.Pelicula;
@@ -13,6 +14,11 @@ public class CargarPeliculas {
     private static PeliculaDAO peliculaDAO = new PeliculaDAOjdbc();
     
     public static void main(String[] args) {
+        // Inicializar la base de datos primero
+        System.out.println("Inicializando base de datos...");
+        BaseDeDatos.inicializarBaseDeDatos();
+        System.out.println("✅ Base de datos lista.\n");
+        
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("=".repeat(60));

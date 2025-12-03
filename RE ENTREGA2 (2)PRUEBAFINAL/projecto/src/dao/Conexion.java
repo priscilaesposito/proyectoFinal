@@ -5,7 +5,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Conexion {
-private static final String DB_URL = "jdbc:sqlite:plataforma_streaming.db";
+    // Ruta absoluta a la base de datos
+    private static final String DB_PATH = System.getProperty("user.home") + 
+        "/PriEsposito/proyectoFinal/RE ENTREGA2 (2)PRUEBAFINAL/projecto/plataforma_streaming.db";
+    private static final String DB_URL = "jdbc:sqlite:" + DB_PATH;
 
     private static Connection connection = null;
 
