@@ -8,11 +8,11 @@ import org.json.JSONObject;
 
 public class ConsultaPeliculasOMDb {
     
-    // Reemplazá con tu API Key obtenida en https://www.omdbapi.com/apikey.aspx
+    // Reemplaza con tu API Key obtenida en https://www.omdbapi.com/apikey.aspx
     private static final String API_KEY = "1dfc3229";
     
     public static void main(String[] args) {
-        String titulo = "titanic";  // Reemplazar por el título a buscar
+        String titulo = "titanic";  // Reemplazar por el titulo a buscar
         consultarPelicula(titulo);
     }
     
@@ -34,13 +34,13 @@ public class ConsultaPeliculasOMDb {
             JSONObject json = new JSONObject(response.body());
             
             if (json.has("Response") && json.getString("Response").equals("True")) {
-                System.out.println("🎬 Título: " + json.getString("Title"));
-                System.out.println("📅 Año: " + json.getString("Year"));
+                System.out.println("🎬 Titulo: " + json.getString("Title"));
+                System.out.println("📅 Anio: " + json.getString("Year"));
                 System.out.println("📖 Sinopsis: " + json.getString("Plot"));
                 System.out.println("⭐ Rating: " + json.optString("imdbRating", "N/A"));
                 System.out.println("🖼️ Poster: " + json.optString("Poster", "N/A"));
             } else {
-                System.out.println("❌ Película no encontrada o error en la consulta.");
+                System.out.println("❌ Pelicula no encontrada o error en la consulta.");
             }
             
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public class ConsultaPeliculasOMDb {
     }
     
     /**
-     * Buscar película y retornar objeto JSON con los datos
+     * Buscar pelicula y retornar objeto JSON con los datos
      */
     public static JSONObject buscarPelicula(String titulo) throws Exception {
         // Armar la URL de consulta (encodear espacios con '+')
@@ -75,7 +75,7 @@ public class ConsultaPeliculasOMDb {
     }
     
     /**
-     * Buscar película por ID de IMDb
+     * Buscar pelicula por ID de IMDb
      */
     public static JSONObject buscarPorIMDbID(String imdbID) throws Exception {
         String url = "https://www.omdbapi.com/?i=" + imdbID + "&apikey=" + API_KEY;
@@ -96,7 +96,7 @@ public class ConsultaPeliculasOMDb {
     }
     
     /**
-     * Buscar múltiples películas por término de búsqueda
+     * Buscar multiples peliculas por termino de busqueda
      */
     public static JSONObject buscarVariasPeliculas(String searchTerm) throws Exception {
         String url = "https://www.omdbapi.com/?s=" + searchTerm.replace(" ", "+") + "&apikey=" + API_KEY;

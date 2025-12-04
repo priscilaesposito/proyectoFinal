@@ -31,7 +31,7 @@ public class Metadatos {
         return titulo;
     }
     
-    public void añadirElenco(String actor) {
+    public void aniadirElenco(String actor) {
         this.elenco.add(actor);
     }
     
@@ -55,7 +55,7 @@ public class Metadatos {
         return idioma;
     }
     
-    public void añadirSubtitulosDisponibles(String subtitulo) {
+    public void aniadirSubtitulosDisponibles(String subtitulo) {
         this.subtitulosDisponibles.add(subtitulo);
     }
     

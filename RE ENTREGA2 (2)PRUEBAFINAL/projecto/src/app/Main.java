@@ -10,20 +10,20 @@ import controlador.LoginControlador;
 public class Main {
 
     private static void menuLogin() {
-        System.out.println("Seleccione una opción:");
-        System.out.println("1. Login / Iniciar Sesión");
+        System.out.println("Seleccione una opcion:");
+        System.out.println("1. Login / Iniciar Sesion");
         System.out.println("2. Registrar Usuario");
         System.out.println("3. Salir");
     }
 
     private static void menuPrincipal() {
-        System.out.println("Seleccione una opción:");
+        System.out.println("Seleccione una opcion:");
         System.out.println("1. Registrar Datos Personales");
-        System.out.println("2. Registrar Película");
+        System.out.println("2. Registrar Pelicula");
         System.out.println("3. Listar Usuarios");
-        System.out.println("4. Listar Películas");
-        System.out.println("5. Registrar Reseña");
-        System.out.println("6. Aprobar Reseña");
+        System.out.println("4. Listar Peliculas");
+        System.out.println("5. Registrar Resenia");
+        System.out.println("6. Aprobar Resenia");
         System.out.println("7. Salir");
     }
 
@@ -37,7 +37,7 @@ public class Main {
             case 3:
                 return false;
             default:
-                System.out.println("Opción no válida.");
+                System.out.println("Opcion no valida.");
                 return false;
         }
     }
@@ -63,9 +63,9 @@ public class Main {
                 Logica.aprobarResenia();
                 break;
             case 7:
-                break; // Cerrar sesión
+                break; // Cerrar sesion
             default:
-                System.out.println("Opción no válida.");
+                System.out.println("Opcion no valida.");
                 break;
         }
     }
@@ -76,7 +76,7 @@ public class Main {
             Conexion.conectar();
             BaseDeDatos.inicializarBaseDeDatos();
 
-            // Verificar si se debe usar interfaz gráfica
+            // Verificar si se debe usar interfaz grafica
             boolean useGUI = true; // Por defecto usar GUI
 
             // Si se pasa argumento "--console", usar consola
@@ -85,16 +85,16 @@ public class Main {
             }
 
             if (useGUI) {
-                System.out.println("Iniciando interfaz gráfica...");
-                // Iniciar interfaz gráfica con el patrón MVC
+                System.out.println("Iniciando interfaz grafica...");
+                // Iniciar interfaz grafica con el patron MVC
                 LoginControlador.iniciarLogin();
             } else {
-                // Modo consola (código original)
+                // Modo consola (codigo original)
                 runConsoleMode();
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al iniciar la aplicación: La conexión a la BD falló.");
+            System.err.println("Error al iniciar la aplicacion: La conexion a la BD fallo.");
             e.printStackTrace();
             System.exit(1);
         } catch (Exception e) {
@@ -113,7 +113,7 @@ public class Main {
             System.out.println("=== MODO CONSOLA ===");
             menuLogin();
             int op = scanner.nextInt();
-            scanner.nextLine(); // Consumir nueva línea
+            scanner.nextLine(); // Consumir nueva linea
             opcionesLogin(op);
         } finally {
             Conexion.desconectar();

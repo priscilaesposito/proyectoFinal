@@ -1,24 +1,24 @@
 package enumerativo;
 
 /**
- * Excepción personalizada para cuando no se encuentra una película solicitada.
- * Esta es una Checked Exception que debe ser manejada explícitamente.
+ * Excepcion personalizada para cuando no se encuentra una pelicula solicitada.
+ * Esta es una Checked Exception que debe ser manejada explicitamente.
  * 
  * Se lanza cuando:
- * - No se encuentra una película por su ID
- * - No se encuentra una película por su título
- * - La búsqueda en OMDb no retorna resultados
- * - No hay películas disponibles para recomendar
+ * - No se encuentra una pelicula por su ID
+ * - No se encuentra una pelicula por su titulo
+ * - La busqueda en OMDb no retorna resultados
+ * - No hay peliculas disponibles para recomendar
  */
 public class PeliculaNoEncontradaException extends Exception {
 
-    private String criterioBusqueda; // Criterio usado para buscar (ID, título, etc.)
-    private String valorBuscado; // Valor que se buscó
+    private String criterioBusqueda; // Criterio usado para buscar (ID, titulo, etc.)
+    private String valorBuscado; // Valor que se busco
 
     /**
-     * Constructor básico con mensaje de error
+     * Constructor basico con mensaje de error
      * 
-     * @param mensaje Descripción del error
+     * @param mensaje Descripcion del error
      */
     public PeliculaNoEncontradaException(String mensaje) {
         super(mensaje);
@@ -27,19 +27,19 @@ public class PeliculaNoEncontradaException extends Exception {
     /**
      * Constructor con mensaje y causa
      * 
-     * @param mensaje Descripción del error
-     * @param causa   Excepción que causó este error
+     * @param mensaje Descripcion del error
+     * @param causa   Excepcion que causo este error
      */
     public PeliculaNoEncontradaException(String mensaje, Throwable causa) {
         super(mensaje, causa);
     }
 
     /**
-     * Constructor completo con información de búsqueda
+     * Constructor completo con informacion de busqueda
      * 
-     * @param mensaje          Descripción del error
-     * @param criterioBusqueda Tipo de búsqueda realizada
-     * @param valorBuscado     Valor que se intentó encontrar
+     * @param mensaje          Descripcion del error
+     * @param criterioBusqueda Tipo de busqueda realizada
+     * @param valorBuscado     Valor que se intento encontrar
      */
     public PeliculaNoEncontradaException(String mensaje, String criterioBusqueda, String valorBuscado) {
         super(mensaje);
@@ -48,16 +48,16 @@ public class PeliculaNoEncontradaException extends Exception {
     }
 
     /**
-     * Obtiene el criterio de búsqueda usado
+     * Obtiene el criterio de busqueda usado
      * 
-     * @return Criterio de búsqueda
+     * @return Criterio de busqueda
      */
     public String getCriterioBusqueda() {
         return criterioBusqueda;
     }
 
     /**
-     * Obtiene el valor que se buscó
+     * Obtiene el valor que se busco
      * 
      * @return Valor buscado
      */
@@ -72,7 +72,7 @@ public class PeliculaNoEncontradaException extends Exception {
     public String toString() {
         if (criterioBusqueda != null && valorBuscado != null) {
             return "PeliculaNoEncontradaException: " + getMessage() +
-                    " [Búsqueda por " + criterioBusqueda + ": " + valorBuscado + "]";
+                    " [Busqueda por " + criterioBusqueda + ": " + valorBuscado + "]";
         }
         return "PeliculaNoEncontradaException: " + getMessage();
     }

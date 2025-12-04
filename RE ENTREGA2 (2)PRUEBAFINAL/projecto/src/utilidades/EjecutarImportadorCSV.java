@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.io.File;
 
 /**
- * Clase ejecutable para probar el importador de CSV desde línea de comandos.
- * También puede usarse desde la interfaz gráfica.
+ * Clase ejecutable para probar el importador de CSV desde linea de comandos.
+ * Tambien puede usarse desde la interfaz grafica.
  */
 public class EjecutarImportadorCSV {
 
@@ -19,7 +19,7 @@ public class EjecutarImportadorCSV {
             }
 
             // Crear ventana simple para seleccionar archivo
-            JFrame frame = new JFrame("Importador de Películas CSV");
+            JFrame frame = new JFrame("Importador de Peliculas CSV");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(400, 200);
             frame.setLocationRelativeTo(null);
@@ -28,7 +28,7 @@ public class EjecutarImportadorCSV {
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-            JLabel label = new JLabel("Importador de Películas desde CSV");
+            JLabel label = new JLabel("Importador de Peliculas desde CSV");
             label.setFont(label.getFont().deriveFont(16f));
             label.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 
@@ -36,7 +36,7 @@ public class EjecutarImportadorCSV {
             btnSeleccionar.setAlignmentX(JButton.CENTER_ALIGNMENT);
 
             JLabel lblInfo = new JLabel("<html><center>Formato esperado:<br>" +
-                    "Titulo,Director,Genero,Año,Rating,Duracion,Sinopsis</center></html>");
+                    "Titulo,Director,Genero,Anio,Rating,Duracion,Sinopsis</center></html>");
             lblInfo.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 
             panel.add(label);
@@ -56,11 +56,11 @@ public class EjecutarImportadorCSV {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File archivo = fileChooser.getSelectedFile();
 
-                    // Confirmar importación
+                    // Confirmar importacion
                     int confirm = JOptionPane.showConfirmDialog(
                             frame,
-                            "¿Desea importar las películas desde:\n" + archivo.getName() + "?",
-                            "Confirmar Importación",
+                            "¿Desea importar las peliculas desde:\n" + archivo.getName() + "?",
+                            "Confirmar Importacion",
                             JOptionPane.YES_NO_OPTION);
 
                     if (confirm == JOptionPane.YES_OPTION) {
@@ -70,7 +70,7 @@ public class EjecutarImportadorCSV {
                             int continuar = JOptionPane.showConfirmDialog(
                                     frame,
                                     "¿Desea importar otro archivo?",
-                                    "Importación Finalizada",
+                                    "Importacion Finalizada",
                                     JOptionPane.YES_NO_OPTION);
 
                             if (continuar != JOptionPane.YES_OPTION) {

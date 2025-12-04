@@ -46,12 +46,12 @@ public class GestionUsuario {
     }
 
     /**
-     * Valida todos los campos de un objeto Usuario según los requisitos.
+     * Valida todos los campos de un objeto Usuario segun los requisitos.
      * 
      * @param usuario El objeto Usuario con los datos a validar de datos personales.
      * @return El mismo objeto Usuario si es valido, o null si hay errores.
      * @throws SQLException
-     * @throws UsuarioInvalidoException si los datos del usuario son inválidos
+     * @throws UsuarioInvalidoException si los datos del usuario son invalidos
      */
     public void validacionDatosPersonales(Usuario usuario) throws SQLException, UsuarioInvalidoException {
         // Validar unicidad de DNI
@@ -64,28 +64,28 @@ public class GestionUsuario {
 
         if (usuario.getNombre() == null || usuario.getNombre().isEmpty()) {
             throw new UsuarioInvalidoException(
-                    "El nombre no puede estar vacío.",
+                    "El nombre no puede estar vacio.",
                     "nombre",
                     usuario.getNombre());
         }
 
         if (!stringValido(usuario.getNombre())) {
             throw new UsuarioInvalidoException(
-                    "El nombre no debe contener números ni caracteres especiales.",
+                    "El nombre no debe contener numeros ni caracteres especiales.",
                     "nombre",
                     usuario.getNombre());
         }
 
         if (usuario.getApellido() == null || usuario.getApellido().isEmpty()) {
             throw new UsuarioInvalidoException(
-                    "El apellido no puede estar vacío.",
+                    "El apellido no puede estar vacio.",
                     "apellido",
                     usuario.getApellido());
         }
 
         if (!stringValido(usuario.getApellido())) {
             throw new UsuarioInvalidoException(
-                    "El apellido no debe contener números ni caracteres especiales.",
+                    "El apellido no debe contener numeros ni caracteres especiales.",
                     "apellido",
                     usuario.getApellido());
         }
@@ -122,10 +122,10 @@ public class GestionUsuario {
     }
 
     /**
-     * Valida los datos de inicio de sesión del usuario.
+     * Valida los datos de inicio de sesion del usuario.
      * 
      * @param usuario El objeto Usuario con los datos a validar
-     * @throws UsuarioInvalidoException si los datos son inválidos
+     * @throws UsuarioInvalidoException si los datos son invalidos
      */
     public void ValidacionUsuario(Usuario usuario) throws UsuarioInvalidoException {
 
@@ -138,7 +138,7 @@ public class GestionUsuario {
 
         if (usuario.getContrasenia() == null || usuario.getContrasenia().isEmpty()) {
             throw new UsuarioInvalidoException(
-                    "La contraseña no puede estar vacia.",
+                    "La contrasenia no puede estar vacia.",
                     "password",
                     "***");
         }

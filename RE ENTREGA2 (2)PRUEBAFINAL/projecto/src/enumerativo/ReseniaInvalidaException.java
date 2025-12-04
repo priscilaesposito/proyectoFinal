@@ -1,26 +1,26 @@
 package enumerativo;
 
 /**
- * Excepción personalizada para errores en reseñas de películas.
- * Esta es una Checked Exception que debe ser manejada explícitamente.
+ * Excepcion personalizada para errores en resenias de peliculas.
+ * Esta es una Checked Exception que debe ser manejada explicitamente.
  * 
  * Se lanza cuando:
- * - La reseña está vacía o es demasiado corta
- * - La calificación está fuera del rango válido (1-10)
- * - El usuario ya calificó la película
- * - La reseña contiene contenido inapropiado
- * - No se encuentra la reseña solicitada
+ * - La resenia esta vacia o es demasiado corta
+ * - La calificacion esta fuera del rango valido (1-10)
+ * - El usuario ya califico la pelicula
+ * - La resenia contiene contenido inapropiado
+ * - No se encuentra la resenia solicitada
  */
 public class ReseniaInvalidaException extends Exception {
 
-    private int calificacion; // Calificación que causó el error
-    private String motivoRechazo; // Motivo específico del rechazo
-    private boolean esProblemaCalificacion; // true si el error es por calificación, false si es por texto
+    private int calificacion; // Calificacion que causo el error
+    private String motivoRechazo; // Motivo especifico del rechazo
+    private boolean esProblemaCalificacion; // true si el error es por calificacion, false si es por texto
 
     /**
-     * Constructor básico con mensaje de error
+     * Constructor basico con mensaje de error
      * 
-     * @param mensaje Descripción del error
+     * @param mensaje Descripcion del error
      */
     public ReseniaInvalidaException(String mensaje) {
         super(mensaje);
@@ -30,8 +30,8 @@ public class ReseniaInvalidaException extends Exception {
     /**
      * Constructor con mensaje y causa
      * 
-     * @param mensaje Descripción del error
-     * @param causa   Excepción que causó este error
+     * @param mensaje Descripcion del error
+     * @param causa   Excepcion que causo este error
      */
     public ReseniaInvalidaException(String mensaje, Throwable causa) {
         super(mensaje, causa);
@@ -39,10 +39,10 @@ public class ReseniaInvalidaException extends Exception {
     }
 
     /**
-     * Constructor para errores relacionados con la calificación
+     * Constructor para errores relacionados con la calificacion
      * 
-     * @param mensaje      Descripción del error
-     * @param calificacion Calificación inválida ingresada
+     * @param mensaje      Descripcion del error
+     * @param calificacion Calificacion invalida ingresada
      */
     public ReseniaInvalidaException(String mensaje, int calificacion) {
         super(mensaje);
@@ -53,8 +53,8 @@ public class ReseniaInvalidaException extends Exception {
     /**
      * Constructor completo con motivo de rechazo
      * 
-     * @param mensaje       Descripción del error
-     * @param motivoRechazo Razón específica del rechazo
+     * @param mensaje       Descripcion del error
+     * @param motivoRechazo Razon especifica del rechazo
      */
     public ReseniaInvalidaException(String mensaje, String motivoRechazo) {
         super(mensaje);
@@ -63,9 +63,9 @@ public class ReseniaInvalidaException extends Exception {
     }
 
     /**
-     * Obtiene la calificación que causó el error
+     * Obtiene la calificacion que causo el error
      * 
-     * @return Calificación inválida
+     * @return Calificacion invalida
      */
     public int getCalificacion() {
         return calificacion;
@@ -81,9 +81,9 @@ public class ReseniaInvalidaException extends Exception {
     }
 
     /**
-     * Indica si el error es por calificación inválida
+     * Indica si el error es por calificacion invalida
      * 
-     * @return true si es problema de calificación
+     * @return true si es problema de calificacion
      */
     public boolean esProblemaCalificacion() {
         return esProblemaCalificacion;
@@ -98,7 +98,7 @@ public class ReseniaInvalidaException extends Exception {
         sb.append(getMessage());
 
         if (esProblemaCalificacion) {
-            sb.append(" [Calificación inválida: ").append(calificacion).append("]");
+            sb.append(" [Calificacion invalida: ").append(calificacion).append("]");
         }
 
         if (motivoRechazo != null) {

@@ -4,54 +4,54 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Clase de demostración del uso de concurrencia en el sistema.
+ * Clase de demostracion del uso de concurrencia en el sistema.
  * Muestra ejemplos de uso de Threads, Timer/TimerTask, y Thread Pool.
  */
 public class DemostracionConcurrencia {
 
     public static void main(String[] args) {
-        System.out.println("=== DEMOSTRACIÓN DE CONCURRENCIA EN JAVA ===\n");
+        System.out.println("=== DEMOSTRACIoN DE CONCURRENCIA EN JAVA ===\n");
 
-        // 1. Demostración de Timer y TimerTask (Auto-guardado)
+        // 1. Demostracion de Timer y TimerTask (Auto-guardado)
         demostrarAutoGuardado();
 
-        // 2. Demostración de Thread Pool (Búsquedas concurrentes)
+        // 2. Demostracion de Thread Pool (Busquedas concurrentes)
         demostrarBusquedaConcurrente();
 
-        // 3. Demostración de Thread extendiendo Thread (Carga de películas)
+        // 3. Demostracion de Thread extendiendo Thread (Carga de peliculas)
         demostrarCargaPeliculas();
 
-        System.out.println("\n=== FIN DE LA DEMOSTRACIÓN ===");
+        System.out.println("\n=== FIN DE LA DEMOSTRACIoN ===");
     }
 
     /**
-     * Demostración 1: Timer y TimerTask
+     * Demostracion 1: Timer y TimerTask
      * Usa AutoGuardadoResenias que implementa Timer para auto-guardar cada 30
      * segundos
      */
     private static void demostrarAutoGuardado() {
-        System.out.println("1️⃣  DEMO: Timer y TimerTask - Auto-guardado de Reseñas");
-        System.out.println("   Concepto: Un Timer ejecuta una TimerTask periódicamente en su propio thread\n");
+        System.out.println("1️⃣  DEMO: Timer y TimerTask - Auto-guardado de Resenias");
+        System.out.println("   Concepto: Un Timer ejecuta una TimerTask periodicamente en su propio thread\n");
 
         try {
-            // Obtener instancia del auto-guardado (inicia el Timer automáticamente)
+            // Obtener instancia del auto-guardado (inicia el Timer automaticamente)
             AutoGuardadoResenias autoGuardado = AutoGuardadoResenias.getInstance();
 
-            // Simular que un usuario está escribiendo reseñas
-            System.out.println("   Usuario escribe reseñas...");
-            autoGuardado.agregarBorrador(1, 101, "The Matrix", 9, "Excelente película de ciencia ficción");
+            // Simular que un usuario esta escribiendo resenias
+            System.out.println("   Usuario escribe resenias...");
+            autoGuardado.agregarBorrador(1, 101, "The Matrix", 9, "Excelente pelicula de ciencia ficcion");
             autoGuardado.agregarBorrador(1, 102, "Inception", 10, "Obra maestra de Christopher Nolan");
             autoGuardado.agregarBorrador(2, 103, "Interstellar", 9, "Impresionante narrativa espacial");
 
             System.out.println("   ✓ 3 borradores creados");
-            System.out.println("   ⏰ El Timer guardará automáticamente cada 30 segundos...");
+            System.out.println("   ⏰ El Timer guardara automaticamente cada 30 segundos...");
             System.out.println("   📊 Borradores activos: " + autoGuardado.getCantidadBorradores());
 
-            // Esperar para ver el auto-guardado (opcional en producción)
-            // Thread.sleep(35000); // Descomentar para ver el guardado automático
+            // Esperar para ver el auto-guardado (opcional en produccion)
+            // Thread.sleep(35000); // Descomentar para ver el guardado automatico
 
-            // Simular que se envía una reseña
-            System.out.println("   📤 Usuario envía la reseña de The Matrix...");
+            // Simular que se envia una resenia
+            System.out.println("   📤 Usuario envia la resenia de The Matrix...");
             autoGuardado.eliminarBorrador(1, 101);
             System.out.println("   ✓ Borrador eliminado");
             System.out.println("   📊 Borradores restantes: " + autoGuardado.getCantidadBorradores());
@@ -64,17 +64,17 @@ public class DemostracionConcurrencia {
     }
 
     /**
-     * Demostración 2: ExecutorService y Thread Pool
-     * Usa BuscadorConcurrentePeliculas para búsquedas paralelas
+     * Demostracion 2: ExecutorService y Thread Pool
+     * Usa BuscadorConcurrentePeliculas para busquedas paralelas
      */
     private static void demostrarBusquedaConcurrente() {
-        System.out.println("2️⃣  DEMO: ExecutorService y Thread Pool - Búsquedas Concurrentes");
-        System.out.println("   Concepto: Un pool de threads reutilizables ejecuta múltiples tareas en paralelo\n");
+        System.out.println("2️⃣  DEMO: ExecutorService y Thread Pool - Busquedas Concurrentes");
+        System.out.println("   Concepto: Un pool de threads reutilizables ejecuta multiples tareas en paralelo\n");
 
         BuscadorConcurrentePeliculas buscador = new BuscadorConcurrentePeliculas();
 
         try {
-            // Buscar múltiples películas en paralelo
+            // Buscar multiples peliculas en paralelo
             List<String> peliculasABuscar = Arrays.asList(
                     "The Matrix",
                     "Inception",
@@ -82,7 +82,7 @@ public class DemostracionConcurrencia {
                     "The Dark Knight",
                     "Fight Club");
 
-            System.out.println("   🔍 Buscando " + peliculasABuscar.size() + " películas en paralelo...");
+            System.out.println("   🔍 Buscando " + peliculasABuscar.size() + " peliculas en paralelo...");
             long inicio = System.currentTimeMillis();
 
             List<BuscadorConcurrentePeliculas.ResultadoBusqueda> resultados = buscador.buscarMultiple(peliculasABuscar);
@@ -101,7 +101,7 @@ public class DemostracionConcurrencia {
             }
 
             System.out.println("\n   ⏱️  Tiempo total: " + (fin - inicio) + " ms");
-            System.out.println("   💡 Beneficio: Sin concurrencia tomaría ~" +
+            System.out.println("   💡 Beneficio: Sin concurrencia tomaria ~" +
                     (peliculasABuscar.size() * 2000) + " ms (estimado)");
 
         } catch (Exception e) {
@@ -115,16 +115,16 @@ public class DemostracionConcurrencia {
     }
 
     /**
-     * Demostración 3: Thread extendiendo Thread
+     * Demostracion 3: Thread extendiendo Thread
      * Usa CargadorPeliculasThread para carga en background
      */
     private static void demostrarCargaPeliculas() {
-        System.out.println("3️⃣  DEMO: Thread (extendiendo Thread) - Carga de Películas");
+        System.out.println("3️⃣  DEMO: Thread (extendiendo Thread) - Carga de Peliculas");
         System.out.println("   Concepto: Un thread personalizado ejecuta una tarea en segundo plano\n");
 
         try {
-            // Simular carga de películas usando el método con timeout
-            System.out.println("   📥 Iniciando carga de películas en background...");
+            // Simular carga de peliculas usando el metodo con timeout
+            System.out.println("   📥 Iniciando carga de peliculas en background...");
             System.out.println("   ⏰ Timeout configurado: 5000 ms");
 
             // Crear y usar el DAO real (comentado para demo)
@@ -151,9 +151,9 @@ public class DemostracionConcurrencia {
 
             threadCarga.start();
 
-            // El thread main continúa ejecutándose
+            // El thread main continua ejecutandose
             System.out.println("   [" + Thread.currentThread().getName() +
-                    "] Thread main continúa ejecutándose...");
+                    "] Thread main continua ejecutandose...");
 
             // Esperar a que termine el thread de carga
             threadCarga.join(); // join() bloquea hasta que el thread termine
@@ -163,10 +163,10 @@ public class DemostracionConcurrencia {
 
             System.out.println("\n   📊 Estados del Thread:");
             System.out.println("   • NEW: Creado pero no iniciado");
-            System.out.println("   • RUNNABLE: Ejecutándose o listo para ejecutarse");
+            System.out.println("   • RUNNABLE: Ejecutandose o listo para ejecutarse");
             System.out.println("   • BLOCKED: Esperando un monitor lock");
             System.out.println("   • WAITING: Esperando indefinidamente");
-            System.out.println("   • TIMED_WAITING: Esperando por un tiempo específico (sleep/join con timeout)");
+            System.out.println("   • TIMED_WAITING: Esperando por un tiempo especifico (sleep/join con timeout)");
             System.out.println("   • TERMINATED: Completado");
 
         } catch (InterruptedException e) {
@@ -177,15 +177,15 @@ public class DemostracionConcurrencia {
     }
 
     /**
-     * Demostración adicional: Métodos clave de Thread
+     * Demostracion adicional: Metodos clave de Thread
      */
     @SuppressWarnings("unused")
     private static void demostrarMetodosThread() {
-        System.out.println("4️⃣  DEMO: Métodos clave de Thread\n");
+        System.out.println("4️⃣  DEMO: Metodos clave de Thread\n");
 
         Thread thread = new Thread(() -> {
             try {
-                System.out.println("   Thread ejecutándose: " + Thread.currentThread().getName());
+                System.out.println("   Thread ejecutandose: " + Thread.currentThread().getName());
 
                 // sleep() - Pausa el thread actual
                 Thread.sleep(1000);
@@ -208,7 +208,7 @@ public class DemostracionConcurrencia {
 
             // Verificar estado
             System.out.println("   Estado final: " + thread.getState()); // TERMINATED
-            System.out.println("   ¿Está vivo? " + thread.isAlive()); // false
+            System.out.println("   ¿Esta vivo? " + thread.isAlive()); // false
 
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Controlador del Login - Maneja la lógica de eventos y coordina entre la Vista
+ * Controlador del Login - Maneja la logica de eventos y coordina entre la Vista
  * y el Modelo.
  */
 public class LoginControlador {
@@ -24,7 +24,7 @@ public class LoginControlador {
     }
 
     private void configurarEventos() {
-        // Evento del botón de login
+        // Evento del boton de login
         vista.getLoginButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -32,7 +32,7 @@ public class LoginControlador {
             }
         });
 
-        // Evento del botón de registro
+        // Evento del boton de registro
         vista.getRegisterButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -53,14 +53,14 @@ public class LoginControlador {
         String email = vista.getEmail();
         String password = vista.getPassword();
 
-        // Validaciones básicas
+        // Validaciones basicas
         if (email.isEmpty() || password.isEmpty()) {
             mostrarMensajeError("E-mail y Password son campos obligatorios");
             return;
         }
 
         if (!esEmailValido(email)) {
-            mostrarMensajeError("Formato de E-mail inválido");
+            mostrarMensajeError("Formato de E-mail invalido");
             return;
         }
 
@@ -79,14 +79,14 @@ public class LoginControlador {
             }
 
         } catch (UsuarioInvalidoException e) {
-            // Manejar específicamente errores de usuario inválido
-            String mensaje = "Usuario inválido: " + e.getMessage();
+            // Manejar especificamente errores de usuario invalido
+            String mensaje = "Usuario invalido: " + e.getMessage();
             if (e.getCampo() != null) {
-                mensaje += "\nCampo problemático: " + e.getCampo();
+                mensaje += "\nCampo problematico: " + e.getCampo();
             }
             mostrarMensajeError(mensaje);
         } catch (Exception ex) {
-            mostrarMensajeError("Error de conexión: " + ex.getMessage());
+            mostrarMensajeError("Error de conexion: " + ex.getMessage());
         }
     }
 
@@ -104,7 +104,7 @@ public class LoginControlador {
 
     private void mostrarMensajeError(String mensaje) {
         vista.mostrarMensaje(mensaje, Color.RED);
-        // Hacer que el mensaje desaparezca después de 5 segundos
+        // Hacer que el mensaje desaparezca despues de 5 segundos
         Timer timer = new Timer(5000, e -> vista.limpiarMensaje());
         timer.setRepeats(false);
         timer.start();
@@ -115,7 +115,7 @@ public class LoginControlador {
     }
 
     /**
-     * Método estático para iniciar la interfaz de login
+     * Metodo estatico para iniciar la interfaz de login
      */
     public static void iniciarLogin() {
         SwingUtilities.invokeLater(new Runnable() {

@@ -1,26 +1,26 @@
 package enumerativo;
 
 /**
- * Excepción personalizada para errores relacionados con datos de usuario
- * inválidos.
- * Esta es una Checked Exception que debe ser manejada explícitamente.
+ * Excepcion personalizada para errores relacionados con datos de usuario
+ * invalidos.
+ * Esta es una Checked Exception que debe ser manejada explicitamente.
  * 
  * Se lanza cuando:
  * - El DNI ya existe en la base de datos
- * - El nombre o apellido contienen caracteres inválidos
+ * - El nombre o apellido contienen caracteres invalidos
  * - El email tiene un formato incorrecto
- * - La contraseña no cumple con los requisitos mínimos
- * - El nombre de usuario ya está en uso
+ * - La contrasenia no cumple con los requisitos minimos
+ * - El nombre de usuario ya esta en uso
  */
 public class UsuarioInvalidoException extends Exception {
 
-    private String campo; // Campo que causó el error (ej: "DNI", "email", "password")
-    private String valorIngresado; // Valor que causó el error
+    private String campo; // Campo que causo el error (ej: "DNI", "email", "password")
+    private String valorIngresado; // Valor que causo el error
 
     /**
-     * Constructor básico con mensaje de error
+     * Constructor basico con mensaje de error
      * 
-     * @param mensaje Descripción del error
+     * @param mensaje Descripcion del error
      */
     public UsuarioInvalidoException(String mensaje) {
         super(mensaje);
@@ -29,19 +29,19 @@ public class UsuarioInvalidoException extends Exception {
     /**
      * Constructor con mensaje y causa
      * 
-     * @param mensaje Descripción del error
-     * @param causa   Excepción que causó este error
+     * @param mensaje Descripcion del error
+     * @param causa   Excepcion que causo este error
      */
     public UsuarioInvalidoException(String mensaje, Throwable causa) {
         super(mensaje, causa);
     }
 
     /**
-     * Constructor completo con información detallada del error
+     * Constructor completo con informacion detallada del error
      * 
-     * @param mensaje        Descripción del error
-     * @param campo          Campo que causó el error
-     * @param valorIngresado Valor que causó el error
+     * @param mensaje        Descripcion del error
+     * @param campo          Campo que causo el error
+     * @param valorIngresado Valor que causo el error
      */
     public UsuarioInvalidoException(String mensaje, String campo, String valorIngresado) {
         super(mensaje);
@@ -50,7 +50,7 @@ public class UsuarioInvalidoException extends Exception {
     }
 
     /**
-     * Obtiene el campo que causó el error
+     * Obtiene el campo que causo el error
      * 
      * @return Nombre del campo
      */
@@ -59,7 +59,7 @@ public class UsuarioInvalidoException extends Exception {
     }
 
     /**
-     * Obtiene el valor que causó el error
+     * Obtiene el valor que causo el error
      * 
      * @return Valor ingresado
      */

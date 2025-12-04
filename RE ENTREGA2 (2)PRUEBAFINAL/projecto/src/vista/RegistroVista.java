@@ -4,9 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Vista del Registro - Responsable únicamente de la presentación del
+ * Vista del Registro - Responsable unicamente de la presentacion del
  * formulario.
- * No contiene lógica de negocio ni validaciones.
+ * No contiene logica de negocio ni validaciones.
  */
 public class RegistroVista extends JFrame {
 
@@ -67,7 +67,7 @@ public class RegistroVista extends JFrame {
                 BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK),
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)));
 
-        JLabel title = new JLabel("Plataforma de Streaming - Registración");
+        JLabel title = new JLabel("Plataforma de Streaming - Registracion");
         title.setFont(new Font("Arial", Font.BOLD, 16));
         topBar.add(title, BorderLayout.WEST);
 
@@ -213,7 +213,7 @@ public class RegistroVista extends JFrame {
         formPanel.add(Box.createVerticalStrut(20), gbc);
         row++;
 
-        // Botón Registrar
+        // Boton Registrar
         gbc.gridx = 0;
         gbc.gridy = row;
         gbc.gridwidth = 2;
@@ -232,7 +232,7 @@ public class RegistroVista extends JFrame {
     }
 
     private void establecerPropiedadesVentana() {
-        setTitle("Plataforma de Streaming - Registración");
+        setTitle("Plataforma de Streaming - Registracion");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         pack();
@@ -264,7 +264,7 @@ public class RegistroVista extends JFrame {
         return registrarButton;
     }
 
-    // Métodos para obtener valores
+    // Metodos para obtener valores
     public String getNombres() {
         return nombresField.getText().trim();
     }

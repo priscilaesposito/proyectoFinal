@@ -7,8 +7,8 @@ import model.Usuario;
 import model.Pelicula;
 
 /**
- * Vista de Películas - Responsable únicamente de mostrar la lista de películas.
- * No contiene lógica de negocio.
+ * Vista de Peliculas - Responsable unicamente de mostrar la lista de peliculas.
+ * No contiene logica de negocio.
  */
 public class PeliculasVista extends JFrame {
 
@@ -86,15 +86,15 @@ public class PeliculasVista extends JFrame {
         searchButton.setBorderPainted(false);
         searchButton.setFocusPainted(false);
 
-        searchPanel.add(new JLabel("Buscar película: "));
+        searchPanel.add(new JLabel("Buscar pelicula: "));
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
 
-        // Panel derecho: Botón de cerrar sesión
+        // Panel derecho: Boton de cerrar sesion
         JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         logoutPanel.setBackground(new Color(245, 245, 245));
 
-        logoutButton = new JButton("Cerrar Sesión");
+        logoutButton = new JButton("Cerrar Sesion");
         logoutButton.setFont(new Font("Arial", Font.BOLD, 12));
         logoutButton.setBackground(new Color(220, 53, 69));
         logoutButton.setForeground(Color.WHITE);
@@ -119,8 +119,8 @@ public class PeliculasVista extends JFrame {
         peliculasPanel.setBackground(Color.WHITE);
         peliculasPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        String tituloSeccion = esPrimerLogin ? "🌟 Top 10 Películas Mejor Rankeadas - ¡Califícalas!"
-                : "🎬 Películas Recomendadas Para Ti";
+        String tituloSeccion = esPrimerLogin ? "🌟 Top 10 Peliculas Mejor Rankeadas - ¡Calificalas!"
+                : "🎬 Peliculas Recomendadas Para Ti";
 
         JLabel tituloLabel = new JLabel(tituloSeccion);
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 20));
@@ -163,12 +163,12 @@ public class PeliculasVista extends JFrame {
         directorLabel.setForeground(Color.GRAY);
         directorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel generoLabel = new JLabel("Género: " + String.join(", ", pelicula.getGeneros()));
+        JLabel generoLabel = new JLabel("Genero: " + String.join(", ", pelicula.getGeneros()));
         generoLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         generoLabel.setForeground(Color.GRAY);
         generoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel anioLabel = new JLabel("Año: " + pelicula.getAnio());
+        JLabel anioLabel = new JLabel("Anio: " + pelicula.getAnio());
         anioLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         anioLabel.setForeground(Color.GRAY);
         anioLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -191,7 +191,7 @@ public class PeliculasVista extends JFrame {
         peliculaPanel.add(infoPanel, BorderLayout.CENTER);
         peliculaPanel.add(ratingPanel, BorderLayout.EAST);
 
-        // Guardar referencia a la película en el panel para uso posterior
+        // Guardar referencia a la pelicula en el panel para uso posterior
         peliculaPanel.putClientProperty("pelicula", pelicula);
 
         return peliculaPanel;
@@ -202,7 +202,7 @@ public class PeliculasVista extends JFrame {
         ratingPanel.setLayout(new BoxLayout(ratingPanel, BoxLayout.Y_AXIS));
         ratingPanel.setBackground(new Color(250, 250, 250));
 
-        JLabel instruccion = new JLabel("Tu calificación:");
+        JLabel instruccion = new JLabel("Tu calificacion:");
         instruccion.setFont(new Font("Arial", Font.PLAIN, 12));
         instruccion.setAlignmentX(Component.CENTER_ALIGNMENT);
 

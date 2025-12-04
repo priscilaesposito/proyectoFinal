@@ -63,11 +63,11 @@ public class Logica {
                 gestionUsuario.registrarDatosPersonales(DatosPersonales);
                 System.out.println("\n¡REGISTRO EXITOSO! Los datos se han guardado correctamente.");
             } else {
-                System.out.println("\nRegistro cancelado por el usuario. No se guardó en la Base de Datos.");
+                System.out.println("\nRegistro cancelado por el usuario. No se guardo en la Base de Datos.");
             }
 
         } catch (SQLException e) {
-            System.err.println("\n[ERROR DE BD] Falló la operación de la base de datos: " + e.getMessage());
+            System.err.println("\n[ERROR DE BD] Fallo la operacion de la base de datos: " + e.getMessage());
         }
     }
 
@@ -110,11 +110,11 @@ public class Logica {
                 gestionUsuario.registrarUsuario(u);
                 System.out.println("\n¡REGISTRO EXITOSO! Los datos se han guardado correctamente.");
             } else {
-                System.out.println("\nRegistro cancelado por el usuario. No se guardó en la Base de Datos.");
+                System.out.println("\nRegistro cancelado por el usuario. No se guardo en la Base de Datos.");
             }
 
         } catch (SQLException e) {
-            System.err.println("\n[ERROR DE BD] Falló la operación de la base de datos: " + e.getMessage());
+            System.err.println("\n[ERROR DE BD] Fallo la operacion de la base de datos: " + e.getMessage());
         }
     }
 
@@ -142,11 +142,11 @@ public class Logica {
                 Administrador.almacenarPelicula(p);
                 System.out.println("\n¡REGISTRO EXITOSO! Los datos se han guardado correctamente.");
             } else {
-                System.out.println("\nRegistro cancelado por el usuario. No se guardó en la Base de Datos.");
+                System.out.println("\nRegistro cancelado por el usuario. No se guardo en la Base de Datos.");
             }
 
         } catch (SQLException e) {
-            System.err.println("\n[ERROR DE BD] Falló la operación de la base de datos: " + e.getMessage());
+            System.err.println("\n[ERROR DE BD] Fallo la operacion de la base de datos: " + e.getMessage());
         }
     }
 
@@ -163,7 +163,7 @@ public class Logica {
                                 ", Nombre: " + u.getNombre() + " " + u.getApellido() + ", DNI: " + u.getDNI());
             }
         } catch (SQLException e) {
-            System.err.println("\n[ERROR DE BD] Falló la operación de la base de datos: " + e.getMessage());
+            System.err.println("\n[ERROR DE BD] Fallo la operacion de la base de datos: " + e.getMessage());
         }
     }
 
@@ -173,15 +173,15 @@ public class Logica {
             System.out.println("TITULO, DIRECTOR O GENERO");
             String criterio = scanner.nextLine();
             List<model.Pelicula> peliculas = TL2.listarPeliculasOrdenadas(criterio);
-            System.out.println("\n--- LISTA DE PELÍCULAS REGISTRADAS ---");
+            System.out.println("\n--- LISTA DE PELICULAS REGISTRADAS ---");
             for (model.Pelicula p : peliculas) {
-                System.out.println("ID: " + p.getID() + ", Título: " + p.getMetadatos().getTitulo() + ", Director: "
+                System.out.println("ID: " + p.getID() + ", Titulo: " + p.getMetadatos().getTitulo() + ", Director: "
                         + p.getMetadatos().getDirector() +
-                        ", Género(s): " + String.join(", ", p.getGeneros()) + ", Duración: "
+                        ", Genero(s): " + String.join(", ", p.getGeneros()) + ", Duracion: "
                         + p.getVideo().getDuracion() + " minutos");
             }
         } catch (SQLException e) {
-            System.err.println("\n[ERROR DE BD] Falló la operación de la base de datos: " + e.getMessage());
+            System.err.println("\n[ERROR DE BD] Fallo la operacion de la base de datos: " + e.getMessage());
         }
     }
 
@@ -191,7 +191,7 @@ public class Logica {
         Resenia r = solicitarDatosParaResenia();
 
         if (r == null) {
-            System.out.println("Error al solicitar datos para la reseña.");
+            System.out.println("Error al solicitar datos para la resenia.");
             return;
         }
 
@@ -199,20 +199,20 @@ public class Logica {
         mostrarListaPeliculas();
 
         // SELECCIONAR PELICULA
-        System.out.println("\nSeleccione el ID de la película que desea reseñar:");
+        System.out.println("\nSeleccione el ID de la pelicula que desea reseniar:");
         int idPelicula = scanner.nextInt();
         scanner.nextLine(); // SALTO DE LINEA
         r.setID_Pelicula(idPelicula);
 
         // DATOS DE LA RESENIA
-        System.out.println("Ingrese su calificación (1-10):");
+        System.out.println("Ingrese su calificacion (1-10):");
         int calificacion = scanner.nextInt();
 
-        // Validar calificación
+        // Validar calificacion
         try {
             if (calificacion < 1 || calificacion > 10) {
                 throw new ReseniaInvalidaException(
-                        "La calificación debe estar entre 1 y 10",
+                        "La calificacion debe estar entre 1 y 10",
                         calificacion);
             }
             r.setCalificacion(calificacion);
@@ -229,8 +229,8 @@ public class Logica {
         try {
             if (comentario == null || comentario.trim().isEmpty()) {
                 throw new ReseniaInvalidaException(
-                        "El comentario no puede estar vacío",
-                        "Comentario vacío");
+                        "El comentario no puede estar vacio",
+                        "Comentario vacio");
             }
             if (comentario.trim().length() < 10) {
                 throw new ReseniaInvalidaException(
@@ -254,9 +254,9 @@ public class Logica {
         String confirmacion = scanner.nextLine();
         if (confirmacion.equalsIgnoreCase("S")) {
             listasyResenias.aniadirResenias(r);
-            System.out.println("Reseña guardada exitosamente.");
+            System.out.println("Resenia guardada exitosamente.");
         } else {
-            System.out.println("Operación cancelada.");
+            System.out.println("Operacion cancelada.");
         }
     }
 
@@ -265,14 +265,14 @@ public class Logica {
         mostrarReseniasNoAprobadas();
 
         // ID RESENIA
-        System.out.println("\nIngrese el ID de la reseña que desea aprobar:");
+        System.out.println("\nIngrese el ID de la resenia que desea aprobar:");
         int idResenia = scanner.nextInt();
 
         try {
             Resenia r = listasyResenias.buscarReseniaPorId(idResenia);
             if (r == null) {
                 throw new ReseniaInvalidaException(
-                        "Reseña no encontrada. Verifique el ID ingresado.",
+                        "Resenia no encontrada. Verifique el ID ingresado.",
                         "ID: " + idResenia);
             }
 
@@ -283,14 +283,14 @@ public class Logica {
             mostrardatosresenia(r);
 
             // APROBAR RESENIA
-            System.out.println("¿Desea aprobar esta reseña? (S/N): ");
+            System.out.println("¿Desea aprobar esta resenia? (S/N): ");
             scanner.nextLine(); // SALTO DE LINEA
             String confirmacion = scanner.nextLine();
             if (confirmacion.equalsIgnoreCase("S")) {
                 listasyResenias.aprobarResenia(idResenia);
-                System.out.println("Reseña aprobada exitosamente.");
+                System.out.println("Resenia aprobada exitosamente.");
             } else {
-                System.out.println("Operación cancelada.");
+                System.out.println("Operacion cancelada.");
             }
         } catch (ReseniaInvalidaException e) {
             System.err.println("\n[ERROR] " + e.toString());
@@ -302,7 +302,7 @@ public class Logica {
         Resenia r = new Resenia();
         System.out.println("Ingrese su nombre de usuario:");
         String nombreUsuario = scanner.nextLine();
-        System.out.println("Ingrese su contraseña:");
+        System.out.println("Ingrese su contrasenia:");
         String contrasenia = scanner.nextLine();
         // VALIDAR DATOS
 
@@ -322,9 +322,9 @@ public class Logica {
         List<model.Pelicula> peliculas = TL2.listarPeliculasOrdenadas(criterio);
         System.out.println("\n--- LISTA DE PELICULAS REGISTRADAS ---");
         for (model.Pelicula p : peliculas) {
-            System.out.println("ID: " + p.getID() + ", Título: " + p.getMetadatos().getTitulo() + ", Director: "
+            System.out.println("ID: " + p.getID() + ", Titulo: " + p.getMetadatos().getTitulo() + ", Director: "
                     + p.getMetadatos().getDirector() +
-                    ", Género(s): " + String.join(", ", p.getGeneros()) + ", Duración: " + p.getVideo().getDuracion()
+                    ", Genero(s): " + String.join(", ", p.getGeneros()) + ", Duracion: " + p.getVideo().getDuracion()
                     + " minutos");
         }
     }
@@ -333,44 +333,44 @@ public class Logica {
         // RESENIAS NO APROBADAS
         List<Resenia> reseniasNoAprobadas = listasyResenias.listarReseniasNoAprobadas();
         for (Resenia r : reseniasNoAprobadas) {
-            System.out.println("ID Reseña: " + r.getID_Resenia() + ", ID Película: " + r.getID_Pelicula() +
-                    ", ID Usuario: " + r.getID_Usuario() + ", Calificación: " + r.getCalificacion() +
+            System.out.println("ID Resenia: " + r.getID_Resenia() + ", ID Pelicula: " + r.getID_Pelicula() +
+                    ", ID Usuario: " + r.getID_Usuario() + ", Calificacion: " + r.getCalificacion() +
                     ", Comentario: " + r.getComentario() + ", Fecha y Hora: " + r.getFechaHora());
         }
     }
 
     private static void mostrardatosresenia(Resenia r) {
-        System.out.println("\n--- DATOS DE LA RESEÑA ---");
-        System.out.println("ID Película: " + r.getID_Pelicula());
+        System.out.println("\n--- DATOS DE LA RESENIA ---");
+        System.out.println("ID Pelicula: " + r.getID_Pelicula());
         System.out.println("ID Usuario: " + r.getID_Usuario());
-        System.out.println("Calificación: " + r.getCalificacion());
+        System.out.println("Calificacion: " + r.getCalificacion());
         System.out.println("Comentario: " + r.getComentario());
         System.out.println("Fecha y Hora: " + r.getFechaHora());
     }
 
     private static void mostrarDatosPelicula(model.Pelicula p) {
-        System.out.println("\n--- DATOS INGRESADOS DE LA PELÍCULA ---");
-        System.out.println("Género(s): " + String.join(", ", p.getGeneros()));
-        System.out.println("Título: " + p.getMetadatos().getTitulo());
+        System.out.println("\n--- DATOS INGRESADOS DE LA PELICULA ---");
+        System.out.println("Genero(s): " + String.join(", ", p.getGeneros()));
+        System.out.println("Titulo: " + p.getMetadatos().getTitulo());
         System.out.println("Resumen: " + p.getMetadatos().getSipnosis());
         System.out.println("Director: " + p.getMetadatos().getDirector());
-        System.out.println("Duración (minutos): " + p.getVideo().getDuracion());
+        System.out.println("Duracion (minutos): " + p.getVideo().getDuracion());
     }
 
     private static void solicitarDatosPelicula(model.Pelicula p) {
-        System.out.println("Ingrese Género(s) (separados por comas si son varios):");
+        System.out.println("Ingrese Genero(s) (separados por comas si son varios):");
         String generosInput = scanner.nextLine();
         String[] generosArray = generosInput.split(",");
         for (String genero : generosArray) {
             p.anadirGeneros(genero.trim());
         }
-        System.out.println("Ingrese Título:");
+        System.out.println("Ingrese Titulo:");
         p.getMetadatos().setTitulo(scanner.nextLine());
         System.out.println("Ingrese Resumen:");
         p.getMetadatos().setSipnosis(scanner.nextLine());
         System.out.println("Ingrese Director:");
         p.getMetadatos().setDirector(scanner.nextLine());
-        System.out.println("Ingrese Duración (en minutos):");
+        System.out.println("Ingrese Duracion (en minutos):");
         p.getVideo().setDuracion(scanner.nextDouble());
         scanner.nextLine(); // SALTO DE LINEA
     }
@@ -386,7 +386,7 @@ public class Logica {
         System.out.println("\n--- DATOS DE USUARIO ---");
         System.out.println("Username: " + u.getUsername());
         System.out.println("Correo: " + u.getCorreo());
-        System.out.println("Contraseña: " + u.getContrasenia());
+        System.out.println("Contrasenia: " + u.getContrasenia());
     }
 
     private static void solicitarDatosPersonales(Usuario nuevoUsuario) {
@@ -410,7 +410,7 @@ public class Logica {
     }
 
     /**
-     * Función para realizar el login de un usuario (consola)
+     * Funcion para realizar el login de un usuario (consola)
      * Solicita email y password, valida las credenciales y proporciona feedback
      */
     public static Usuario login() throws Exception {
@@ -442,7 +442,7 @@ public class Logica {
             }
 
         } catch (SQLException e) {
-            System.err.println("\n[ERROR DE CONEXIÓN] No se pudo verificar las credenciales: " + e.getMessage());
+            System.err.println("\n[ERROR DE CONEXION] No se pudo verificar las credenciales: " + e.getMessage());
             return null;
         } catch (Exception e) {
             System.err.println("\n[ERROR] Error inesperado durante el login: " + e.getMessage());
@@ -451,12 +451,12 @@ public class Logica {
     }
 
     /**
-     * Función para realizar el login de un usuario (interfaz gráfica)
-     * Recibe email y password como parámetros
+     * Funcion para realizar el login de un usuario (interfaz grafica)
+     * Recibe email y password como parametros
      */
     public static Usuario login(String email, String password) throws Exception {
         try {
-            // Validaciones básicas
+            // Validaciones basicas
             if (email == null || email.trim().isEmpty() ||
                     password == null || password.trim().isEmpty()) {
                 return null;
@@ -465,10 +465,10 @@ public class Logica {
             // Intentar validar usuario usando el DAO con email
             Usuario usuarioValidado = usuarioDAO.validarPorEmail(email.trim(), password);
 
-            return usuarioValidado; // Retorna el usuario si es válido, null si no
+            return usuarioValidado; // Retorna el usuario si es valido, null si no
 
         } catch (SQLException e) {
-            throw new Exception("Error de conexión a la base de datos: " + e.getMessage());
+            throw new Exception("Error de conexion a la base de datos: " + e.getMessage());
         } catch (Exception e) {
             throw new Exception("Error inesperado durante el login: " + e.getMessage());
         }
@@ -505,7 +505,7 @@ public class Logica {
             int dniInt = Integer.parseInt(dni);
             return datosPersonalesDAO.existeDNI(dniInt);
         } catch (NumberFormatException e) {
-            throw new Exception("DNI inválido");
+            throw new Exception("DNI invalido");
         } catch (SQLException e) {
             throw new Exception("Error al verificar DNI: " + e.getMessage());
         }
@@ -553,7 +553,7 @@ public class Logica {
             return true;
 
         } catch (IllegalArgumentException e) {
-            throw new Exception("Error de validación: " + e.getMessage());
+            throw new Exception("Error de validacion: " + e.getMessage());
         } catch (SQLException e) {
             throw new Exception("Error al registrar en la base de datos: " + e.getMessage());
         } catch (Exception e) {
@@ -562,9 +562,9 @@ public class Logica {
     }
 
     /**
-     * Buscar película en OMDb por título
+     * Buscar pelicula en OMDb por titulo
      * 
-     * @throws PeliculaNoEncontradaException si no se encuentra la película
+     * @throws PeliculaNoEncontradaException si no se encuentra la pelicula
      */
     public static JSONObject buscarPeliculaOMDb(String titulo) throws Exception {
         try {
@@ -572,50 +572,50 @@ public class Logica {
 
             if (resultado == null || resultado.optString("Response", "False").equals("False")) {
                 throw new PeliculaNoEncontradaException(
-                        "No se encontró la película en OMDb",
-                        "Título",
+                        "No se encontro la pelicula en OMDb",
+                        "Titulo",
                         titulo);
             }
 
             return resultado;
         } catch (PeliculaNoEncontradaException e) {
-            throw e; // Re-lanzar la excepción personalizada
+            throw e; // Re-lanzar la excepcion personalizada
         } catch (Exception e) {
-            throw new Exception("Error al buscar película: " + e.getMessage());
+            throw new Exception("Error al buscar pelicula: " + e.getMessage());
         }
     }
 
     /**
-     * Buscar múltiples películas en OMDb
+     * Buscar multiples peliculas en OMDb
      */
     public static JSONObject buscarVariasPeliculasOMDb(String searchTerm) throws Exception {
         return ConsultaPeliculasOMDb.buscarVariasPeliculas(searchTerm);
     }
 
     /**
-     * Buscar película en OMDb y guardarla en la base de datos
+     * Buscar pelicula en OMDb y guardarla en la base de datos
      */
     public static boolean buscarYGuardarPeliculaOMDb(String titulo) throws Exception {
         try {
             JSONObject datosOMDb = ConsultaPeliculasOMDb.buscarPelicula(titulo);
 
             if (datosOMDb == null) {
-                throw new Exception("No se encontró la película en OMDb");
+                throw new Exception("No se encontro la pelicula en OMDb");
             }
 
             // Crear objeto Pelicula
             Pelicula pelicula = new Pelicula();
 
-            // Mapear datos básicos
+            // Mapear datos basicos
             pelicula.getMetadatos().setTitulo(datosOMDb.getString("Title"));
             pelicula.getMetadatos().setSipnosis(datosOMDb.optString("Plot", "Sin sinopsis"));
             pelicula.getMetadatos().setDirector(datosOMDb.optString("Director", "Desconocido"));
 
-            // Extraer año
+            // Extraer anio
             String year = datosOMDb.optString("Year", "0");
             try {
-                // Por si es serie (viene como "2010–2020")
-                pelicula.setAnio(Integer.parseInt(year.split("–")[0]));
+                // Por si es serie (viene como "2010-2020")
+                pelicula.setAnio(Integer.parseInt(year.split("-")[0]));
             } catch (NumberFormatException e) {
                 pelicula.setAnio(0);
             }
@@ -633,17 +633,17 @@ public class Logica {
             // Poster URL
             pelicula.setPoster(datosOMDb.optString("Poster", ""));
 
-            // Géneros (viene como "Action, Adventure, Drama")
+            // Generos (viene como "Action, Adventure, Drama")
             String generos = datosOMDb.optString("Genre", "");
             if (!generos.isEmpty() && !generos.equals("N/A")) {
                 for (String genero : generos.split(", ")) {
                     pelicula.anadirGeneros(genero.trim());
                 }
             } else {
-                pelicula.anadirGeneros("Sin género");
+                pelicula.anadirGeneros("Sin genero");
             }
 
-            // Duración (viene como "142 min")
+            // Duracion (viene como "142 min")
             String runtime = datosOMDb.optString("Runtime", "0 min");
             if (!runtime.equals("N/A")) {
                 try {
@@ -661,17 +661,17 @@ public class Logica {
             return true;
 
         } catch (IllegalArgumentException e) {
-            throw new Exception("Error de validación: " + e.getMessage());
+            throw new Exception("Error de validacion: " + e.getMessage());
         } catch (SQLException e) {
             throw new Exception("Error al guardar en la base de datos: " + e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Error al buscar/guardar película: " + e.getMessage());
+            throw new Exception("Error al buscar/guardar pelicula: " + e.getMessage());
         }
     }
 
     /**
-     * Listar películas desde OMDb por término de búsqueda
-     * Retorna un array de películas encontradas
+     * Listar peliculas desde OMDb por termino de busqueda
+     * Retorna un array de peliculas encontradas
      */
     public static JSONArray listarPeliculasOMDb(String searchTerm) throws Exception {
         JSONObject resultado = ConsultaPeliculasOMDb.buscarVariasPeliculas(searchTerm);
@@ -680,7 +680,7 @@ public class Logica {
             return resultado.getJSONArray("Search");
         }
 
-        return new JSONArray(); // Retorna array vacío si no hay resultados
+        return new JSONArray(); // Retorna array vacio si no hay resultados
     }
 
     /**
@@ -721,9 +721,9 @@ public class Logica {
     }
 
     /**
-     * Obtener top 10 películas mejor rankeadas
+     * Obtener top 10 peliculas mejor rankeadas
      * 
-     * @throws PeliculaNoEncontradaException si no hay películas disponibles
+     * @throws PeliculaNoEncontradaException si no hay peliculas disponibles
      */
     public static List<Pelicula> obtenerTop10Peliculas() throws Exception {
         try {
@@ -731,7 +731,7 @@ public class Logica {
 
             if (peliculas == null || peliculas.isEmpty()) {
                 throw new PeliculaNoEncontradaException(
-                        "No hay películas disponibles en el catálogo",
+                        "No hay peliculas disponibles en el catalogo",
                         "Top 10",
                         "Ninguna");
             }
@@ -740,14 +740,14 @@ public class Logica {
         } catch (PeliculaNoEncontradaException e) {
             throw e;
         } catch (SQLException e) {
-            throw new Exception("Error al obtener top películas: " + e.getMessage());
+            throw new Exception("Error al obtener top peliculas: " + e.getMessage());
         }
     }
 
     /**
-     * Obtener 10 películas random que el usuario no ha calificado
+     * Obtener 10 peliculas random que el usuario no ha calificado
      * 
-     * @throws PeliculaNoEncontradaException si no hay películas disponibles
+     * @throws PeliculaNoEncontradaException si no hay peliculas disponibles
      */
     public static List<Pelicula> obtener10PeliculasRandom(int idUsuario) throws Exception {
         try {
@@ -755,7 +755,7 @@ public class Logica {
 
             if (peliculas == null || peliculas.isEmpty()) {
                 throw new PeliculaNoEncontradaException(
-                        "No hay películas disponibles para recomendar",
+                        "No hay peliculas disponibles para recomendar",
                         "Recomendaciones",
                         "Usuario ID: " + idUsuario);
             }
@@ -764,31 +764,31 @@ public class Logica {
         } catch (PeliculaNoEncontradaException e) {
             throw e;
         } catch (SQLException e) {
-            throw new Exception("Error al obtener películas random: " + e.getMessage());
+            throw new Exception("Error al obtener peliculas random: " + e.getMessage());
         }
     }
 
     /**
-     * Guardar calificación de película
+     * Guardar calificacion de pelicula
      * 
-     * @throws ReseniaInvalidaException si la calificación o comentario son
-     *                                  inválidos
+     * @throws ReseniaInvalidaException si la calificacion o comentario son
+     *                                  invalidos
      */
     public static boolean calificarPelicula(int idUsuario, int idPelicula, int calificacion, String comentario)
             throws Exception {
         try {
-            // Validar calificación
+            // Validar calificacion
             if (calificacion < 1 || calificacion > 10) {
                 throw new ReseniaInvalidaException(
-                        "La calificación debe estar entre 1 y 10",
+                        "La calificacion debe estar entre 1 y 10",
                         calificacion);
             }
 
             // Validar comentario
             if (comentario == null || comentario.trim().isEmpty()) {
                 throw new ReseniaInvalidaException(
-                        "El comentario no puede estar vacío",
-                        "Comentario vacío");
+                        "El comentario no puede estar vacio",
+                        "Comentario vacio");
             }
 
             if (comentario.trim().length() < 10) {
@@ -811,7 +811,7 @@ public class Logica {
         } catch (ReseniaInvalidaException e) {
             throw e;
         } catch (SQLException e) {
-            throw new Exception("Error al guardar calificación: " + e.getMessage());
+            throw new Exception("Error al guardar calificacion: " + e.getMessage());
         }
     }
 }

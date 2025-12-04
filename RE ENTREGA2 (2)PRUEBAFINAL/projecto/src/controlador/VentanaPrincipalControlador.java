@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.util.List;
 
 /**
- * Controlador de la Ventana Principal - Maneja la lógica de carga de películas.
+ * Controlador de la Ventana Principal - Maneja la logica de carga de peliculas.
  */
 public class VentanaPrincipalControlador {
 
@@ -25,20 +25,20 @@ public class VentanaPrincipalControlador {
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                // Pequeña pausa para asegurar que la pantalla de carga sea visible
+                // Pequenia pausa para asegurar que la pantalla de carga sea visible
                 Thread.sleep(500);
 
                 // Verificar si es primer login
                 esPrimerLogin = Logica.esPrimerLogin(vista.getUsuario().getID_USUARIO());
 
-                // Cargar películas según sea primer login o no
+                // Cargar peliculas segun sea primer login o no
                 if (esPrimerLogin) {
                     peliculasActuales = Logica.obtenerTop10Peliculas();
                 } else {
                     peliculasActuales = Logica.obtener10PeliculasRandom(vista.getUsuario().getID_USUARIO());
                 }
 
-                // Pequeña pausa adicional para que el usuario vea la pantalla de carga
+                // Pequenia pausa adicional para que el usuario vea la pantalla de carga
                 Thread.sleep(500);
 
                 return null;
@@ -54,13 +54,13 @@ public class VentanaPrincipalControlador {
                         Logica.registrarPrimerLogin(vista.getUsuario().getID_USUARIO());
                     }
 
-                    // Cerrar ventana de carga y abrir ventana de películas
+                    // Cerrar ventana de carga y abrir ventana de peliculas
                     vista.dispose();
                     PeliculasControlador.iniciarPeliculas(vista.getUsuario(), peliculasActuales, esPrimerLogin);
 
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(vista,
-                            "Error al cargar películas: " + e.getMessage(),
+                            "Error al cargar peliculas: " + e.getMessage(),
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -74,7 +74,7 @@ public class VentanaPrincipalControlador {
     }
 
     /**
-     * Método estático para iniciar la ventana principal
+     * Metodo estatico para iniciar la ventana principal
      */
     public static void iniciarVentanaPrincipal(Usuario usuario) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -84,7 +84,7 @@ public class VentanaPrincipalControlador {
                 VentanaPrincipalControlador controlador = new VentanaPrincipalControlador(vista);
                 vista.setVisible(true);
 
-                // Cargar películas en segundo plano después de un pequeño delay
+                // Cargar peliculas en segundo plano despues de un pequenio delay
                 Timer timer = new Timer(100, e -> controlador.cargarPeliculasEnBackground());
                 timer.setRepeats(false);
                 timer.start();

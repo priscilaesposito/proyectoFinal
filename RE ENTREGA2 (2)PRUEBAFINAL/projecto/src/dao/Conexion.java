@@ -37,7 +37,7 @@ public class Conexion {
              if (connection != null && !connection.isClosed()) {
                 connection.close();
                 connection = null; 
-                System.out.println("Conexión a la base de datos cerrada.");
+                System.out.println("Conexion a la base de datos cerrada.");
             }
         } catch (SQLException e) {
             System.out.println("Error al desconectar de la base de datos SQLite: " + e.getMessage());

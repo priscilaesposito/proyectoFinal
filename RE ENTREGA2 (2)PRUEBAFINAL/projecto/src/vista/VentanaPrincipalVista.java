@@ -6,7 +6,7 @@ import model.Usuario;
 
 /**
  * Vista de la Ventana Principal - Muestra pantalla de carga mientras se cargan
- * las películas con barra de progreso animada.
+ * las peliculas con barra de progreso animada.
  */
 public class VentanaPrincipalVista extends JFrame {
 
@@ -44,7 +44,7 @@ public class VentanaPrincipalVista extends JFrame {
         mainPanel.add(loadingLabel, gbc);
 
         gbc.gridy = 2;
-        JLabel messageLabel = new JLabel("Por favor espere mientras cargamos las películas...");
+        JLabel messageLabel = new JLabel("Por favor espere mientras cargamos las peliculas...");
         messageLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         messageLabel.setForeground(Color.GRAY);
         mainPanel.add(messageLabel, gbc);
@@ -65,12 +65,12 @@ public class VentanaPrincipalVista extends JFrame {
     }
 
     /**
-     * Inicia la animación del texto de carga
+     * Inicia la animacion del texto de carga
      */
     private void iniciarAnimacion() {
         final String[] mensajes = {
                 "Cargando contenido...",
-                "Preparando películas...",
+                "Preparando peliculas...",
                 "Casi listo...",
                 "Cargando contenido..."
         };
@@ -84,7 +84,7 @@ public class VentanaPrincipalVista extends JFrame {
     }
 
     /**
-     * Detiene la animación
+     * Detiene la animacion
      */
     public void detenerAnimacion() {
         if (animacionTimer != null) {

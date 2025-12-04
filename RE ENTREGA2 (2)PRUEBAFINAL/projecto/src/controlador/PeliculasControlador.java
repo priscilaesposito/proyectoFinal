@@ -16,8 +16,8 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 /**
- * Controlador de Películas - Maneja la lógica de eventos de la interfaz de
- * películas.
+ * Controlador de Peliculas - Maneja la logica de eventos de la interfaz de
+ * peliculas.
  */
 public class PeliculasControlador {
 
@@ -29,7 +29,7 @@ public class PeliculasControlador {
     }
 
     private void configurarEventos() {
-        // Configurar evento de búsqueda
+        // Configurar evento de busqueda
         vista.getSearchButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -37,7 +37,7 @@ public class PeliculasControlador {
             }
         });
 
-        // Configurar evento de cerrar sesión
+        // Configurar evento de cerrar sesion
         vista.getLogoutButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,7 +45,7 @@ public class PeliculasControlador {
             }
         });
 
-        // Configurar eventos de calificación para todos los botones
+        // Configurar eventos de calificacion para todos los botones
         configurarEventosCalificacion();
     }
 
@@ -103,21 +103,21 @@ public class PeliculasControlador {
                 vista.getUsuario().getID_USUARIO(),
                 pelicula.getID());
 
-        // Crear diálogo para ingresar la reseña
+        // Crear dialogo para ingresar la resenia
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel instruccion = new JLabel("Ingrese su calificación y reseña:");
+        JLabel instruccion = new JLabel("Ingrese su calificacion y resenia:");
         instruccion.setFont(new Font("Arial", Font.BOLD, 12));
 
         JPanel ratingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ratingPanel.add(new JLabel("Calificación:"));
+        ratingPanel.add(new JLabel("Calificacion:"));
         JLabel ratingValue = new JLabel(calificacion + "/10");
         ratingValue.setFont(new Font("Arial", Font.BOLD, 14));
         ratingValue.setForeground(new Color(255, 165, 0));
         ratingPanel.add(ratingValue);
 
-        JLabel reseniaLabel = new JLabel("Reseña:");
+        JLabel reseniaLabel = new JLabel("Resenia:");
         JTextArea reseniaArea = new JTextArea(5, 30);
         reseniaArea.setLineWrap(true);
         reseniaArea.setWrapStyleWord(true);
@@ -138,7 +138,7 @@ public class PeliculasControlador {
             private void guardar() {
                 String texto = reseniaArea.getText();
                 if (texto != null && !texto.trim().isEmpty()) {
-                    // Esta llamada se ejecutará en el Timer thread
+                    // Esta llamada se ejecutara en el Timer thread
                     autoGuardado.agregarBorrador(
                             vista.getUsuario().getID_USUARIO(),
                             pelicula.getID(),
@@ -184,7 +184,7 @@ public class PeliculasControlador {
 
             if (resenia.isEmpty()) {
                 JOptionPane.showMessageDialog(vista,
-                        "Debe ingresar una reseña para calificar la película.",
+                        "Debe ingresar una resenia para calificar la pelicula.",
                         "Campo requerido",
                         JOptionPane.WARNING_MESSAGE);
                 return;
@@ -205,23 +205,23 @@ public class PeliculasControlador {
 
                     JOptionPane.showMessageDialog(vista,
                             "¡Gracias por calificar \"" + pelicula.getMetadatos().getTitulo() + "\"!",
-                            "Calificación guardada",
+                            "Calificacion guardada",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
 
             } catch (ReseniaInvalidaException e) {
-                // Manejar específicamente errores de reseña inválida
+                // Manejar especificamente errores de resenia invalida
                 String mensaje = e.getMessage();
                 if (e.getMotivoRechazo() != null) {
                     mensaje += "\nMotivo: " + e.getMotivoRechazo();
                 }
                 JOptionPane.showMessageDialog(vista,
                         mensaje,
-                        "Reseña Inválida",
+                        "Resenia Invalida",
                         JOptionPane.WARNING_MESSAGE);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(vista,
-                        "Error al guardar calificación: " + ex.getMessage(),
+                        "Error al guardar calificacion: " + ex.getMessage(),
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
             }
@@ -233,13 +233,13 @@ public class PeliculasControlador {
 
         if (termino.isEmpty()) {
             JOptionPane.showMessageDialog(vista,
-                    "Por favor ingrese un término de búsqueda",
-                    "Búsqueda",
+                    "Por favor ingrese un termino de busqueda",
+                    "Busqueda",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Mostrar diálogo de búsqueda
+        // Mostrar dialogo de busqueda
         JDialog loadingDialog = new JDialog(vista, "Buscando...", true);
         loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         loadingDialog.setSize(300, 100);
@@ -268,7 +268,7 @@ public class PeliculasControlador {
                         mostrarResultadoBusqueda(resultado);
                     } else {
                         JOptionPane.showMessageDialog(vista,
-                                "No se encontró la película \"" + termino + "\"",
+                                "No se encontro la pelicula \"" + termino + "\"",
                                 "Sin resultados",
                                 JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -280,17 +280,17 @@ public class PeliculasControlador {
                         PeliculaNoEncontradaException pnee = (PeliculaNoEncontradaException) causa;
                         JOptionPane.showMessageDialog(vista,
                                 pnee.getMessage(),
-                                "Película No Encontrada",
+                                "Pelicula No Encontrada",
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(vista,
-                                "Error en la búsqueda: " + causa.getMessage(),
+                                "Error en la busqueda: " + causa.getMessage(),
                                 "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(vista,
-                            "Error en la búsqueda: " + e.getMessage(),
+                            "Error en la busqueda: " + e.getMessage(),
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
@@ -303,23 +303,23 @@ public class PeliculasControlador {
 
     private void mostrarResultadoBusqueda(org.json.JSONObject pelicula) {
         String info = "🎬 " + pelicula.getString("Title") + "\n\n" +
-                "📅 Año: " + pelicula.getString("Year") + "\n" +
-                "🎭 Género: " + pelicula.getString("Genre") + "\n" +
+                "📅 Anio: " + pelicula.getString("Year") + "\n" +
+                "🎭 Genero: " + pelicula.getString("Genre") + "\n" +
                 "🎬 Director: " + pelicula.getString("Director") + "\n" +
                 "⭐ Rating IMDb: " + pelicula.optString("imdbRating", "N/A") + "/10\n" +
-                "⏱️ Duración: " + pelicula.optString("Runtime", "N/A") + "\n\n" +
+                "⏱️ Duracion: " + pelicula.optString("Runtime", "N/A") + "\n\n" +
                 "📖 Sinopsis:\n" + pelicula.getString("Plot");
 
         JOptionPane.showMessageDialog(vista,
                 info,
-                "Resultado de Búsqueda",
+                "Resultado de Busqueda",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void cerrarSesion() {
         int confirm = JOptionPane.showConfirmDialog(vista,
-                "¿Está seguro que desea cerrar sesión?",
-                "Cerrar Sesión",
+                "¿Esta seguro que desea cerrar sesion?",
+                "Cerrar Sesion",
                 JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
@@ -329,7 +329,7 @@ public class PeliculasControlador {
     }
 
     /**
-     * Método estático para iniciar la interfaz de películas
+     * Metodo estatico para iniciar la interfaz de peliculas
      */
     public static void iniciarPeliculas(Usuario usuario, List<Pelicula> peliculas, boolean esPrimerLogin) {
         SwingUtilities.invokeLater(new Runnable() {

@@ -5,7 +5,7 @@ import dao.PeliculaDAO;
 import java.util.List;
 
 /**
- * Thread para cargar películas en segundo plano.
+ * Thread para cargar peliculas en segundo plano.
  * Extiende la clase Thread e implementa la estrategia de heredar de Thread.
  */
 public class CargadorPeliculasThread extends Thread {
@@ -20,7 +20,7 @@ public class CargadorPeliculasThread extends Thread {
     /**
      * Constructor del thread
      * 
-     * @param peliculaDAO   DAO para acceder a las películas
+     * @param peliculaDAO   DAO para acceder a las peliculas
      * @param idUsuario     ID del usuario
      * @param esPrimerLogin Si es el primer login del usuario
      */
@@ -33,20 +33,20 @@ public class CargadorPeliculasThread extends Thread {
     }
 
     /**
-     * Método run() - Contiene el código que se ejecutará concurrentemente
+     * Metodo run() - Contiene el codigo que se ejecutara concurrentemente
      */
     @Override
     public void run() {
         String threadName = Thread.currentThread().getName();
-        System.out.println("[" + threadName + "] Iniciando carga de películas...");
+        System.out.println("[" + threadName + "] Iniciando carga de peliculas...");
 
         try {
             // Simular tiempo de carga inicial
             Thread.sleep(500);
 
-            // Cargar películas según el tipo de login
+            // Cargar peliculas segun el tipo de login
             if (esPrimerLogin) {
-                System.out.println("[" + threadName + "] Cargando Top 10 películas...");
+                System.out.println("[" + threadName + "] Cargando Top 10 peliculas...");
                 peliculasCargadas = peliculaDAO.obtenerTop10PorRating();
             } else {
                 System.out.println("[" + threadName + "] Cargando recomendaciones personalizadas...");
@@ -59,12 +59,12 @@ public class CargadorPeliculasThread extends Thread {
             cargaCompletada = true;
             System.out.println("[" + threadName + "] ✓ Carga completada: " +
                     (peliculasCargadas != null ? peliculasCargadas.size() : 0) +
-                    " películas");
+                    " peliculas");
 
         } catch (InterruptedException e) {
             System.out.println("[" + threadName + "] ✗ Thread interrumpido");
             this.error = e;
-            Thread.currentThread().interrupt(); // Restaurar el estado de interrupción
+            Thread.currentThread().interrupt(); // Restaurar el estado de interrupcion
         } catch (Exception e) {
             System.out.println("[" + threadName + "] ✗ Error: " + e.getMessage());
             this.error = e;
@@ -72,17 +72,17 @@ public class CargadorPeliculasThread extends Thread {
     }
 
     /**
-     * Obtener las películas cargadas (debe llamarse después de que el thread
+     * Obtener las peliculas cargadas (debe llamarse despues de que el thread
      * termine)
      * 
-     * @return Lista de películas o null si hubo error
+     * @return Lista de peliculas o null si hubo error
      */
     public List<Pelicula> getPeliculasCargadas() {
         return peliculasCargadas;
     }
 
     /**
-     * Obtener el error si ocurrió alguno
+     * Obtener el error si ocurrio alguno
      * 
      * @return Exception o null si no hubo error
      */
@@ -93,20 +93,20 @@ public class CargadorPeliculasThread extends Thread {
     /**
      * Verificar si la carga fue completada exitosamente
      * 
-     * @return true si se completó sin errores
+     * @return true si se completo sin errores
      */
     public boolean isCargaCompletada() {
         return cargaCompletada;
     }
 
     /**
-     * Método estático de utilidad para cargar películas con timeout
+     * Metodo estatico de utilidad para cargar peliculas con timeout
      * 
-     * @param peliculaDAO   DAO de películas
+     * @param peliculaDAO   DAO de peliculas
      * @param idUsuario     ID del usuario
      * @param esPrimerLogin Si es primer login
-     * @param timeoutMs     Tiempo máximo de espera en milisegundos
-     * @return Lista de películas o null si excede el timeout
+     * @param timeoutMs     Tiempo maximo de espera en milisegundos
+     * @return Lista de peliculas o null si excede el timeout
      */
     public static List<Pelicula> cargarConTimeout(PeliculaDAO peliculaDAO, int idUsuario,
             boolean esPrimerLogin, long timeoutMs) {
@@ -117,7 +117,7 @@ public class CargadorPeliculasThread extends Thread {
             // Esperar a que el thread termine con timeout
             cargador.join(timeoutMs);
 
-            // Verificar si el thread aún está vivo (excedió el timeout)
+            // Verificar si el thread aun esta vivo (excedio el timeout)
             if (cargador.isAlive()) {
                 System.out.println("[CargadorPeliculas] ⚠ Timeout excedido, interrumpiendo...");
                 cargador.interrupt();
@@ -135,7 +135,7 @@ public class CargadorPeliculasThread extends Thread {
             Thread.currentThread().interrupt();
             return null;
         } catch (Exception e) {
-            System.err.println("Error al cargar películas: " + e.getMessage());
+            System.err.println("Error al cargar peliculas: " + e.getMessage());
             return null;
         }
     }

@@ -6,9 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 /**
- * Gestor de auto-guardado de reseñas en borrador usando Timer y TimerTask.
- * Implementa concurrencia para guardar automáticamente el progreso de las
- * reseñas.
+ * Gestor de auto-guardado de resenias en borrador usando Timer y TimerTask.
+ * Implementa concurrencia para guardar automaticamente el progreso de las
+ * resenias.
  */
 public class AutoGuardadoResenias {
 
@@ -20,7 +20,7 @@ public class AutoGuardadoResenias {
     private static final long INTERVALO_GUARDADO = 30000; // 30 segundos
 
     /**
-     * Clase interna para representar un borrador de reseña
+     * Clase interna para representar un borrador de resenia
      */
     public static class BorradorResenia {
         private int idUsuario;
@@ -69,7 +69,7 @@ public class AutoGuardadoResenias {
     }
 
     /**
-     * Constructor privado (Patrón Singleton)
+     * Constructor privado (Patron Singleton)
      */
     private AutoGuardadoResenias() {
         // Usar ConcurrentHashMap para thread-safety
@@ -79,7 +79,7 @@ public class AutoGuardadoResenias {
     }
 
     /**
-     * Obtener instancia única (Singleton)
+     * Obtener instancia unica (Singleton)
      */
     public static synchronized AutoGuardadoResenias getInstance() {
         if (instancia == null) {
@@ -120,15 +120,15 @@ public class AutoGuardadoResenias {
         for (Map.Entry<String, BorradorResenia> entry : borradores.entrySet()) {
             BorradorResenia borrador = entry.getValue();
 
-            // Simular guardado (en una implementación real, guardarías en BD o archivo)
+            // Simular guardado (en una implementacion real, guardarias en BD o archivo)
             System.out.println("  → Borrador guardado: Usuario " + borrador.getIdUsuario() +
-                    ", Película: " + borrador.getTituloPelicula() +
-                    ", Calificación: " + borrador.getCalificacion() +
+                    ", Pelicula: " + borrador.getTituloPelicula() +
+                    ", Calificacion: " + borrador.getCalificacion() +
                     ", Comentario: " +
                     (borrador.getComentario() != null
                             ? borrador.getComentario().substring(0, Math.min(20, borrador.getComentario().length()))
                                     + "..."
-                            : "vacío"));
+                            : "vacio"));
         }
     }
 
@@ -150,7 +150,7 @@ public class AutoGuardadoResenias {
     }
 
     /**
-     * Eliminar un borrador (cuando se envía la reseña final)
+     * Eliminar un borrador (cuando se envia la resenia final)
      */
     public void eliminarBorrador(int idUsuario, int idPelicula) {
         String clave = idUsuario + "_" + idPelicula;
@@ -162,7 +162,7 @@ public class AutoGuardadoResenias {
     }
 
     /**
-     * Obtener un borrador específico
+     * Obtener un borrador especifico
      */
     public BorradorResenia obtenerBorrador(int idUsuario, int idPelicula) {
         String clave = idUsuario + "_" + idPelicula;
@@ -178,11 +178,11 @@ public class AutoGuardadoResenias {
     }
 
     /**
-     * Detener el timer (llamar al cerrar la aplicación)
+     * Detener el timer (llamar al cerrar la aplicacion)
      */
     public void detener() {
         if (timer != null) {
-            guardarBorradores(); // Guardar una última vez antes de detener
+            guardarBorradores(); // Guardar una ultima vez antes de detener
             timer.cancel();
             System.out.println("[AutoGuardado] Timer detenido");
         }

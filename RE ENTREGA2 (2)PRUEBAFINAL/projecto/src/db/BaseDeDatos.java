@@ -89,7 +89,7 @@ public class BaseDeDatos {
             stmt.executeUpdate(sql);
             System.out.println("Columna " + columna + " agregada a la tabla " + tabla);
         } catch (SQLException e) {
-            // Si la columna ya existe, SQLite lanzará una excepción - esto es normal
+            // Si la columna ya existe, SQLite lanzara una excepcion - esto es normal
             if (e.getMessage().contains("duplicate column name")) {
                 // Columna ya existe, no hacer nada
             } else {

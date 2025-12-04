@@ -42,12 +42,12 @@ public class ListasyResenias {
 
     public Resenia validarResenia(int IDresenia) throws SQLException { // verifica si la reseni existe, en ese caso devuelve la resenia,
                                                    // caso contrario informa y devuelve null.
-        Resenia reseñaEncontrada = RD.buscarPorId(IDresenia);
-        if (reseñaEncontrada == null) {
-            System.out.println(" Error: La reseña con ID " + IDresenia + " no existe.");
+        Resenia reseniaEncontrada = RD.buscarPorId(IDresenia);
+        if (reseniaEncontrada == null) {
+            System.out.println(" Error: La resenia con ID " + IDresenia + " no existe.");
             return null;
         }
-        return reseñaEncontrada;
+        return reseniaEncontrada;
     }
 
     public void aprobarResenia(int idResenia) throws SQLException {

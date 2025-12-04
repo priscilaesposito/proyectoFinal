@@ -15,13 +15,13 @@ import dao.PeliculaDAO;
 import daoJDBC.PeliculaDAOjdbc;
 
 /**
- * Importador de películas desde archivo CSV usando concurrencia con
+ * Importador de peliculas desde archivo CSV usando concurrencia con
  * SwingWorker.
- * Permite cargar películas sin bloquear la interfaz gráfica y muestra el
+ * Permite cargar peliculas sin bloquear la interfaz grafica y muestra el
  * progreso.
  * 
  * Formato CSV esperado:
- * Titulo,Director,Genero,Año,Rating,Duracion,Sinopsis
+ * Titulo,Director,Genero,Anio,Rating,Duracion,Sinopsis
  */
 public class ImportadorCSV {
 
@@ -35,18 +35,18 @@ public class ImportadorCSV {
     private JLabel labelEstado;
 
     /**
-     * Importa películas desde un archivo CSV mostrando una barra de progreso.
-     * Usa SwingWorker para ejecutar la importación en segundo plano.
+     * Importa peliculas desde un archivo CSV mostrando una barra de progreso.
+     * Usa SwingWorker para ejecutar la importacion en segundo plano.
      * 
      * @param archivo  Archivo CSV a importar
-     * @param parent   Componente padre para mostrar diálogos
+     * @param parent   Componente padre para mostrar dialogos
      * @param callback Callback opcional que se ejecuta al finalizar
      */
     public void importarConProgreso(File archivo, JFrame parent, Runnable callback) {
-        // Crear diálogo de progreso
+        // Crear dialogo de progreso
         JDialog dialogoProgreso = crearDialogoProgreso(parent);
 
-        // SwingWorker para importación en background
+        // SwingWorker para importacion en background
         SwingWorker<ResultadoImportacion, ProgresoImportacion> worker = new SwingWorker<ResultadoImportacion, ProgresoImportacion>() {
 
             @Override
@@ -56,7 +56,7 @@ public class ImportadorCSV {
 
             @Override
             protected void process(List<ProgresoImportacion> chunks) {
-                // Actualizar UI con el último progreso
+                // Actualizar UI con el ultimo progreso
                 if (!chunks.isEmpty()) {
                     ProgresoImportacion ultimo = chunks.get(chunks.size() - 1);
                     barraProgreso.setValue(ultimo.getPorcentaje());
@@ -73,8 +73,8 @@ public class ImportadorCSV {
 
                     // Mostrar resultado
                     String mensaje = String.format(
-                            "Importación completada:\n\n" +
-                                    "✅ Películas importadas: %d\n" +
+                            "Importacion completada:\n\n" +
+                                    "✅ Peliculas importadas: %d\n" +
                                     "⚠️  Errores: %d\n" +
                                     "⏱️  Tiempo: %.2f segundos",
                             resultado.getExitosas(),
@@ -92,7 +92,7 @@ public class ImportadorCSV {
                     JOptionPane.showMessageDialog(
                             parent,
                             mensaje,
-                            "Importación Finalizada",
+                            "Importacion Finalizada",
                             resultado.getErrores() == 0 ? JOptionPane.INFORMATION_MESSAGE
                                     : JOptionPane.WARNING_MESSAGE);
 
@@ -104,20 +104,20 @@ public class ImportadorCSV {
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
                             parent,
-                            "Error durante la importación:\n" + e.getMessage(),
+                            "Error durante la importacion:\n" + e.getMessage(),
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
         };
 
-        // Iniciar importación
+        // Iniciar importacion
         worker.execute();
         dialogoProgreso.setVisible(true);
     }
 
     /**
-     * Procesa el archivo CSV línea por línea
+     * Procesa el archivo CSV linea por linea
      */
     private ResultadoImportacion procesarArchivoCSV(
             File archivo,
@@ -127,7 +127,7 @@ public class ImportadorCSV {
         List<String> lineas = new ArrayList<>();
 
         try {
-            // Leer todas las líneas primero
+            // Leer todas las lineas primero
             try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
                 String linea;
                 boolean primeraLinea = true;
@@ -144,7 +144,7 @@ public class ImportadorCSV {
             int total = lineas.size();
             int procesadas = 0;
 
-            // Procesar cada línea
+            // Procesar cada linea
             for (String linea : lineas) {
                 try {
                     Pelicula pelicula = parsearLineaCSV(linea);
@@ -153,7 +153,7 @@ public class ImportadorCSV {
 
                 } catch (Exception e) {
                     resultado.incrementarErrores();
-                    resultado.agregarMensajeError("Línea " + (procesadas + 2) + ": " + e.getMessage());
+                    resultado.agregarMensajeError("Linea " + (procesadas + 2) + ": " + e.getMessage());
                 }
 
                 procesadas++;
@@ -161,7 +161,7 @@ public class ImportadorCSV {
                 // Publicar progreso
                 int porcentaje = (procesadas * 100) / total;
                 String mensaje = String.format(
-                        "Procesando película %d de %d...",
+                        "Procesando pelicula %d de %d...",
                         procesadas,
                         total);
                 ProgresoImportacion progreso = new ProgresoImportacion(porcentaje, mensaje);
@@ -170,7 +170,7 @@ public class ImportadorCSV {
                     labelEstado.setText(progreso.getMensaje());
                 });
 
-                // Pequeña pausa para que se vea el progreso
+                // Pequenia pausa para que se vea el progreso
                 Thread.sleep(10);
             }
 
@@ -185,31 +185,31 @@ public class ImportadorCSV {
     }
 
     /**
-     * Parsea una línea del CSV y crea un objeto Pelicula
-     * Formato: Titulo,Director,Genero,Año,Rating,Duracion,Sinopsis
+     * Parsea una linea del CSV y crea un objeto Pelicula
+     * Formato: Titulo,Director,Genero,Anio,Rating,Duracion,Sinopsis
      */
     private Pelicula parsearLineaCSV(String linea) throws Exception {
         String[] campos = linea.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); // Split respetando comillas
 
         if (campos.length < 7) {
-            throw new Exception("Formato inválido - se esperan 7 campos");
+            throw new Exception("Formato invalido - se esperan 7 campos");
         }
 
         Pelicula pelicula = new Pelicula();
 
-        // Título
+        // Titulo
         pelicula.getMetadatos().setTitulo(limpiarCampo(campos[0]));
 
         // Director
         pelicula.getMetadatos().setDirector(limpiarCampo(campos[1]));
 
-        // Género(s)
+        // Genero(s)
         String[] generos = limpiarCampo(campos[2]).split("\\|");
         for (String genero : generos) {
             pelicula.anadirGeneros(genero.trim());
         }
 
-        // Año
+        // Anio
         try {
             pelicula.setAnio(Integer.parseInt(limpiarCampo(campos[3])));
         } catch (NumberFormatException e) {
@@ -223,7 +223,7 @@ public class ImportadorCSV {
             pelicula.setRatingPromedio(7.0f);
         }
 
-        // Duración
+        // Duracion
         try {
             pelicula.getVideo().setDuracion(Double.parseDouble(limpiarCampo(campos[5])));
         } catch (NumberFormatException e) {
@@ -246,10 +246,10 @@ public class ImportadorCSV {
     }
 
     /**
-     * Crea el diálogo de progreso
+     * Crea el dialogo de progreso
      */
     private JDialog crearDialogoProgreso(JFrame parent) {
-        JDialog dialogo = new JDialog(parent, "Importando Películas", true);
+        JDialog dialogo = new JDialog(parent, "Importando Peliculas", true);
         dialogo.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         dialogo.setSize(450, 150);
         dialogo.setLocationRelativeTo(parent);
@@ -258,7 +258,7 @@ public class ImportadorCSV {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        labelEstado = new JLabel("Iniciando importación...", SwingConstants.CENTER);
+        labelEstado = new JLabel("Iniciando importacion...", SwingConstants.CENTER);
         labelEstado.setFont(new Font("Arial", Font.PLAIN, 12));
         panel.add(labelEstado, BorderLayout.NORTH);
 
@@ -299,7 +299,7 @@ public class ImportadorCSV {
     }
 
     /**
-     * Clase interna para resultado de importación
+     * Clase interna para resultado de importacion
      */
     public static class ResultadoImportacion {
         private int exitosas = 0;

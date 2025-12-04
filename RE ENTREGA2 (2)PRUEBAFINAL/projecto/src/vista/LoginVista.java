@@ -4,8 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Vista del Login - Responsable únicamente de la presentación de la interfaz.
- * No contiene lógica de negocio ni manejo de eventos.
+ * Vista del Login - Responsable unicamente de la presentacion de la interfaz.
  */
 public class LoginVista extends JFrame {
 
@@ -27,7 +26,7 @@ public class LoginVista extends JFrame {
         emailField = new JTextField(20);
         passwordField = new JPasswordField(20);
         loginButton = new JButton("Ingresar");
-        registerButton = new JButton("Regístrate");
+        registerButton = new JButton("Registrate");
         statusLabel = new JLabel(" ");
 
         mainPanel = new JPanel();
@@ -180,7 +179,7 @@ public class LoginVista extends JFrame {
 
         JPanel registerPanel = new JPanel(new FlowLayout());
         registerPanel.setBackground(Color.WHITE);
-        registerPanel.add(new JLabel("¿Aún no sos usuario?"));
+        registerPanel.add(new JLabel("¿Aun no sos usuario?"));
 
         registerButton.setBackground(new Color(51, 153, 255));
         registerButton.setForeground(Color.WHITE);
@@ -229,7 +228,7 @@ public class LoginVista extends JFrame {
         return statusLabel;
     }
 
-    // Métodos para actualizar la vista desde el Controlador
+    // Metodos para actualizar la vista desde el Controlador
     public void mostrarMensaje(String mensaje, Color color) {
         statusLabel.setText(mensaje);
         statusLabel.setForeground(color);
