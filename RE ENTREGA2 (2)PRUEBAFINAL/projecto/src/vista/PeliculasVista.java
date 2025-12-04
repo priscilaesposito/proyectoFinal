@@ -50,10 +50,10 @@ public class PeliculasVista extends JFrame {
     private JPanel crearBarraSuperior() {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(Color.WHITE);
-        topBar.setPreferredSize(new Dimension(0, 120));
+        topBar.setPreferredSize(new Dimension(0, 140));
         topBar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)),
-                BorderFactory.createEmptyBorder(20, 40, 20, 40)));
+                BorderFactory.createEmptyBorder(25, 40, 25, 40)));
 
         // Panel superior con usuario y botón cerrar sesión
         JPanel topRowPanel = new JPanel(new BorderLayout());
@@ -93,11 +93,11 @@ public class PeliculasVista extends JFrame {
         searchField.setPreferredSize(new Dimension(300, 38));
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
         searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createMatteBorder(1, 1, 2, 1, new Color(180, 180, 180)),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         searchButton = new JButton("🔍");
-        searchButton.setFont(new Font("Arial", Font.BOLD, 18));
+        searchButton.setFont(new Font("Arial", Font.PLAIN, 20));
         searchButton.setBackground(new Color(0, 122, 255));
         searchButton.setForeground(Color.WHITE);
         searchButton.setOpaque(true);

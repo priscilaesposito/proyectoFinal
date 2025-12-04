@@ -22,41 +22,63 @@ public class VentanaPrincipalControlador {
     }
 
     public void cargarPeliculasEnBackground() {
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+        SwingWorker<List<Pelicula>, String> worker = new SwingWorker<List<Pelicula>, String>() {
             @Override
-            protected Void doInBackground() throws Exception {
-                // Pequenia pausa para asegurar que la pantalla de carga sea visible
-                Thread.sleep(500);
+            protected List<Pelicula> doInBackground() throws Exception {
+                // Actualizar mensaje en UI
+                publish("Iniciando carga de películas...");
+                Thread.sleep(300);
 
                 // Verificar si es primer login
+                publish("Verificando estado de usuario...");
                 esPrimerLogin = Logica.esPrimerLogin(vista.getUsuario().getID_USUARIO());
+                Thread.sleep(200);
 
                 // Cargar peliculas segun sea primer login o no
+                List<Pelicula> peliculas;
                 if (esPrimerLogin) {
-                    peliculasActuales = Logica.obtenerTop10Peliculas();
+                    publish("Cargando Top 10 películas...");
+                    peliculas = Logica.obtenerTop10Peliculas();
                 } else {
-                    peliculasActuales = Logica.obtener10PeliculasRandom(vista.getUsuario().getID_USUARIO());
+                    publish("Cargando películas recomendadas...");
+                    peliculas = Logica.obtener10PeliculasRandom(vista.getUsuario().getID_USUARIO());
                 }
 
-                // Pequenia pausa adicional para que el usuario vea la pantalla de carga
-                Thread.sleep(500);
+                // Simular procesamiento adicional para mejor feedback visual
+                publish("Preparando visualización...");
+                Thread.sleep(300);
 
-                return null;
+                return peliculas;
+            }
+
+            @Override
+            protected void process(List<String> chunks) {
+                // Actualizar el mensaje de la ventana de carga con el último mensaje
+                if (!chunks.isEmpty()) {
+                    vista.actualizarMensaje(chunks.get(chunks.size() - 1));
+                }
             }
 
             @Override
             protected void done() {
                 try {
-                    get(); // Verificar si hubo errores
+                    peliculasActuales = get(); // Obtener las películas cargadas
 
                     // Marcar como no primer login si era el primero
                     if (esPrimerLogin) {
                         Logica.registrarPrimerLogin(vista.getUsuario().getID_USUARIO());
                     }
 
-                    // Cerrar ventana de carga y abrir ventana de peliculas
-                    vista.dispose();
-                    PeliculasControlador.iniciarPeliculas(vista.getUsuario(), peliculasActuales, esPrimerLogin);
+                    vista.actualizarMensaje("¡Listo! Abriendo catálogo...");
+                    
+                    // Pequeña pausa para mostrar mensaje final
+                    Timer finalizarTimer = new Timer(300, e -> {
+                        // Cerrar ventana de carga y abrir ventana de peliculas
+                        vista.dispose();
+                        PeliculasControlador.iniciarPeliculas(vista.getUsuario(), peliculasActuales, esPrimerLogin);
+                    });
+                    finalizarTimer.setRepeats(false);
+                    finalizarTimer.start();
 
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(vista,

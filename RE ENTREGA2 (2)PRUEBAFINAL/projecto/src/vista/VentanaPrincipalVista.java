@@ -70,15 +70,18 @@ public class VentanaPrincipalVista extends JFrame {
     private void iniciarAnimacion() {
         final String[] mensajes = {
                 "Cargando contenido...",
-                "Preparando peliculas...",
-                "Casi listo...",
-                "Cargando contenido..."
+                "Preparando películas...",
+                "Procesando datos...",
+                "Casi listo..."
         };
         final int[] indice = { 0 };
 
-        animacionTimer = new Timer(800, e -> {
-            loadingLabel.setText(mensajes[indice[0]]);
-            indice[0] = (indice[0] + 1) % mensajes.length;
+        animacionTimer = new Timer(1000, e -> {
+            // Solo cambiar automáticamente si no se ha establecido un mensaje específico
+            if (loadingLabel.getText().equals(mensajes[(indice[0] - 1 + mensajes.length) % mensajes.length])) {
+                loadingLabel.setText(mensajes[indice[0]]);
+                indice[0] = (indice[0] + 1) % mensajes.length;
+            }
         });
         animacionTimer.start();
     }
@@ -112,6 +115,8 @@ public class VentanaPrincipalVista extends JFrame {
     }
 
     public void actualizarMensaje(String mensaje) {
-        loadingLabel.setText(mensaje);
+        SwingUtilities.invokeLater(() -> {
+            loadingLabel.setText(mensaje);
+        });
     }
 }

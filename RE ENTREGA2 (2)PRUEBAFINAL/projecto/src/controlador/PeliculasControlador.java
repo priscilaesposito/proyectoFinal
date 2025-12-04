@@ -193,11 +193,14 @@ public class PeliculasControlador {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                // Crear y mostrar la vista en el hilo de eventos de Swing
                 PeliculasVista vista = new PeliculasVista(usuario, peliculas, esPrimerLogin);
                 PeliculasControlador controlador = new PeliculasControlador(vista);
+                
+                // Hacer visible la ventana
                 vista.setVisible(true);
                 
-                // Reconfigurar eventos después de que la vista sea visible
+                // Configurar eventos después de que todo esté renderizado
                 SwingUtilities.invokeLater(() -> {
                     controlador.configurarEventosCalificacion();
                 });
