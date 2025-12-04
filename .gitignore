@@ -1,0 +1,26 @@
+# Archivos compilados de Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Directorios de compilación
+bin/
+build/
+target/
+out/
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.iml
+.DS_Store
+
+# Archivos de configuración local
+*.log
+*.tmp
+*.swp
+
+# Librerías (mantener solo en lib/ si es necesario)
+# Descomentar la siguiente línea si las librerías están en el repo
+# !lib/*.jar
