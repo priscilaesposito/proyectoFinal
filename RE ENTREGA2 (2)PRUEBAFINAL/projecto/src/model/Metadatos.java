@@ -9,6 +9,7 @@ public class Metadatos {
     private String director;
     private String idioma;
     private LinkedList<String> subtitulosDisponibles;
+    private String poster;
     
     public Metadatos() {
         this.elenco = new LinkedList<>();
@@ -65,6 +66,14 @@ public class Metadatos {
     
     public LinkedList<String> getSubtitulosDisponibles() {
         return subtitulosDisponibles;
+    }
+    
+    public void setPoster(String poster) {
+        this.poster = poster;
+    }
+    
+    public String getPoster() {
+        return poster;
     }
 }
 

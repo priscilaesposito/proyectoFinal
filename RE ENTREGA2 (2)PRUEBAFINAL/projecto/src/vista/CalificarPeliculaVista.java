@@ -31,76 +31,78 @@ public class CalificarPeliculaVista extends JDialog {
         JPanel topBar = crearBarraSuperior();
         containerPanel.add(topBar, BorderLayout.NORTH);
 
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
         mainPanel.setBackground(Color.WHITE);
 
         // Titulo de la pelicula
-        JLabel tituloLabel = new JLabel("Titulo de la Pelicula");
-        tituloLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        mainPanel.add(tituloLabel, BorderLayout.NORTH);
-
-        // Panel central con calificacion y comentario
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.setBackground(Color.WHITE);
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        JLabel tituloLabel = new JLabel(pelicula.getMetadatos().getTitulo());
+        tituloLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        tituloLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        mainPanel.add(tituloLabel);
+        mainPanel.add(Box.createVerticalStrut(30));
 
         // Panel de calificacion
-        JPanel ratingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        JPanel ratingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
         ratingPanel.setBackground(Color.WHITE);
         ratingPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        ratingPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
-        JLabel calificacionLabel = new JLabel("Calificacion:");
-        calificacionLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        JLabel calificacionLabel = new JLabel("Calificación:");
+        calificacionLabel.setFont(new Font("Arial", Font.PLAIN, 15));
         ratingPanel.add(calificacionLabel);
 
         Integer[] ratings = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
         ratingCombo = new JComboBox<>(ratings);
         ratingCombo.setSelectedIndex(7); // Default 8/10
-        ratingCombo.setFont(new Font("Arial", Font.PLAIN, 12));
+        ratingCombo.setFont(new Font("Arial", Font.PLAIN, 14));
+        ratingCombo.setPreferredSize(new Dimension(60, 25));
         ratingPanel.add(ratingCombo);
 
-        centerPanel.add(ratingPanel);
-        centerPanel.add(Box.createVerticalStrut(15));
+        mainPanel.add(ratingPanel);
+        mainPanel.add(Box.createVerticalStrut(25));
 
         // Panel de comentario
         JLabel comentarioLabel = new JLabel("Comentario:");
-        comentarioLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        comentarioLabel.setFont(new Font("Arial", Font.PLAIN, 15));
         comentarioLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        centerPanel.add(comentarioLabel);
-        centerPanel.add(Box.createVerticalStrut(5));
+        mainPanel.add(comentarioLabel);
+        mainPanel.add(Box.createVerticalStrut(10));
 
-        reseniaArea = new JTextArea(5, 30);
+        reseniaArea = new JTextArea(4, 40);
         reseniaArea.setLineWrap(true);
         reseniaArea.setWrapStyleWord(true);
         reseniaArea.setFont(new Font("Arial", Font.PLAIN, 13));
         reseniaArea.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(8, 8, 8, 8)));
 
         JScrollPane scrollPane = new JScrollPane(reseniaArea);
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scrollPane.setPreferredSize(new Dimension(400, 100));
-        centerPanel.add(scrollPane);
+        scrollPane.setPreferredSize(new Dimension(500, 90));
+        scrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
+        mainPanel.add(scrollPane);
+        mainPanel.add(Box.createVerticalStrut(25));
 
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
+        // Boton Guardar - centrado
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        btnPanel.setBackground(Color.WHITE);
+        btnPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        btnPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
-        // Boton Guardar
         JButton guardarBtn = new JButton("Guardar");
-        guardarBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        guardarBtn.setFont(new Font("Arial", Font.BOLD, 13));
         guardarBtn.setBackground(new Color(0, 122, 255));
         guardarBtn.setForeground(Color.WHITE);
         guardarBtn.setFocusPainted(false);
         guardarBtn.setOpaque(true);
         guardarBtn.setBorderPainted(false);
-        guardarBtn.setPreferredSize(new Dimension(100, 35));
+        guardarBtn.setPreferredSize(new Dimension(110, 35));
         guardarBtn.addActionListener(e -> guardarCalificacion());
-
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        btnPanel.setBackground(Color.WHITE);
         btnPanel.add(guardarBtn);
-        mainPanel.add(btnPanel, BorderLayout.SOUTH);
+
+        mainPanel.add(btnPanel);
 
         containerPanel.add(mainPanel, BorderLayout.CENTER);
         setContentPane(containerPanel);
@@ -206,7 +208,7 @@ public class CalificarPeliculaVista extends JDialog {
     }
 
     private void establecerPropiedades() {
-        setSize(500, 390);
+        setSize(600, 400);
         setLocationRelativeTo(getParent());
         setResizable(false);
     }

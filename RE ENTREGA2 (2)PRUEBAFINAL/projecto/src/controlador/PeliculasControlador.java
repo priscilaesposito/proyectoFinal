@@ -1,13 +1,12 @@
 package controlador;
 
 import vista.PeliculasVista;
+import vista.CalificarPeliculaVista;
+import vista.ResultadoBusquedaVista;
 import model.Usuario;
 import model.Pelicula;
 import app.Logica;
 import enumerativo.PeliculaNoEncontradaException;
-import enumerativo.ReseniaInvalidaException;
-import utilidades.AutoGuardadoResenias;
-import utilidades.AutoGuardadoResenias.BorradorResenia;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,181 +50,50 @@ public class PeliculasControlador {
 
     private void configurarEventosCalificacion() {
         // Buscar todos los botones de calificar en la vista
-        try {
-            Component viewComponent = ((JScrollPane) vista.getContentPane().getComponent(0)
-                    .getComponentAt(0, 0))
-                    .getViewport().getView();
-
-            if (viewComponent instanceof Container) {
-                Component[] components = ((Container) viewComponent).getComponents();
-                for (Component comp : components) {
-                    if (comp instanceof JPanel) {
-                        buscarYConfigurarBotonesCalificar((JPanel) comp);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // Si hay error al buscar componentes, ignorar
-        }
+        SwingUtilities.invokeLater(() -> {
+            buscarYConfigurarBotonesEnContenedor(vista.getContentPane());
+        });
     }
-
-    private void buscarYConfigurarBotonesCalificar(JPanel panel) {
-        for (Component comp : panel.getComponents()) {
+    
+    private void buscarYConfigurarBotonesEnContenedor(Container container) {
+        for (Component comp : container.getComponents()) {
             if (comp instanceof JButton) {
                 JButton button = (JButton) comp;
                 if ("Calificar".equals(button.getText())) {
+                    // Remover listeners anteriores si existen
+                    for (ActionListener al : button.getActionListeners()) {
+                        button.removeActionListener(al);
+                    }
+                    
                     button.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             Pelicula pelicula = (Pelicula) button.getClientProperty("pelicula");
-                            @SuppressWarnings("unchecked")
-                            JComboBox<Integer> ratingCombo = (JComboBox<Integer>) button
-                                    .getClientProperty("ratingCombo");
-                            if (pelicula != null && ratingCombo != null) {
-                                int calificacion = (Integer) ratingCombo.getSelectedItem();
-                                calificarPelicula(pelicula, calificacion);
+                            if (pelicula != null) {
+                                System.out.println("Abriendo ventana de calificación para: " + pelicula.getMetadatos().getTitulo());
+                                // Abrir ventana emergente de calificación
+                                boolean calificado = CalificarPeliculaVista.mostrar(
+                                    vista, 
+                                    pelicula, 
+                                    vista.getUsuario()
+                                );
+                                
+                                if (calificado) {
+                                    // Deshabilitar el botón y cambiar texto
+                                    button.setEnabled(false);
+                                    button.setText("Calificada");
+                                    button.setBackground(Color.GRAY);
+                                }
+                            } else {
+                                System.err.println("ERROR: No se encontró la película en el botón");
                             }
                         }
                     });
                 }
-            } else if (comp instanceof JPanel) {
-                buscarYConfigurarBotonesCalificar((JPanel) comp);
-            }
-        }
-    }
-
-    private void calificarPelicula(Pelicula pelicula, int calificacion) {
-        // Obtener instancia del auto-guardado (usando concurrencia con Timer)
-        AutoGuardadoResenias autoGuardado = AutoGuardadoResenias.getInstance();
-
-        // Verificar si existe un borrador previo
-        BorradorResenia borrador = autoGuardado.obtenerBorrador(
-                vista.getUsuario().getID_USUARIO(),
-                pelicula.getID());
-
-        // Crear dialogo para ingresar la resenia
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JLabel instruccion = new JLabel("Ingrese su calificacion y resenia:");
-        instruccion.setFont(new Font("Arial", Font.BOLD, 12));
-
-        JPanel ratingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ratingPanel.add(new JLabel("Calificacion:"));
-        JLabel ratingValue = new JLabel(calificacion + "/10");
-        ratingValue.setFont(new Font("Arial", Font.BOLD, 14));
-        ratingValue.setForeground(new Color(255, 165, 0));
-        ratingPanel.add(ratingValue);
-
-        JLabel reseniaLabel = new JLabel("Resenia:");
-        JTextArea reseniaArea = new JTextArea(5, 30);
-        reseniaArea.setLineWrap(true);
-        reseniaArea.setWrapStyleWord(true);
-        reseniaArea.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-        // Restaurar borrador si existe
-        if (borrador != null) {
-            reseniaArea.setText(borrador.getComentario());
-            calificacion = borrador.getCalificacion();
-            ratingValue.setText(calificacion + "/10");
-        }
-
-        // Listener para auto-guardar mientras el usuario escribe (concurrencia)
-        final int calificacionFinal = calificacion;
-        javax.swing.event.DocumentListener autoSaveListener = new javax.swing.event.DocumentListener() {
-            private void guardar() {
-                String texto = reseniaArea.getText();
-                if (texto != null && !texto.trim().isEmpty()) {
-                    // Esta llamada se ejecutara en el Timer thread
-                    autoGuardado.agregarBorrador(
-                            vista.getUsuario().getID_USUARIO(),
-                            pelicula.getID(),
-                            pelicula.getMetadatos().getTitulo(),
-                            calificacionFinal,
-                            texto);
-                }
-            }
-
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                guardar();
-            }
-
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                guardar();
-            }
-
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                guardar();
+            } else if (comp instanceof Container) {
+                buscarYConfigurarBotonesEnContenedor((Container) comp);
             }
         };
-        reseniaArea.getDocument().addDocumentListener(autoSaveListener);
-
-        JScrollPane scrollPane = new JScrollPane(reseniaArea);
-
-        panel.add(instruccion, BorderLayout.NORTH);
-        panel.add(ratingPanel, BorderLayout.CENTER);
-
-        JPanel reseniaPanel = new JPanel(new BorderLayout(5, 5));
-        reseniaPanel.add(reseniaLabel, BorderLayout.NORTH);
-        reseniaPanel.add(scrollPane, BorderLayout.CENTER);
-        panel.add(reseniaPanel, BorderLayout.SOUTH);
-
-        int result = JOptionPane.showConfirmDialog(
-                vista,
-                panel,
-                "Calificar: " + pelicula.getMetadatos().getTitulo(),
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
-
-        if (result == JOptionPane.OK_OPTION) {
-            String resenia = reseniaArea.getText().trim();
-
-            if (resenia.isEmpty()) {
-                JOptionPane.showMessageDialog(vista,
-                        "Debe ingresar una resenia para calificar la pelicula.",
-                        "Campo requerido",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            try {
-                boolean exito = Logica.calificarPelicula(
-                        vista.getUsuario().getID_USUARIO(),
-                        pelicula.getID(),
-                        calificacion,
-                        resenia);
-
-                if (exito) {
-                    // Eliminar borrador al guardar exitosamente
-                    autoGuardado.eliminarBorrador(
-                            vista.getUsuario().getID_USUARIO(),
-                            pelicula.getID());
-
-                    JOptionPane.showMessageDialog(vista,
-                            "¡Gracias por calificar \"" + pelicula.getMetadatos().getTitulo() + "\"!",
-                            "Calificacion guardada",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-
-            } catch (ReseniaInvalidaException e) {
-                // Manejar especificamente errores de resenia invalida
-                String mensaje = e.getMessage();
-                if (e.getMotivoRechazo() != null) {
-                    mensaje += "\nMotivo: " + e.getMotivoRechazo();
-                }
-                JOptionPane.showMessageDialog(vista,
-                        mensaje,
-                        "Resenia Invalida",
-                        JOptionPane.WARNING_MESSAGE);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(vista,
-                        "Error al guardar calificacion: " + ex.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
     }
 
     private void buscarPelicula() {
@@ -302,18 +170,8 @@ public class PeliculasControlador {
     }
 
     private void mostrarResultadoBusqueda(org.json.JSONObject pelicula) {
-        String info = "🎬 " + pelicula.getString("Title") + "\n\n" +
-                "📅 Anio: " + pelicula.getString("Year") + "\n" +
-                "🎭 Genero: " + pelicula.getString("Genre") + "\n" +
-                "🎬 Director: " + pelicula.getString("Director") + "\n" +
-                "⭐ Rating IMDb: " + pelicula.optString("imdbRating", "N/A") + "/10\n" +
-                "⏱️ Duracion: " + pelicula.optString("Runtime", "N/A") + "\n\n" +
-                "📖 Sinopsis:\n" + pelicula.getString("Plot");
-
-        JOptionPane.showMessageDialog(vista,
-                info,
-                "Resultado de Busqueda",
-                JOptionPane.INFORMATION_MESSAGE);
+        // Usar ventana emergente de ResultadoBusquedaVista con datos de OMDb
+        ResultadoBusquedaVista.mostrar(vista, pelicula);
     }
 
     private void cerrarSesion() {
@@ -336,9 +194,19 @@ public class PeliculasControlador {
             @Override
             public void run() {
                 PeliculasVista vista = new PeliculasVista(usuario, peliculas, esPrimerLogin);
-                new PeliculasControlador(vista);
+                PeliculasControlador controlador = new PeliculasControlador(vista);
                 vista.setVisible(true);
+                
+                // Reconfigurar eventos después de que la vista sea visible
+                SwingUtilities.invokeLater(() -> {
+                    controlador.configurarEventosCalificacion();
+                });
             }
         });
+    }
+    
+    // Hacer público el método para poder llamarlo desde fuera
+    public void reconfigurarEventos() {
+        configurarEventosCalificacion();
     }
 }

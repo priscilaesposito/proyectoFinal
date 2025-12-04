@@ -2,6 +2,7 @@ package vista;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URI;
 import java.util.List;
 import model.Usuario;
 import model.Pelicula;
@@ -143,13 +144,40 @@ public class PeliculasVista extends JFrame {
     }
 
     private JPanel crearPanelPelicula(Pelicula pelicula) {
-        JPanel peliculaPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel peliculaPanel = new JPanel(new BorderLayout(15, 10));
         peliculaPanel.setBackground(new Color(250, 250, 250));
         peliculaPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(220, 220, 220)),
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)));
-        peliculaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+        peliculaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
 
+        // Panel del poster (izquierda) - usar datos de movies_database.csv
+        JLabel posterLabel = new JLabel();
+        posterLabel.setPreferredSize(new Dimension(100, 150));
+        posterLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        posterLabel.setVerticalAlignment(SwingConstants.CENTER);
+        posterLabel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+
+        String posterUrl = pelicula.getPoster();
+        if (posterUrl != null && !posterUrl.isEmpty() && !posterUrl.equals("N/A")) {
+            try {
+                ImageIcon icon = new ImageIcon(new URI(posterUrl).toURL());
+                Image img = icon.getImage().getScaledInstance(100, 150, Image.SCALE_SMOOTH);
+                posterLabel.setIcon(new ImageIcon(img));
+            } catch (Exception e) {
+                posterLabel.setText("Sin poster");
+                posterLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+                posterLabel.setForeground(Color.GRAY);
+            }
+        } else {
+            posterLabel.setText("Sin poster");
+            posterLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+            posterLabel.setForeground(Color.GRAY);
+        }
+
+        peliculaPanel.add(posterLabel, BorderLayout.WEST);
+
+        // Panel de informacion (centro) - usar datos de movies_database.csv
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBackground(new Color(250, 250, 250));
@@ -202,34 +230,21 @@ public class PeliculasVista extends JFrame {
         ratingPanel.setLayout(new BoxLayout(ratingPanel, BoxLayout.Y_AXIS));
         ratingPanel.setBackground(new Color(250, 250, 250));
 
-        JLabel instruccion = new JLabel("Tu calificacion:");
-        instruccion.setFont(new Font("Arial", Font.PLAIN, 12));
-        instruccion.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JPanel starPanel = new JPanel(new FlowLayout());
-        starPanel.setBackground(new Color(250, 250, 250));
-
-        JComboBox<Integer> ratingCombo = new JComboBox<>(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
-        ratingCombo.setSelectedIndex(7); // Default 8/10
-
         JButton calificarButton = new JButton("Calificar");
         calificarButton.setFont(new Font("Arial", Font.BOLD, 12));
-        calificarButton.setBackground(new Color(40, 167, 69));
+        calificarButton.setBackground(new Color(0, 122, 255));
         calificarButton.setForeground(Color.WHITE);
         calificarButton.setOpaque(true);
         calificarButton.setBorderPainted(false);
         calificarButton.setFocusPainted(false);
+        calificarButton.setPreferredSize(new Dimension(100, 35));
 
-        // Guardar referencias para el controlador
+        // Guardar referencia a la pelicula para el controlador
         calificarButton.putClientProperty("pelicula", pelicula);
-        calificarButton.putClientProperty("ratingCombo", ratingCombo);
 
-        starPanel.add(ratingCombo);
-        starPanel.add(calificarButton);
-
-        ratingPanel.add(instruccion);
-        ratingPanel.add(Box.createVerticalStrut(5));
-        ratingPanel.add(starPanel);
+        ratingPanel.add(Box.createVerticalGlue());
+        ratingPanel.add(calificarButton);
+        ratingPanel.add(Box.createVerticalGlue());
 
         return ratingPanel;
     }

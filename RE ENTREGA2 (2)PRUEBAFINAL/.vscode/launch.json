@@ -6,18 +6,20 @@
             "name": "Main",
             "request": "launch",
             "mainClass": "app.Main",
-            "projectName": "RE ENTREGA2 (2)PRUEBAFINAL_d7387c5c"
+            "projectName": "RE ENTREGA2 (2)PRUEBAFINAL_d7387c5c",
+            "console": "integratedTerminal"
         },
         {
             "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "app.Main",
-            "projectName": "RE ENTREGA2 (2)PRUEBAFINA;_d7387c4b"
+            "projectName": "RE ENTREGA2 (2)PRUEBAFINA;_d7387c4b",
+            "console": "integratedTerminal"
         },
         {
             "type": "java",
-            "name": "Main",
+            "name": "Main (GUI)",
             "request": "launch",
             "mainClass": "app.Main",
             "projectName": "projecto",
@@ -25,7 +27,9 @@
             "classPaths": [
                 "${workspaceFolder}/projecto/bin",
                 "${workspaceFolder}/projecto/lib/*"
-            ]
+            ],
+            "console": "integratedTerminal",
+            "vmArgs": ""
         }
     ]
 }
