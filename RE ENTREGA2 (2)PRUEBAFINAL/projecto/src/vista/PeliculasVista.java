@@ -59,8 +59,9 @@ public class PeliculasVista extends JFrame {
         JPanel topRowPanel = new JPanel(new BorderLayout());
         topRowPanel.setBackground(Color.WHITE);
 
-        // Usuario a la izquierda
-        JLabel userLabel = new JLabel(usuario.getUsername());
+        // Usuario a la izquierda - Mostrar nombre completo
+        String nombreCompleto = usuario.getNombre() + " " + usuario.getApellido();
+        JLabel userLabel = new JLabel(nombreCompleto);
         userLabel.setFont(new Font("Arial", Font.BOLD, 15));
 
         // Botón cerrar sesión a la derecha
@@ -311,14 +312,20 @@ public class PeliculasVista extends JFrame {
                 Image img = icon.getImage().getScaledInstance(60, 80, Image.SCALE_SMOOTH);
                 posterLabel.setIcon(new ImageIcon(img));
             } catch (Exception e) {
-                posterLabel.setText("X");
-                posterLabel.setFont(new Font("Arial", Font.BOLD, 20));
-                posterLabel.setForeground(Color.LIGHT_GRAY);
+                // Mostrar imagen de defecto con fondo amarillo y texto "Imagen No Disponible"
+                posterLabel.setOpaque(true);
+                posterLabel.setBackground(new Color(255, 255, 153)); // Amarillo claro
+                posterLabel.setText("<html><center>Imagen No<br>Disponible</center></html>");
+                posterLabel.setFont(new Font("Arial", Font.PLAIN, 9));
+                posterLabel.setForeground(Color.BLACK);
             }
         } else {
-            posterLabel.setText("X");
-            posterLabel.setFont(new Font("Arial", Font.BOLD, 20));
-            posterLabel.setForeground(Color.LIGHT_GRAY);
+            // Mostrar imagen de defecto con fondo amarillo y texto "Imagen No Disponible"
+            posterLabel.setOpaque(true);
+            posterLabel.setBackground(new Color(255, 255, 153)); // Amarillo claro
+            posterLabel.setText("<html><center>Imagen No<br>Disponible</center></html>");
+            posterLabel.setFont(new Font("Arial", Font.PLAIN, 9));
+            posterLabel.setForeground(Color.BLACK);
         }
         filaPanel.add(posterLabel, gbc);
 
