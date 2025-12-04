@@ -5,18 +5,18 @@ import java.sql.SQLException;
 
 import dao.Conexion;
 import db.BaseDeDatos;
-import gui.LoginGUI;
+import controlador.LoginControlador;
 
 public class Main {
 
-    private static void menuLogin(){
+    private static void menuLogin() {
         System.out.println("Seleccione una opción:");
         System.out.println("1. Login / Iniciar Sesión");
         System.out.println("2. Registrar Usuario");
         System.out.println("3. Salir");
     }
 
-    private static void menuPrincipal(){
+    private static void menuPrincipal() {
         System.out.println("Seleccione una opción:");
         System.out.println("1. Registrar Datos Personales");
         System.out.println("2. Registrar Película");
@@ -26,15 +26,16 @@ public class Main {
         System.out.println("6. Aprobar Reseña");
         System.out.println("7. Salir");
     }
-     private static boolean opcionesLogin(int op) throws Exception {
+
+    private static boolean opcionesLogin(int op) throws Exception {
         switch (op) {
             case 1:
                 return Logica.login() != null; // Retorna true si login exitoso
             case 2:
                 Logica.registrarUsuario();
-                return false; 
+                return false;
             case 3:
-                return false; 
+                return false;
             default:
                 System.out.println("Opción no válida.");
                 return false;
@@ -74,24 +75,24 @@ public class Main {
             // Inicializar base de datos
             Conexion.conectar();
             BaseDeDatos.inicializarBaseDeDatos();
-            
+
             // Verificar si se debe usar interfaz gráfica
             boolean useGUI = true; // Por defecto usar GUI
-            
+
             // Si se pasa argumento "--console", usar consola
             if (args.length > 0 && "--console".equals(args[0])) {
                 useGUI = false;
             }
-            
+
             if (useGUI) {
                 System.out.println("Iniciando interfaz gráfica...");
-                // Iniciar interfaz gráfica
-                LoginGUI.startGUI();
+                // Iniciar interfaz gráfica con el patrón MVC
+                LoginControlador.iniciarLogin();
             } else {
                 // Modo consola (código original)
                 runConsoleMode();
             }
-            
+
         } catch (SQLException e) {
             System.err.println("Error al iniciar la aplicación: La conexión a la BD falló.");
             e.printStackTrace();
@@ -102,7 +103,7 @@ public class Main {
             System.exit(1);
         }
     }
-    
+
     /**
      * Modo consola (funcionalidad original)
      */
@@ -119,6 +120,5 @@ public class Main {
             scanner.close();
         }
     }
-
 
 }

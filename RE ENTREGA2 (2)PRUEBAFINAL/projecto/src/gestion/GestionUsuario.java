@@ -1,6 +1,5 @@
 package gestion;
 
-
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -8,7 +7,7 @@ import java.util.LinkedList;
 import dao.DatosPersonalesDAO;
 import dao.UsuarioDAO;
 import model.Usuario;
-
+import enumerativo.UsuarioInvalidoException;
 
 public class GestionUsuario {
     private DatosPersonalesDAO UDJ = new daoJDBC.DatosPersonalesDAOJdbc();
@@ -52,28 +51,43 @@ public class GestionUsuario {
      * @param usuario El objeto Usuario con los datos a validar de datos personales.
      * @return El mismo objeto Usuario si es valido, o null si hay errores.
      * @throws SQLException
+     * @throws UsuarioInvalidoException si los datos del usuario son inválidos
      */
-    public void validacionDatosPersonales(Usuario usuario) throws SQLException {
+    public void validacionDatosPersonales(Usuario usuario) throws SQLException, UsuarioInvalidoException {
         // Validar unicidad de DNI
-         if (dniUnico(usuario.getDNI())) {
-            throw new IllegalArgumentException("El DNI ya existe en la base de datos.");
-            }
+        if (dniUnico(usuario.getDNI())) {
+            throw new UsuarioInvalidoException(
+                    "El DNI ya existe en la base de datos.",
+                    "DNI",
+                    String.valueOf(usuario.getDNI()));
+        }
 
         if (usuario.getNombre() == null || usuario.getNombre().isEmpty()) {
-            throw new IllegalArgumentException("El nombre no puede estar vacío.");
+            throw new UsuarioInvalidoException(
+                    "El nombre no puede estar vacío.",
+                    "nombre",
+                    usuario.getNombre());
         }
 
         if (!stringValido(usuario.getNombre())) {
-            throw new IllegalArgumentException("El nombre no debe contener números ni caracteres especiales.");
+            throw new UsuarioInvalidoException(
+                    "El nombre no debe contener números ni caracteres especiales.",
+                    "nombre",
+                    usuario.getNombre());
         }
 
-        if (usuario.getApellido() == null || usuario.getApellido().isEmpty()) { // Necesitas implementar getApellido()
-                                                                                // en Usuario
-            throw new IllegalArgumentException("El apellido no puede estar vacío.");
+        if (usuario.getApellido() == null || usuario.getApellido().isEmpty()) {
+            throw new UsuarioInvalidoException(
+                    "El apellido no puede estar vacío.",
+                    "apellido",
+                    usuario.getApellido());
         }
 
         if (!stringValido(usuario.getApellido())) {
-            throw new IllegalArgumentException("El apellido no debe contener números ni caracteres especiales.");
+            throw new UsuarioInvalidoException(
+                    "El apellido no debe contener números ni caracteres especiales.",
+                    "apellido",
+                    usuario.getApellido());
         }
 
         return;
@@ -107,18 +121,33 @@ public class GestionUsuario {
 
     }
 
-    public void ValidacionUsuario(Usuario usuario) {
+    /**
+     * Valida los datos de inicio de sesión del usuario.
+     * 
+     * @param usuario El objeto Usuario con los datos a validar
+     * @throws UsuarioInvalidoException si los datos son inválidos
+     */
+    public void ValidacionUsuario(Usuario usuario) throws UsuarioInvalidoException {
 
         if (usuario.getUsername() == null || usuario.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre de usuario no puede estar vacio.");
+            throw new UsuarioInvalidoException(
+                    "El nombre de usuario no puede estar vacio.",
+                    "username",
+                    usuario.getUsername());
         }
 
         if (usuario.getContrasenia() == null || usuario.getContrasenia().isEmpty()) {
-            throw new IllegalArgumentException("La contrasenia no puede estar vacia.");
+            throw new UsuarioInvalidoException(
+                    "La contraseña no puede estar vacia.",
+                    "password",
+                    "***");
         }
 
         if (!mailValido(usuario.getCorreo())) {
-            throw new IllegalArgumentException("El formato del mail ingresado debe ser xxx@yyy.");
+            throw new UsuarioInvalidoException(
+                    "El formato del mail ingresado debe ser xxx@yyy.",
+                    "email",
+                    usuario.getCorreo());
         }
 
         return;
