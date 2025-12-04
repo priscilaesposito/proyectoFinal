@@ -69,16 +69,20 @@ public class VentanaPrincipalControlador {
                         Logica.registrarPrimerLogin(vista.getUsuario().getID_USUARIO());
                     }
 
-                    vista.actualizarMensaje("¡Listo! Abriendo catálogo...");
+                    vista.actualizarMensaje("Preparando interfaz...");
                     
-                    // Pequeña pausa para mostrar mensaje final
-                    Timer finalizarTimer = new Timer(300, e -> {
-                        // Cerrar ventana de carga y abrir ventana de peliculas
-                        vista.dispose();
-                        PeliculasControlador.iniciarPeliculas(vista.getUsuario(), peliculasActuales, esPrimerLogin);
+                    // Crear la ventana de películas pero mantener la ventana de carga abierta
+                    SwingUtilities.invokeLater(() -> {
+                        PeliculasControlador.iniciarPeliculasConCallback(
+                            vista.getUsuario(), 
+                            peliculasActuales, 
+                            esPrimerLogin,
+                            () -> {
+                                // Este callback se ejecuta cuando la ventana de películas está lista
+                                vista.dispose();
+                            }
+                        );
                     });
-                    finalizarTimer.setRepeats(false);
-                    finalizarTimer.start();
 
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(vista,

@@ -190,10 +190,17 @@ public class PeliculasControlador {
      * Metodo estatico para iniciar la interfaz de peliculas
      */
     public static void iniciarPeliculas(Usuario usuario, List<Pelicula> peliculas, boolean esPrimerLogin) {
+        iniciarPeliculasConCallback(usuario, peliculas, esPrimerLogin, null);
+    }
+    
+    /**
+     * Metodo estatico para iniciar la interfaz de peliculas con callback
+     */
+    public static void iniciarPeliculasConCallback(Usuario usuario, List<Pelicula> peliculas, boolean esPrimerLogin, Runnable onReady) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                // Crear y mostrar la vista en el hilo de eventos de Swing
+                // Crear la vista en el hilo de eventos de Swing
                 PeliculasVista vista = new PeliculasVista(usuario, peliculas, esPrimerLogin);
                 PeliculasControlador controlador = new PeliculasControlador(vista);
                 
@@ -203,6 +210,14 @@ public class PeliculasControlador {
                 // Configurar eventos después de que todo esté renderizado
                 SwingUtilities.invokeLater(() -> {
                     controlador.configurarEventosCalificacion();
+                    
+                    // Ejecutar callback cuando todo esté listo
+                    if (onReady != null) {
+                        // Pequeño delay adicional para asegurar que la ventana esté completamente renderizada
+                        Timer readyTimer = new Timer(200, e -> onReady.run());
+                        readyTimer.setRepeats(false);
+                        readyTimer.start();
+                    }
                 });
             }
         });

@@ -71,7 +71,8 @@ public class LoginControlador {
             Usuario usuario = Logica.login(email, password);
 
             if (usuario != null) {
-                mostrarMensajeExito("¡Bienvenido/a, " + usuario.getUsername() + "!");
+                String nombreCompleto = usuario.getNombre() + " " + usuario.getApellido();
+                mostrarMensajeExito("¡Bienvenido/a, " + nombreCompleto + "!");
                 abrirVentanaPrincipal(usuario);
                 vista.dispose();
             } else {

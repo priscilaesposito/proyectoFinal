@@ -378,7 +378,8 @@ public class PeliculasVista extends JFrame {
     }
 
     private void establecerPropiedadesVentana() {
-        setTitle("Plataforma de Streaming - " + usuario.getUsername());
+        String nombreCompleto = usuario.getNombre() + " " + usuario.getApellido();
+        setTitle("Plataforma de Streaming - " + nombreCompleto);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 800);
         setLocationRelativeTo(null);
