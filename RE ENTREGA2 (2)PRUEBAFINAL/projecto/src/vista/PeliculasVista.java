@@ -289,7 +289,7 @@ public class PeliculasVista extends JFrame {
         JPanel filaPanel = new JPanel(new GridBagLayout());
         filaPanel.setBackground(Color.WHITE);
         filaPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)));
-        filaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
+        filaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
@@ -303,7 +303,6 @@ public class PeliculasVista extends JFrame {
         posterLabel.setPreferredSize(new Dimension(60, 80));
         posterLabel.setHorizontalAlignment(SwingConstants.CENTER);
         posterLabel.setVerticalAlignment(SwingConstants.CENTER);
-        posterLabel.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
 
         String posterUrl = pelicula.getPoster();
         if (posterUrl != null && !posterUrl.isEmpty() && !posterUrl.equals("N/A")) {
@@ -341,8 +340,15 @@ public class PeliculasVista extends JFrame {
         // Resumen
         gbc.gridx = 3;
         gbc.weightx = 0.42;
-        JLabel resumenLabel = new JLabel("Texto del resumen");
+        String resumen = pelicula.getMetadatos().getSipnosis();
+        if (resumen == null || resumen.isEmpty()) {
+            resumen = "No se encuentra disponible";
+        }
+        // Usar HTML para permitir múltiples líneas
+        String resumenHtml = "<html><div style='width:400px;'>" + resumen + "</div></html>";
+        JLabel resumenLabel = new JLabel(resumenHtml);
         resumenLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        resumenLabel.setVerticalAlignment(SwingConstants.TOP);
         filaPanel.add(resumenLabel, gbc);
 
         // Botón Calificar
