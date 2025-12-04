@@ -173,7 +173,7 @@ public class PeliculasVista extends JFrame {
         JPanel headerPanel = new JPanel(new GridBagLayout());
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(200, 200, 200)));
-        headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -187,19 +187,69 @@ public class PeliculasVista extends JFrame {
         posterLabel.setFont(new Font("Arial", Font.BOLD, 13));
         headerPanel.add(posterLabel, gbc);
 
-        // Título
+        // Título con botones de ordenamiento
         gbc.gridx = 1;
         gbc.weightx = 0.15;
+        JPanel tituloPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        tituloPanel.setBackground(Color.WHITE);
+        
         JLabel tituloLabel = new JLabel("Título");
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 13));
-        headerPanel.add(tituloLabel, gbc);
+        tituloPanel.add(tituloLabel);
+        
+        JPanel botonesPanel = new JPanel();
+        botonesPanel.setLayout(new BoxLayout(botonesPanel, BoxLayout.Y_AXIS));
+        botonesPanel.setBackground(Color.WHITE);
+        
+        JButton btnAscTitulo = new JButton("▲");
+        btnAscTitulo.setFont(new Font("Arial", Font.PLAIN, 8));
+        btnAscTitulo.setMargin(new Insets(0, 2, 0, 2));
+        btnAscTitulo.setPreferredSize(new Dimension(16, 12));
+        btnAscTitulo.addActionListener(e -> ordenarPorTitulo(true));
+        
+        JButton btnDescTitulo = new JButton("▼");
+        btnDescTitulo.setFont(new Font("Arial", Font.PLAIN, 8));
+        btnDescTitulo.setMargin(new Insets(0, 2, 0, 2));
+        btnDescTitulo.setPreferredSize(new Dimension(16, 12));
+        btnDescTitulo.addActionListener(e -> ordenarPorTitulo(false));
+        
+        botonesPanel.add(btnAscTitulo);
+        botonesPanel.add(btnDescTitulo);
+        tituloPanel.add(botonesPanel);
+        
+        headerPanel.add(tituloPanel, gbc);
 
-        // Género
+        // Género con botones de ordenamiento
         gbc.gridx = 2;
         gbc.weightx = 0.15;
+        JPanel generoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        generoPanel.setBackground(Color.WHITE);
+        
         JLabel generoLabel = new JLabel("Genero");
         generoLabel.setFont(new Font("Arial", Font.BOLD, 13));
-        headerPanel.add(generoLabel, gbc);
+        generoPanel.add(generoLabel);
+        
+        JPanel botonesGeneroPanel = new JPanel();
+        botonesGeneroPanel.setLayout(new BoxLayout(botonesGeneroPanel, BoxLayout.Y_AXIS));
+        botonesGeneroPanel.setBackground(Color.WHITE);
+        
+        JButton btnAscGenero = new JButton("▲");
+        btnAscGenero.setFont(new Font("Arial", Font.PLAIN, 8));
+        btnAscGenero.setMargin(new Insets(0, 2, 0, 2));
+        btnAscGenero.setPreferredSize(new Dimension(16, 12));
+        btnAscGenero.addActionListener(e -> ordenarPorGenero(true));
+        
+        JButton btnDescGenero = new JButton("▼");
+        btnDescGenero.setFont(new Font("Arial", Font.PLAIN, 8));
+        btnDescGenero.setMargin(new Insets(0, 2, 0, 2));
+        btnDescGenero.setPreferredSize(new Dimension(16, 12));
+        btnDescGenero.addActionListener(e -> ordenarPorGenero(false));
+        
+        botonesGeneroPanel.add(btnAscGenero);
+        botonesGeneroPanel.add(btnDescGenero);
+        generoPanel.add(botonesGeneroPanel);
+        
+        headerPanel.add(generoPanel, gbc);
 
         // Resumen
         gbc.gridx = 3;
@@ -215,6 +265,24 @@ public class PeliculasVista extends JFrame {
         headerPanel.add(accionLabel, gbc);
 
         return headerPanel;
+    }
+    
+    private void ordenarPorTitulo(boolean ascendente) {
+        peliculasActuales.sort((p1, p2) -> {
+            String t1 = p1.getMetadatos().getTitulo();
+            String t2 = p2.getMetadatos().getTitulo();
+            return ascendente ? t1.compareToIgnoreCase(t2) : t2.compareToIgnoreCase(t1);
+        });
+        mostrarPeliculas();
+    }
+    
+    private void ordenarPorGenero(boolean ascendente) {
+        peliculasActuales.sort((p1, p2) -> {
+            String g1 = p1.getGeneros().isEmpty() ? "" : p1.getGeneros().get(0);
+            String g2 = p2.getGeneros().isEmpty() ? "" : p2.getGeneros().get(0);
+            return ascendente ? g1.compareToIgnoreCase(g2) : g2.compareToIgnoreCase(g1);
+        });
+        mostrarPeliculas();
     }
 
     private JPanel crearFilaPelicula(Pelicula pelicula) {
