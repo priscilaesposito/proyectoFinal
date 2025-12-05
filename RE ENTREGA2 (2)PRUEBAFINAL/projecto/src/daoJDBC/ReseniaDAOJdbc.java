@@ -31,6 +31,9 @@ public class ReseniaDAOJdbc implements ReseniaDAO {
             pstmt.setInt(6, resenia.getID_Pelicula());
 
             pstmt.executeUpdate();
+            
+            // Actualizar el rating promedio de la película
+            actualizarRatingPromedio(conn, resenia.getID_Pelicula());
 
         }
     }
@@ -75,7 +78,46 @@ public class ReseniaDAOJdbc implements ReseniaDAO {
 
             pstmt.setInt(1, idResenia);
             pstmt.executeUpdate();
+            
+            // Obtener el ID de la película para actualizar su rating
+            String sqlPelicula = "SELECT ID_PELICULA FROM RESENIA WHERE ID = ?";
+            try (PreparedStatement pstmtPelicula = conn.prepareStatement(sqlPelicula)) {
+                pstmtPelicula.setInt(1, idResenia);
+                try (ResultSet rs = pstmtPelicula.executeQuery()) {
+                    if (rs.next()) {
+                        int idPelicula = rs.getInt("ID_PELICULA");
+                        actualizarRatingPromedio(conn, idPelicula);
+                    }
+                }
+            }
 
+        }
+    }
+    
+    /**
+     * Actualiza el rating promedio de una película basándose en las reseñas aprobadas
+     */
+    private void actualizarRatingPromedio(Connection conn, int idPelicula) throws SQLException {
+        String sqlAvg = "SELECT AVG(CALIFICACION) as PROMEDIO FROM RESENIA WHERE ID_PELICULA = ? AND APROBADO = 1";
+        String sqlUpdate = "UPDATE PELICULA SET RATING_PROMEDIO = ? WHERE ID = ?";
+        
+        try (PreparedStatement pstmtAvg = conn.prepareStatement(sqlAvg)) {
+            pstmtAvg.setInt(1, idPelicula);
+            
+            try (ResultSet rs = pstmtAvg.executeQuery()) {
+                if (rs.next()) {
+                    float promedio = rs.getFloat("PROMEDIO");
+                    
+                    // Actualizar el rating en la tabla PELICULA
+                    try (PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
+                        pstmtUpdate.setFloat(1, promedio);
+                        pstmtUpdate.setInt(2, idPelicula);
+                        pstmtUpdate.executeUpdate();
+                        
+                        System.out.println("✅ Rating promedio actualizado para película ID " + idPelicula + ": " + promedio);
+                    }
+                }
+            }
         }
     }
 
