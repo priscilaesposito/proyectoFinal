@@ -32,10 +32,18 @@ public class BaseDeDatos {
                     "DIRECTOR TEXT (100) NOT NULL, " +
                     "DURACION REAL NOT NULL, " +
                     "RATING_PROMEDIO REAL, " +
+                    "CANTIDAD_VOTOS INTEGER DEFAULT 0, " +
                     "ANIO INTEGER, " +
                     "POSTER TEXT (500)" +
                     ");";
             stmt.executeUpdate(sqlPelicula);
+            
+            // Agregar columna CANTIDAD_VOTOS si no existe (para bases de datos existentes)
+            try {
+                stmt.executeUpdate("ALTER TABLE PELICULA ADD COLUMN CANTIDAD_VOTOS INTEGER DEFAULT 0");
+            } catch (SQLException e) {
+                // Columna ya existe, ignorar
+            }
 
             String sqlUsuario = "CREATE TABLE IF NOT EXISTS USUARIO (" +
                     "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +

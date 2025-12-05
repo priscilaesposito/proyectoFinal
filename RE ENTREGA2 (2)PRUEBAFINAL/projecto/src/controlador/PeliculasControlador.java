@@ -65,10 +65,13 @@ public class PeliculasControlador {
                         button.removeActionListener(al);
                     }
                     
+                    // Crear referencia final al botón para el ActionListener
+                    final JButton finalButton = button;
+                    
                     button.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            Pelicula pelicula = (Pelicula) button.getClientProperty("pelicula");
+                            Pelicula pelicula = (Pelicula) finalButton.getClientProperty("pelicula");
                             if (pelicula != null) {
                                 System.out.println("Abriendo ventana de calificación para: " + pelicula.getMetadatos().getTitulo());
                                 // Abrir ventana emergente de calificación
@@ -79,10 +82,16 @@ public class PeliculasControlador {
                                 );
                                 
                                 if (calificado) {
-                                    // Deshabilitar el botón y cambiar texto
-                                    button.setEnabled(false);
-                                    button.setText("Calificada");
-                                    button.setBackground(Color.GRAY);
+                                    // Actualizar el botón en el EDT
+                                    SwingUtilities.invokeLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            finalButton.setEnabled(false);
+                                            finalButton.setText("Calificada");
+                                            finalButton.setBackground(Color.GRAY);
+                                            finalButton.repaint();
+                                        }
+                                    });
                                 }
                             } else {
                                 System.err.println("ERROR: No se encontró la película en el botón");
@@ -93,7 +102,7 @@ public class PeliculasControlador {
             } else if (comp instanceof Container) {
                 buscarYConfigurarBotonesEnContenedor((Container) comp);
             }
-        };
+        }
     }
 
     private void buscarPelicula() {

@@ -4,6 +4,7 @@ public class Pelicula extends Titulo {
     private Video video;
     private int ID;
     private float ratingPromedio;
+    private int cantidadVotos;
     private int anio;
     private String poster;
 
@@ -34,6 +35,14 @@ public class Pelicula extends Titulo {
 
     public void setRatingPromedio(float ratingPromedio) {
         this.ratingPromedio = ratingPromedio;
+    }
+
+    public int getCantidadVotos() {
+        return cantidadVotos;
+    }
+
+    public void setCantidadVotos(int cantidadVotos) {
+        this.cantidadVotos = cantidadVotos;
     }
 
     public int getAnio() {

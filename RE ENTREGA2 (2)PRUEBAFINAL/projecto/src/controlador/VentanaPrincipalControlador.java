@@ -27,10 +27,13 @@ public class VentanaPrincipalControlador {
             @Override
             public void run() {
                 try {
+                    // SIEMPRE cargar desde CSV a la BD (en todos los accesos)
+                    utilidades.CargadorCSV.cargarPeliculasDesdeCSV();
+                    
                     // Verificar si es primer login
                     esPrimerLogin = Logica.esPrimerLogin(vista.getUsuario().getID_USUARIO());
 
-                    // Cargar peliculas segun sea primer login o no
+                    // Cargar peliculas desde BD segun sea primer login o no
                     List<Pelicula> peliculas;
                     if (esPrimerLogin) {
                         peliculas = Logica.obtenerTop10Peliculas();

@@ -95,26 +95,51 @@ public class ReseniaDAOJdbc implements ReseniaDAO {
     }
     
     /**
-     * Actualiza el rating promedio de una película basándose en las reseñas aprobadas
+     * Actualiza el rating promedio de una película usando cálculo incremental.
+     * Fórmula: nuevo_promedio = (promedio_actual * cantidad_votos + nueva_calificacion) / (cantidad_votos + 1)
      */
     private void actualizarRatingPromedio(Connection conn, int idPelicula) throws SQLException {
-        String sqlAvg = "SELECT AVG(CALIFICACION) as PROMEDIO FROM RESENIA WHERE ID_PELICULA = ? AND APROBADO = 1";
-        String sqlUpdate = "UPDATE PELICULA SET RATING_PROMEDIO = ? WHERE ID = ?";
+        // Obtener la nueva calificación que se acaba de agregar
+        String sqlUltimaCalif = "SELECT CALIFICACION FROM RESENIA WHERE ID_PELICULA = ? AND APROBADO = 1 ORDER BY ID DESC LIMIT 1";
         
-        try (PreparedStatement pstmtAvg = conn.prepareStatement(sqlAvg)) {
-            pstmtAvg.setInt(1, idPelicula);
+        // Obtener valores actuales de la película
+        String sqlPelicula = "SELECT RATING_PROMEDIO, CANTIDAD_VOTOS FROM PELICULA WHERE ID = ?";
+        
+        // Actualizar película
+        String sqlUpdate = "UPDATE PELICULA SET RATING_PROMEDIO = ?, CANTIDAD_VOTOS = ? WHERE ID = ?";
+        
+        try (PreparedStatement pstmtCalif = conn.prepareStatement(sqlUltimaCalif);
+             PreparedStatement pstmtPelicula = conn.prepareStatement(sqlPelicula)) {
             
-            try (ResultSet rs = pstmtAvg.executeQuery()) {
-                if (rs.next()) {
-                    float promedio = rs.getFloat("PROMEDIO");
+            // Obtener nueva calificación
+            pstmtCalif.setInt(1, idPelicula);
+            float nuevaCalificacion = 0;
+            try (ResultSet rsCalif = pstmtCalif.executeQuery()) {
+                if (rsCalif.next()) {
+                    nuevaCalificacion = rsCalif.getFloat("CALIFICACION");
+                }
+            }
+            
+            // Obtener valores actuales
+            pstmtPelicula.setInt(1, idPelicula);
+            try (ResultSet rsPelicula = pstmtPelicula.executeQuery()) {
+                if (rsPelicula.next()) {
+                    float promedioActual = rsPelicula.getFloat("RATING_PROMEDIO");
+                    int cantidadVotos = rsPelicula.getInt("CANTIDAD_VOTOS");
                     
-                    // Actualizar el rating en la tabla PELICULA
+                    // Cálculo incremental del promedio
+                    float nuevoPromedio = (promedioActual * cantidadVotos + nuevaCalificacion) / (cantidadVotos + 1);
+                    int nuevaCantidadVotos = cantidadVotos + 1;
+                    
+                    // Actualizar en la base de datos
                     try (PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
-                        pstmtUpdate.setFloat(1, promedio);
-                        pstmtUpdate.setInt(2, idPelicula);
+                        pstmtUpdate.setFloat(1, nuevoPromedio);
+                        pstmtUpdate.setInt(2, nuevaCantidadVotos);
+                        pstmtUpdate.setInt(3, idPelicula);
                         pstmtUpdate.executeUpdate();
                         
-                        System.out.println("✅ Rating promedio actualizado para película ID " + idPelicula + ": " + promedio);
+                        System.out.println("✅ Rating actualizado para película ID " + idPelicula + 
+                                         ": " + nuevoPromedio + " (" + nuevaCantidadVotos + " votos)");
                     }
                 }
             }

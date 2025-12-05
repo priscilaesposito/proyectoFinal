@@ -89,6 +89,7 @@ public class PeliculaDAOjdbc implements PeliculaDAO {
         p.getMetadatos().setDirector(rs.getString("DIRECTOR"));
         p.getVideo().setDuracion(rs.getDouble("DURACION"));
         p.setRatingPromedio(rs.getFloat("RATING_PROMEDIO"));
+        p.setCantidadVotos(rs.getInt("CANTIDAD_VOTOS"));
         p.setAnio(rs.getInt("ANIO"));
         p.setPoster(rs.getString("POSTER"));
         

@@ -1,6 +1,7 @@
 package app;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.sql.SQLException;
 
@@ -726,22 +727,49 @@ public class Logica {
     }
 
     /**
-     * Obtener top 10 peliculas mejor rankeadas
+     * Obtener top 10 peliculas mejor rankeadas.
+     * Combina películas de BD (con ratings actualizados) y CSV (sin duplicados).
      * 
      * @throws PeliculaNoEncontradaException si no hay peliculas disponibles
      */
     public static List<Pelicula> obtenerTop10Peliculas() throws Exception {
         try {
-            List<Pelicula> peliculas = peliculaDAO.obtenerTop10PorRating();
+            // 1. Obtener todas las películas de la BD (con ratings actualizados)
+            List<Pelicula> peliculasBD = peliculaDAO.listarTodos();
+            
+            // 2. Cargar películas del CSV
+            List<Pelicula> peliculasCSV = utilidades.CargadorCSV.cargarPeliculasDesdeCSV();
+            
+            // 3. Crear conjunto de títulos+años de BD para evitar duplicados
+            java.util.Set<String> peliculasEnBD = new java.util.HashSet<>();
+            for (Pelicula p : peliculasBD) {
+                String clave = p.getMetadatos().getTitulo() + "_" + p.getAnio();
+                peliculasEnBD.add(clave);
+            }
+            
+            // 4. Combinar: agregar películas del CSV que NO están en BD
+            List<Pelicula> todasPeliculas = new ArrayList<>(peliculasBD);
+            for (Pelicula p : peliculasCSV) {
+                String clave = p.getMetadatos().getTitulo() + "_" + p.getAnio();
+                if (!peliculasEnBD.contains(clave)) {
+                    todasPeliculas.add(p);
+                }
+            }
+            
+            // 5. Ordenar por rating descendente
+            todasPeliculas.sort((p1, p2) -> Float.compare(p2.getRatingPromedio(), p1.getRatingPromedio()));
+            
+            // 6. Tomar las 10 mejores
+            List<Pelicula> top10 = todasPeliculas.subList(0, Math.min(10, todasPeliculas.size()));
 
-            if (peliculas == null || peliculas.isEmpty()) {
+            if (top10.isEmpty()) {
                 throw new PeliculaNoEncontradaException(
                         "No hay peliculas disponibles en el catalogo",
                         "Top 10",
                         "Ninguna");
             }
 
-            return peliculas;
+            return top10;
         } catch (PeliculaNoEncontradaException e) {
             throw e;
         } catch (SQLException e) {
