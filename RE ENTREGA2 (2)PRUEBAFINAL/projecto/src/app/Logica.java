@@ -410,51 +410,7 @@ public class Logica {
         nuevoUsuario.setContrasenia(scanner.nextLine());
     }
 
-    /**
-     * Funcion para realizar el login de un usuario (consola)
-     * Solicita email y password, valida las credenciales y proporciona feedback
-     */
-    public static Usuario login() throws Exception {
-        System.out.println("\n=== LOGIN - PLATAFORMA DE STREAMING ===");
-
-        try {
-            // Solicitar credenciales
-            Usuario usuario = new Usuario();
-            System.out.println("Ingrese Correo:");
-            usuario.setCorreo(scanner.nextLine());
-            System.out.println("Ingrese Contrasenia:");
-            usuario.setContrasenia(scanner.nextLine());
-
-            // Validacion
-            if (usuario.getCorreo().isEmpty() || usuario.getContrasenia().isEmpty()) {
-                System.err.println("\n[ERROR] Completar todos los campos.");
-                return null;
-            }
-
-            // Intentar validar usuario
-            Usuario usuarioValidado = usuarioDAO.validar(usuario.getCorreo(), usuario.getContrasenia());
-
-            if (usuarioValidado != null) {
-                System.out.println("\n¡Bienvenido/a, " + usuarioValidado.getUsername() + "!");
-                return usuarioValidado;
-            } else {
-                System.err.println("\n[ERROR] E-mail o Password incorrectos.");
-                return null;
-            }
-
-        } catch (SQLException e) {
-            System.err.println("\n[ERROR DE CONEXION] No se pudo verificar las credenciales: " + e.getMessage());
-            return null;
-        } catch (Exception e) {
-            System.err.println("\n[ERROR] Error inesperado durante el login: " + e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Funcion para realizar el login de un usuario (interfaz grafica)
-     * Recibe email y password como parametros
-     */
+    //LOGIN
     public static Usuario login(String email, String password) throws Exception {
         try {
             // Validaciones basicas
@@ -475,9 +431,6 @@ public class Logica {
         }
     }
 
-    /**
-     * Verificar si un nombre de usuario ya existe
-     */
     public static boolean existeUsuario(String username) throws Exception {
         try {
             Usuario u = usuarioDAO.buscar(username);
@@ -487,9 +440,7 @@ public class Logica {
         }
     }
 
-    /**
-     * Verificar si un email ya existe
-     */
+   
     public static boolean existeEmail(String email) throws Exception {
         try {
             return usuarioDAO.existeEmail(email);
@@ -498,9 +449,6 @@ public class Logica {
         }
     }
 
-    /**
-     * Verificar si un DNI ya existe
-     */
     public static boolean existeDNI(String dni) throws Exception {
         try {
             int dniInt = Integer.parseInt(dni);
@@ -512,9 +460,7 @@ public class Logica {
         }
     }
 
-    /**
-     * Registrar un nuevo usuario con todos sus datos
-     */
+
     public static boolean registrarUsuario(String nombre, String apellido, String dni,
             int edad, String direccion, String telefono,
             String username, String email, String password) throws Exception {
@@ -562,12 +508,7 @@ public class Logica {
         }
     }
 
-    /**
-     * Buscar pelicula en OMDb por titulo
-     * 
-     * @throws PeliculaNoEncontradaException si no se encuentra la pelicula
-     * @throws java.io.IOException si hay problemas de red
-     */
+   
     public static JSONObject buscarPeliculaOMDb(String titulo) throws Exception {
         try {
             JSONObject resultado = ConsultaPeliculasOMDb.buscarPelicula(titulo);
@@ -591,16 +532,10 @@ public class Logica {
         }
     }
 
-    /**
-     * Buscar multiples peliculas en OMDb
-     */
     public static JSONObject buscarVariasPeliculasOMDb(String searchTerm) throws Exception {
         return ConsultaPeliculasOMDb.buscarVariasPeliculas(searchTerm);
     }
 
-    /**
-     * Buscar pelicula en OMDb y guardarla en la base de datos
-     */
     public static boolean buscarYGuardarPeliculaOMDb(String titulo) throws Exception {
         try {
             JSONObject datosOMDb = ConsultaPeliculasOMDb.buscarPelicula(titulo);
@@ -675,10 +610,6 @@ public class Logica {
         }
     }
 
-    /**
-     * Listar peliculas desde OMDb por termino de busqueda
-     * Retorna un array de peliculas encontradas
-     */
     public static JSONArray listarPeliculasOMDb(String searchTerm) throws Exception {
         JSONObject resultado = ConsultaPeliculasOMDb.buscarVariasPeliculas(searchTerm);
 
@@ -689,9 +620,6 @@ public class Logica {
         return new JSONArray(); // Retorna array vacio si no hay resultados
     }
 
-    /**
-     * Verificar si es el primer login del usuario
-     */
     public static boolean esPrimerLogin(int idUsuario) throws Exception {
         try (java.sql.Connection conn = db.BaseDeDatos.conectar();
                 java.sql.PreparedStatement pstmt = conn.prepareStatement(
@@ -709,9 +637,6 @@ public class Logica {
         }
     }
 
-    /**
-     * Registrar que el usuario ya hizo su primer login
-     */
     public static void registrarPrimerLogin(int idUsuario) throws Exception {
         try (java.sql.Connection conn = db.BaseDeDatos.conectar();
                 java.sql.PreparedStatement pstmt = conn.prepareStatement(
@@ -726,12 +651,6 @@ public class Logica {
         }
     }
 
-    /**
-     * Obtener top 10 peliculas mejor rankeadas.
-     * Combina películas de BD (con ratings actualizados) y CSV (sin duplicados).
-     * 
-     * @throws PeliculaNoEncontradaException si no hay peliculas disponibles
-     */
     public static List<Pelicula> obtenerTop10Peliculas() throws Exception {
         try {
             // 1. Obtener todas las películas de la BD (con ratings actualizados)
@@ -777,11 +696,6 @@ public class Logica {
         }
     }
 
-    /**
-     * Obtener 10 peliculas random que el usuario no ha calificado
-     * 
-     * @throws PeliculaNoEncontradaException si no hay peliculas disponibles
-     */
     public static List<Pelicula> obtener10PeliculasRandom(int idUsuario) throws Exception {
         try {
             List<Pelicula> peliculas = peliculaDAO.obtener10RandomNoCalificadas(idUsuario);
@@ -801,12 +715,6 @@ public class Logica {
         }
     }
 
-    /**
-     * Guardar calificacion de pelicula
-     * 
-     * @throws ReseniaInvalidaException si la calificacion o comentario son
-     *                                  invalidos
-     */
     public static boolean calificarPelicula(int idUsuario, int idPelicula, int calificacion, String comentario)
             throws Exception {
         try {

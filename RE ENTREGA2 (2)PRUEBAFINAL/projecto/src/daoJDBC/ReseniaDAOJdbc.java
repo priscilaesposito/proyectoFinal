@@ -94,10 +94,6 @@ public class ReseniaDAOJdbc implements ReseniaDAO {
         }
     }
     
-    /**
-     * Actualiza el rating promedio de una película usando cálculo incremental.
-     * Fórmula: nuevo_promedio = (promedio_actual * cantidad_votos + nueva_calificacion) / (cantidad_votos + 1)
-     */
     private void actualizarRatingPromedio(Connection conn, int idPelicula) throws SQLException {
         // Obtener la nueva calificación que se acaba de agregar
         String sqlUltimaCalif = "SELECT CALIFICACION FROM RESENIA WHERE ID_PELICULA = ? AND APROBADO = 1 ORDER BY ID DESC LIMIT 1";

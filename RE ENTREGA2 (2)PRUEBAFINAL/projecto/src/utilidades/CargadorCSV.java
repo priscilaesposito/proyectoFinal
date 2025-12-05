@@ -17,12 +17,6 @@ public class CargadorCSV {
     private static final String CSV_PATH = System.getProperty("user.home") + 
         "/PriEsposito/proyectoFinal/RE ENTREGA2 (2)PRUEBAFINAL/projecto/movies_database.csv";
     
-    /**
-     * Carga peliculas desde movies_database.csv.
-     * - Importa una por una guardando en BD
-     * - Mantiene objetos en memoria
-     * - Retorna lista ordenada por rating_promedio descendente
-     */
     public static List<Pelicula> cargarPeliculasDesdeCSV() {
         System.out.println("Cargando peliculas desde movies_database.csv...");
         
@@ -143,9 +137,6 @@ public class CargadorCSV {
         return partes;
     }
     
-    /**
-     * Extrae el año de una fecha en formato YYYY-MM-DD
-     */
     private static int extraerAnio(String fecha) {
         try {
             if (fecha != null && fecha.length() >= 4) {

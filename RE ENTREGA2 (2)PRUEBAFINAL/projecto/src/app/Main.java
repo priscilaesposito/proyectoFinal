@@ -9,89 +9,15 @@ import controlador.LoginControlador;
 
 public class Main {
 
-    private static void menuLogin() {
-        System.out.println("Seleccione una opcion:");
-        System.out.println("1. Login / Iniciar Sesion");
-        System.out.println("2. Registrar Usuario");
-        System.out.println("3. Salir");
-    }
-
-    private static void menuPrincipal() {
-        System.out.println("Seleccione una opcion:");
-        System.out.println("1. Registrar Datos Personales");
-        System.out.println("2. Registrar Pelicula");
-        System.out.println("3. Listar Usuarios");
-        System.out.println("4. Listar Peliculas");
-        System.out.println("5. Registrar Resenia");
-        System.out.println("6. Aprobar Resenia");
-        System.out.println("7. Salir");
-    }
-
-    private static boolean opcionesLogin(int op) throws Exception {
-        switch (op) {
-            case 1:
-                return Logica.login() != null; // Retorna true si login exitoso
-            case 2:
-                Logica.registrarUsuario();
-                return false;
-            case 3:
-                return false;
-            default:
-                System.out.println("Opcion no valida.");
-                return false;
-        }
-    }
-
-    private static void opcionesPrincipal(int op) throws Exception {
-        switch (op) {
-            case 1:
-                Logica.registrarDatosPersonales();
-                break;
-            case 2:
-                Logica.registrarPelicula();
-                break;
-            case 3:
-                Logica.listarUsuarios();
-                break;
-            case 4:
-                Logica.listarPeliculas();
-                break;
-            case 5:
-                Logica.registrarResenia();
-                break;
-            case 6:
-                Logica.aprobarResenia();
-                break;
-            case 7:
-                break; // Cerrar sesion
-            default:
-                System.out.println("Opcion no valida.");
-                break;
-        }
-    }
-
     public static void main(String[] args) throws Exception {
         try {
             // Inicializar base de datos
             Conexion.conectar();
             BaseDeDatos.inicializarBaseDeDatos();
 
-            // Verificar si se debe usar interfaz grafica
-            boolean useGUI = true; // Por defecto usar GUI
-
-            // Si se pasa argumento "--console", usar consola
-            if (args.length > 0 && "--console".equals(args[0])) {
-                useGUI = false;
-            }
-
-            if (useGUI) {
-                System.out.println("Iniciando interfaz grafica...");
-                // Iniciar interfaz grafica con el patron MVC
-                LoginControlador.iniciarLogin();
-            } else {
-                // Modo consola (codigo original)
-                runConsoleMode();
-            }
+            System.out.println("Iniciando interfaz grafica...");
+            // Iniciar interfaz grafica con el patron MVC
+            LoginControlador.iniciarLogin();
 
         } catch (SQLException e) {
             System.err.println("Error al iniciar la aplicacion: La conexion a la BD fallo.");
@@ -101,23 +27,6 @@ public class Main {
             System.err.println("Error inesperado: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
-        }
-    }
-
-    /**
-     * Modo consola (funcionalidad original)
-     */
-    private static void runConsoleMode() throws Exception {
-        Scanner scanner = new Scanner(System.in);
-        try {
-            System.out.println("=== MODO CONSOLA ===");
-            menuLogin();
-            int op = scanner.nextInt();
-            scanner.nextLine(); // Consumir nueva linea
-            opcionesLogin(op);
-        } finally {
-            Conexion.desconectar();
-            scanner.close();
         }
     }
 
