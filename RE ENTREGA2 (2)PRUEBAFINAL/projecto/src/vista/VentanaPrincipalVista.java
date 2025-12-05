@@ -24,21 +24,28 @@ public class VentanaPrincipalVista extends JFrame {
     }
 
     private void inicializarComponentes() {
+        JPanel containerPanel = new JPanel(new BorderLayout());
+        containerPanel.setBackground(Color.WHITE);
+
+        // Barra superior con botones de control
+        JPanel topBar = crearBarraSuperior();
+        containerPanel.add(topBar, BorderLayout.NORTH);
+
         mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(20, 20, 20, 20);
+        gbc.insets = new Insets(10, 20, 0, 20);
 
-        // Icono de carga
-        JLabel spinnerLabel = new JLabel("🎬");
-        spinnerLabel.setFont(new Font("Arial", Font.PLAIN, 64));
+        // Icono de carga - reloj de arena
+        JLabel spinnerLabel = new JLabel("⏳");
+        spinnerLabel.setFont(new Font("Arial", Font.PLAIN, 40));
         mainPanel.add(spinnerLabel, gbc);
 
         gbc.gridy = 1;
-        loadingLabel = new JLabel("Cargando contenido...", SwingConstants.CENTER);
+        loadingLabel = new JLabel("Cargando películas", SwingConstants.CENTER);
         loadingLabel.setFont(new Font("Arial", Font.BOLD, 18));
         loadingLabel.setForeground(new Color(0, 122, 255));
         mainPanel.add(loadingLabel, gbc);
@@ -61,29 +68,69 @@ public class VentanaPrincipalVista extends JFrame {
         progressBar.setForeground(new Color(0, 122, 255));
         mainPanel.add(progressBar, gbc);
 
-        add(mainPanel);
+        containerPanel.add(mainPanel, BorderLayout.CENTER);
+        add(containerPanel);
+    }
+
+    private JPanel crearBarraSuperior() {
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(Color.WHITE);
+        topBar.setPreferredSize(new Dimension(0, 40));
+        topBar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)));
+
+        JLabel titleLabel = new JLabel("Cargando");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        topBar.add(titleLabel, BorderLayout.WEST);
+
+        JPanel controlButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        controlButtonsPanel.setBackground(Color.WHITE);
+
+        JButton minimizeButton = crearBotonControlVentana(new Color(255, 189, 68), "−");
+        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
+
+        JButton maximizeButton = crearBotonControlVentana(new Color(39, 201, 63), "+");
+        maximizeButton.addActionListener(e -> {
+            if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                setExtendedState(JFrame.NORMAL);
+            } else {
+                setExtendedState(JFrame.MAXIMIZED_BOTH);
+            }
+        });
+
+        JButton closeButton = crearBotonControlVentana(new Color(255, 95, 86), "×");
+        closeButton.addActionListener(e -> System.exit(0));
+
+        controlButtonsPanel.add(minimizeButton);
+        controlButtonsPanel.add(maximizeButton);
+        controlButtonsPanel.add(closeButton);
+
+        topBar.add(controlButtonsPanel, BorderLayout.EAST);
+
+        return topBar;
+    }
+
+    private JButton crearBotonControlVentana(Color color, String symbol) {
+        JButton button = new JButton(symbol);
+        button.setPreferredSize(new Dimension(12, 12));
+        button.setBackground(color);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
+        button.setFont(new Font("Arial", Font.BOLD, 8));
+        button.setForeground(Color.WHITE);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        return button;
     }
 
     /**
      * Inicia la animacion del texto de carga
+     * Deshabilitada - texto fijo
      */
     private void iniciarAnimacion() {
-        final String[] mensajes = {
-                "Cargando contenido...",
-                "Preparando películas...",
-                "Procesando datos...",
-                "Casi listo..."
-        };
-        final int[] indice = { 0 };
-
-        animacionTimer = new Timer(1000, e -> {
-            // Solo cambiar automáticamente si no se ha establecido un mensaje específico
-            if (loadingLabel.getText().equals(mensajes[(indice[0] - 1 + mensajes.length) % mensajes.length])) {
-                loadingLabel.setText(mensajes[indice[0]]);
-                indice[0] = (indice[0] + 1) % mensajes.length;
-            }
-        });
-        animacionTimer.start();
+        // Animación deshabilitada - el texto permanece fijo como "Cargando películas"
     }
 
     /**

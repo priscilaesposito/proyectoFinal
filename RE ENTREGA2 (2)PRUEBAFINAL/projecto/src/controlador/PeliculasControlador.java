@@ -136,7 +136,7 @@ public class PeliculasControlador {
                         mostrarResultadoBusqueda(resultado);
                     } else {
                         JOptionPane.showMessageDialog(vista,
-                                "No se encontro la pelicula \"" + termino + "\"",
+                                "Película no encontrada",
                                 "Sin resultados",
                                 JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -145,10 +145,9 @@ public class PeliculasControlador {
                     // Verificar si la causa es PeliculaNoEncontradaException
                     Throwable causa = e.getCause();
                     if (causa instanceof PeliculaNoEncontradaException) {
-                        PeliculaNoEncontradaException pnee = (PeliculaNoEncontradaException) causa;
                         JOptionPane.showMessageDialog(vista,
-                                pnee.getMessage(),
-                                "Pelicula No Encontrada",
+                                "Película no encontrada",
+                                "Sin resultados",
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(vista,

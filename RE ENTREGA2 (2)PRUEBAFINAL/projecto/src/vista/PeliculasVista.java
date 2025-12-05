@@ -34,6 +34,13 @@ public class PeliculasVista extends JFrame {
     }
 
     private void inicializarComponentes() {
+        JPanel containerPanel = new JPanel(new BorderLayout());
+        containerPanel.setBackground(Color.WHITE);
+
+        // Barra de control superior
+        JPanel controlBar = crearBarraControl();
+        containerPanel.add(controlBar, BorderLayout.NORTH);
+
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
 
@@ -44,13 +51,68 @@ public class PeliculasVista extends JFrame {
         contentPanel.setBackground(Color.WHITE);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
-        add(mainPanel);
+        containerPanel.add(mainPanel, BorderLayout.CENTER);
+        add(containerPanel);
+    }
+
+    private JPanel crearBarraControl() {
+        JPanel controlBar = new JPanel(new BorderLayout());
+        controlBar.setBackground(Color.WHITE);
+        controlBar.setPreferredSize(new Dimension(0, 40));
+        controlBar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)));
+
+        String nombreCompleto = usuario.getNombre() + " " + usuario.getApellido();
+        JLabel titleLabel = new JLabel("Plataforma de Streaming - " + nombreCompleto);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        controlBar.add(titleLabel, BorderLayout.WEST);
+
+        JPanel controlButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        controlButtonsPanel.setBackground(Color.WHITE);
+
+        JButton minimizeButton = crearBotonControlVentana(new Color(255, 189, 68), "−");
+        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
+
+        JButton maximizeButton = crearBotonControlVentana(new Color(39, 201, 63), "+");
+        maximizeButton.addActionListener(e -> {
+            if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                setExtendedState(JFrame.NORMAL);
+            } else {
+                setExtendedState(JFrame.MAXIMIZED_BOTH);
+            }
+        });
+
+        JButton closeButton = crearBotonControlVentana(new Color(255, 95, 86), "×");
+        closeButton.addActionListener(e -> System.exit(0));
+
+        controlButtonsPanel.add(minimizeButton);
+        controlButtonsPanel.add(maximizeButton);
+        controlButtonsPanel.add(closeButton);
+
+        controlBar.add(controlButtonsPanel, BorderLayout.EAST);
+
+        return controlBar;
+    }
+
+    private JButton crearBotonControlVentana(Color color, String symbol) {
+        JButton button = new JButton(symbol);
+        button.setPreferredSize(new Dimension(12, 12));
+        button.setBackground(color);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
+        button.setFont(new Font("Arial", Font.BOLD, 8));
+        button.setForeground(Color.WHITE);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        return button;
     }
 
     private JPanel crearBarraSuperior() {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(Color.WHITE);
-        topBar.setPreferredSize(new Dimension(0, 140));
+        topBar.setPreferredSize(new Dimension(0, 160));
         topBar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)),
                 BorderFactory.createEmptyBorder(25, 40, 25, 40)));
@@ -87,24 +149,25 @@ public class PeliculasVista extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
 
         // Buscador a la derecha
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 5));
         searchPanel.setBackground(Color.WHITE);
 
         searchField = new JTextField(25);
         searchField.setPreferredSize(new Dimension(300, 38));
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
         searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(1, 1, 2, 1, new Color(180, 180, 180)),
+                BorderFactory.createMatteBorder(1, 1, 2, 1, Color.BLACK),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        searchButton = new JButton("🔍");
-        searchButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        searchButton = new JButton("Buscar");
+        searchButton.setFont(new Font("Arial", Font.BOLD, 14));
         searchButton.setBackground(new Color(0, 122, 255));
         searchButton.setForeground(Color.WHITE);
         searchButton.setOpaque(true);
         searchButton.setBorderPainted(false);
         searchButton.setFocusPainted(false);
-        searchButton.setPreferredSize(new Dimension(50, 38));
+        searchButton.setPreferredSize(new Dimension(100, 38));
+        searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
@@ -294,12 +357,13 @@ public class PeliculasVista extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridy = 0;
 
         // Poster
         gbc.gridx = 0;
         gbc.weightx = 0.08;
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
         JLabel posterLabel = new JLabel();
         posterLabel.setPreferredSize(new Dimension(60, 80));
         posterLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -312,17 +376,15 @@ public class PeliculasVista extends JFrame {
                 Image img = icon.getImage().getScaledInstance(60, 80, Image.SCALE_SMOOTH);
                 posterLabel.setIcon(new ImageIcon(img));
             } catch (Exception e) {
-                // Mostrar imagen de defecto con fondo amarillo y texto "Imagen No Disponible"
                 posterLabel.setOpaque(true);
-                posterLabel.setBackground(new Color(255, 255, 153)); // Amarillo claro
+                posterLabel.setBackground(new Color(255, 255, 153));
                 posterLabel.setText("<html><center>Imagen No<br>Disponible</center></html>");
                 posterLabel.setFont(new Font("Arial", Font.PLAIN, 9));
                 posterLabel.setForeground(Color.BLACK);
             }
         } else {
-            // Mostrar imagen de defecto con fondo amarillo y texto "Imagen No Disponible"
             posterLabel.setOpaque(true);
-            posterLabel.setBackground(new Color(255, 255, 153)); // Amarillo claro
+            posterLabel.setBackground(new Color(255, 255, 153));
             posterLabel.setText("<html><center>Imagen No<br>Disponible</center></html>");
             posterLabel.setFont(new Font("Arial", Font.PLAIN, 9));
             posterLabel.setForeground(Color.BLACK);
@@ -332,37 +394,51 @@ public class PeliculasVista extends JFrame {
         // Título
         gbc.gridx = 1;
         gbc.weightx = 0.15;
+        gbc.insets = new Insets(5, 20, 5, 10);
+        gbc.anchor = GridBagConstraints.WEST;
         JLabel tituloLabel = new JLabel(pelicula.getMetadatos().getTitulo());
         tituloLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         filaPanel.add(tituloLabel, gbc);
 
         // Género
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.weightx = 0.15;
+        gbc.insets = new Insets(5, 300, 5, 10);
         String genero = pelicula.getGeneros().isEmpty() ? "" : pelicula.getGeneros().get(0);
         JLabel generoLabel = new JLabel(genero);
         generoLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         filaPanel.add(generoLabel, gbc);
 
-        // Resumen
-        gbc.gridx = 3;
-        gbc.weightx = 0.42;
+        // Resumen con límite de 60 caracteres por línea
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 0.5;
+        gbc.insets = new Insets(5, 400, 5, 10);
+        gbc.fill = GridBagConstraints.BOTH;
         String resumen = pelicula.getMetadatos().getSipnosis();
         if (resumen == null || resumen.isEmpty()) {
             resumen = "No se encuentra disponible";
         }
-        // Usar HTML para permitir múltiples líneas
+        
+        // Limitar a 180 caracteres (3 líneas de 60)
+        if (resumen.length() > 180) {
+            resumen = resumen.substring(0, 177) + "...";
+        }
+        
+        // Usar HTML con ancho fijo para forzar saltos de línea cada 60 caracteres aproximadamente
         String resumenHtml = "<html><div style='width:400px;'>" + resumen + "</div></html>";
         JLabel resumenLabel = new JLabel(resumenHtml);
         resumenLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         resumenLabel.setVerticalAlignment(SwingConstants.TOP);
         filaPanel.add(resumenLabel, gbc);
 
-        // Botón Calificar
-        gbc.gridx = 4;
-        gbc.weightx = 0.2;
+        // Botón Calificar (a la derecha del resumen)
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 0.15;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(5, 10, 5, 10);
         JButton calificarButton = new JButton("Calificar");
         calificarButton.setFont(new Font("Arial", Font.BOLD, 12));
         calificarButton.setBackground(new Color(0, 122, 255));
@@ -372,6 +448,10 @@ public class PeliculasVista extends JFrame {
         calificarButton.setFocusPainted(false);
         calificarButton.setPreferredSize(new Dimension(100, 30));
         calificarButton.putClientProperty("pelicula", pelicula);
+        filaPanel.add(calificarButton, gbc);
+
+        // Resetear gridy para otros componentes
+        gbc.gridy = 0;
         filaPanel.add(calificarButton, gbc);
 
         return filaPanel;
