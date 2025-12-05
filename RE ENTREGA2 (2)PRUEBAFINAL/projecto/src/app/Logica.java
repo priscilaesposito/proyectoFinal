@@ -565,6 +565,7 @@ public class Logica {
      * Buscar pelicula en OMDb por titulo
      * 
      * @throws PeliculaNoEncontradaException si no se encuentra la pelicula
+     * @throws java.io.IOException si hay problemas de red
      */
     public static JSONObject buscarPeliculaOMDb(String titulo) throws Exception {
         try {
@@ -580,6 +581,10 @@ public class Logica {
             return resultado;
         } catch (PeliculaNoEncontradaException e) {
             throw e; // Re-lanzar la excepcion personalizada
+        } catch (java.net.ConnectException | java.net.UnknownHostException e) {
+            throw new java.io.IOException("Sin conexion a Internet. " + e.getMessage());
+        } catch (java.io.IOException e) {
+            throw e; // Re-lanzar errores de red
         } catch (Exception e) {
             throw new Exception("Error al buscar pelicula: " + e.getMessage());
         }

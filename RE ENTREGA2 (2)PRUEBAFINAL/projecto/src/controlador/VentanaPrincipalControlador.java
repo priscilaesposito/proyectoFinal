@@ -22,64 +22,77 @@ public class VentanaPrincipalControlador {
     }
 
     public void cargarPeliculasEnBackground() {
-        SwingWorker<List<Pelicula>, String> worker = new SwingWorker<List<Pelicula>, String>() {
+        // Usar Thread para carga asincrona
+        Thread loadThread = new Thread(new Runnable() {
             @Override
-            protected List<Pelicula> doInBackground() throws Exception {
-                // Verificar si es primer login
-                esPrimerLogin = Logica.esPrimerLogin(vista.getUsuario().getID_USUARIO());
-
-                // Cargar peliculas segun sea primer login o no
-                List<Pelicula> peliculas;
-                if (esPrimerLogin) {
-                    peliculas = Logica.obtenerTop10Peliculas();
-                } else {
-                    peliculas = Logica.obtener10PeliculasRandom(vista.getUsuario().getID_USUARIO());
-                }
-
-                return peliculas;
-            }
-
-            @Override
-            protected void process(List<String> chunks) {
-                // No actualizar mensajes - mantener "Cargando películas" fijo
-            }
-
-            @Override
-            protected void done() {
+            public void run() {
                 try {
-                    peliculasActuales = get(); // Obtener las películas cargadas
+                    // Verificar si es primer login
+                    esPrimerLogin = Logica.esPrimerLogin(vista.getUsuario().getID_USUARIO());
 
-                    // Marcar como no primer login si era el primero
+                    // Cargar peliculas segun sea primer login o no
+                    List<Pelicula> peliculas;
                     if (esPrimerLogin) {
-                        Logica.registrarPrimerLogin(vista.getUsuario().getID_USUARIO());
+                        peliculas = Logica.obtenerTop10Peliculas();
+                    } else {
+                        peliculas = Logica.obtener10PeliculasRandom(vista.getUsuario().getID_USUARIO());
                     }
-                    
-                    // Crear la ventana de películas pero mantener la ventana de carga abierta
-                    SwingUtilities.invokeLater(() -> {
-                        PeliculasControlador.iniciarPeliculasConCallback(
-                            vista.getUsuario(), 
-                            peliculasActuales, 
-                            esPrimerLogin,
-                            () -> {
-                                // Este callback se ejecuta cuando la ventana de películas está lista
+
+                    peliculasActuales = peliculas;
+
+                    // Actualizar UI en el Event Dispatch Thread
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                // Marcar como no primer login si era el primero
+                                if (esPrimerLogin) {
+                                    Logica.registrarPrimerLogin(vista.getUsuario().getID_USUARIO());
+                                }
+                                
+                                // Crear la ventana de películas pero mantener la ventana de carga abierta
+                                PeliculasControlador.iniciarPeliculasConCallback(
+                                    vista.getUsuario(), 
+                                    peliculasActuales, 
+                                    esPrimerLogin,
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // Este callback se ejecuta cuando la ventana de películas está lista
+                                            vista.dispose();
+                                        }
+                                    }
+                                );
+                            } catch (Exception e) {
+                                JOptionPane.showMessageDialog(vista,
+                                        "Error al cargar peliculas: " + e.getMessage(),
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
                                 vista.dispose();
+                                LoginControlador.iniciarLogin();
                             }
-                        );
+                        }
                     });
 
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(vista,
-                            "Error al cargar peliculas: " + e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    vista.dispose();
-                    LoginControlador.iniciarLogin();
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            JOptionPane.showMessageDialog(vista,
+                                    "Error al cargar peliculas: " + e.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                            vista.dispose();
+                            LoginControlador.iniciarLogin();
+                        }
+                    });
                 }
             }
-        };
+        });
 
-        worker.execute();
+        loadThread.start();
     }
 
     /**

@@ -108,64 +108,71 @@ public class PeliculasControlador {
         }
 
         // Mostrar dialogo de busqueda
-        JDialog loadingDialog = new JDialog(vista, "Buscando...", true);
+        JDialog loadingDialog = new JDialog(vista, "Buscando...", false);
         loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         loadingDialog.setSize(300, 100);
         loadingDialog.setLocationRelativeTo(vista);
 
         JLabel loadingMsg = new JLabel("Buscando en OMDb: " + termino + "...", SwingConstants.CENTER);
         loadingDialog.add(loadingMsg);
+        loadingDialog.setVisible(true);
 
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            private org.json.JSONObject resultado;
-
+        // Usar Thread para busqueda asincrona
+        Thread searchThread = new Thread(new Runnable() {
             @Override
-            protected Void doInBackground() throws Exception {
-                resultado = Logica.buscarPeliculaOMDb(termino);
-                return null;
-            }
-
-            @Override
-            protected void done() {
-                loadingDialog.dispose();
+            public void run() {
+                org.json.JSONObject resultado = null;
+                Exception error = null;
 
                 try {
-                    get();
-
-                    if (resultado != null) {
-                        mostrarResultadoBusqueda(resultado);
-                    } else {
-                        JOptionPane.showMessageDialog(vista,
-                                "Película no encontrada",
-                                "Sin resultados",
-                                JOptionPane.INFORMATION_MESSAGE);
-                    }
-
-                } catch (java.util.concurrent.ExecutionException e) {
-                    // Verificar si la causa es PeliculaNoEncontradaException
-                    Throwable causa = e.getCause();
-                    if (causa instanceof PeliculaNoEncontradaException) {
-                        JOptionPane.showMessageDialog(vista,
-                                "Película no encontrada",
-                                "Sin resultados",
-                                JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(vista,
-                                "Error en la busqueda: " + causa.getMessage(),
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
+                    resultado = Logica.buscarPeliculaOMDb(termino);
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(vista,
-                            "Error en la busqueda: " + e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    error = e;
                 }
-            }
-        };
 
-        worker.execute();
-        loadingDialog.setVisible(true);
+                // Actualizar UI en el Event Dispatch Thread
+                final org.json.JSONObject finalResultado = resultado;
+                final Exception finalError = error;
+
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadingDialog.dispose();
+
+                        if (finalError != null) {
+                            // Manejar errores
+                            if (finalError instanceof PeliculaNoEncontradaException) {
+                                JOptionPane.showMessageDialog(vista,
+                                        "La pelicula '" + termino + "' no fue encontrada en OMDb.\n" +
+                                        "Verifica que el titulo este escrito correctamente.",
+                                        "Pelicula no encontrada",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                            } else if (finalError instanceof java.io.IOException) {
+                                JOptionPane.showMessageDialog(vista,
+                                        "Error de conexion:\n" + finalError.getMessage() + "\n\n" +
+                                        "Verifica tu conexion a Internet e intenta nuevamente.",
+                                        "Sin conexion",
+                                        JOptionPane.WARNING_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(vista,
+                                        "Error inesperado al buscar la pelicula:\n" + finalError.getMessage(),
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            }
+                        } else if (finalResultado != null) {
+                            mostrarResultadoBusqueda(finalResultado);
+                        } else {
+                            JOptionPane.showMessageDialog(vista,
+                                    "Película no encontrada",
+                                    "Sin resultados",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                });
+            }
+        });
+
+        searchThread.start();
     }
 
     private void mostrarResultadoBusqueda(org.json.JSONObject pelicula) {
