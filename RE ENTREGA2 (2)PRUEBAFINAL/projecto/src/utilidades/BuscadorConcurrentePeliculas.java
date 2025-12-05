@@ -1,6 +1,5 @@
 package utilidades;
 
-import model.Pelicula;
 import org.json.JSONObject;
 import java.util.List;
 import java.util.ArrayList;

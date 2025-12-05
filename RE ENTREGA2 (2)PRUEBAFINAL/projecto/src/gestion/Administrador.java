@@ -80,20 +80,15 @@ public class Administrador extends Usuario {
             }
         }
 
-        if (pelicula.getVideo().getDuracion() < 0) {
-            errores.add("La duracion/visualizaciones debe ser un numero positivo.");
-        }
+		if (pelicula.getVideo().getDuracion() < 0) {
+			errores.add("La duracion/visualizaciones debe ser un numero positivo.");
+		}
 
-        if (!errores.isEmpty()) {
-            System.out.println("Errores en el registro de pelicula:");
-            for (String error : errores) {
-                System.out.println("- " + error);
-            }
-            throw new IllegalArgumentException("El registro de la pelicula fallo por errores de validacion.");
-        }
-    }
-
-    public void almacenarPelicula(Pelicula pelicula) throws SQLException {
+		if (!errores.isEmpty()) {
+			String mensajeError = "El registro de la pelicula fallo por errores de validacion: " + String.join(", ", errores);
+			throw new IllegalArgumentException(mensajeError);
+		}
+	}    public void almacenarPelicula(Pelicula pelicula) throws SQLException {
         peliD.registrar(pelicula);
 
     }

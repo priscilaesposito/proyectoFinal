@@ -14,10 +14,6 @@ public class ListasyResenias {
     private int cantPuntuacion;
     private int sumaPuntuacion;
 
-    private boolean moderacion(Resenia resenia) {
-        return true; // puesto de esta forma para no tener errores de compilacion.
-    }
-
     public LinkedList<Resenia> getResenias() {
         return resenias;
     }
@@ -40,17 +36,13 @@ public class ListasyResenias {
         return RD.listarNoAprobadas();
     }
 
-    public Resenia validarResenia(int IDresenia) throws SQLException { // verifica si la reseni existe, en ese caso devuelve la resenia,
-                                                   // caso contrario informa y devuelve null.
-        Resenia reseniaEncontrada = RD.buscarPorId(IDresenia);
-        if (reseniaEncontrada == null) {
-            System.out.println(" Error: La resenia con ID " + IDresenia + " no existe.");
-            return null;
-        }
-        return reseniaEncontrada;
-    }
-
-    public void aprobarResenia(int idResenia) throws SQLException {
+	public Resenia validarResenia(int IDresenia) throws SQLException {
+		Resenia reseniaEncontrada = RD.buscarPorId(IDresenia);
+		if (reseniaEncontrada == null) {
+			return null;
+		}
+		return reseniaEncontrada;
+	}    public void aprobarResenia(int idResenia) throws SQLException {
         RD.aprobarResenia(idResenia);
     }
 

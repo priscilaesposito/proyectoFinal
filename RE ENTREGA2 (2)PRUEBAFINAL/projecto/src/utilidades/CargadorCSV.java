@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import dao.Conexion;
-import db.BaseDeDatos;
 import model.Pelicula;
 import daoJDBC.PeliculaDAOjdbc;
 

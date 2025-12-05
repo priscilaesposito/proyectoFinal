@@ -1,6 +1,5 @@
 package utilidades;
 
-import dao.Conexion;
 import db.BaseDeDatos;
 import daoJDBC.PeliculaDAOjdbc;
 import daoJDBC.ReseniaDAOJdbc;

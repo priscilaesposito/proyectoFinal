@@ -25,7 +25,6 @@ public class TL2 {
 	private UsuarioDAO UD = new daoJDBC.UsuarioDAOjdbc();
 	private DatosPersonalesDAO UDJ = new daoJDBC.DatosPersonalesDAOJdbc();
 	private LinkedList<Usuario> listaUsuarios;
-	private LinkedList<Titulo> catalogo;
 
 	public String iniciarSesion(String username, String password) {
 		return null;
@@ -37,9 +36,6 @@ public class TL2 {
 
 	public LinkedList<Titulo> getCatalogo() {
 		return null;
-	}
-
-	private void restringirGeolocalizacionCatalogo() {
 	}
 
 	public LinkedList<Usuario> getListaUsuarios() throws SQLException {
@@ -61,13 +57,10 @@ public class TL2 {
 
 		if ("NOMBRE".equalsIgnoreCase(criterio)) {
 			Collections.sort(listaUsuarios, new OrdenarPorNombreUsuario());
-
 		} else if ("EMAIL".equalsIgnoreCase(criterio)) {
 			Collections.sort(listaUsuarios, new OrdenarPorMail());
-
-		} else {
-			System.out.println("Criterio de ordenacion no valido. Se muestra sin ordenar.");
 		}
+		// Si el criterio no es válido, se retorna sin ordenar
 
 		return listaUsuarios;
 	}
@@ -82,9 +75,8 @@ public class TL2 {
 			Collections.sort(listaPeliculas, new OrdenarPorDuracion());
 		} else if ("GENERO".equalsIgnoreCase(criterio)) {
 			Collections.sort(listaPeliculas, new OrdenarPorPrimerGenero());
-		} else {
-			System.out.println("Criterio de ordenacion no valido. Se muestra sin ordenar.");
 		}
+		// Si el criterio no es válido, se retorna sin ordenar
 
 		return listaPeliculas;
 	}
