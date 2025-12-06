@@ -32,7 +32,7 @@ public class ReseniaDAOJdbc implements ReseniaDAO {
 
             pstmt.executeUpdate();
             
-            // Actualizar el rating promedio de la película
+            // Actualizar el rating promedio de la pelicula
             actualizarRatingPromedio(conn, resenia.getID_Pelicula());
 
         }
@@ -79,7 +79,7 @@ public class ReseniaDAOJdbc implements ReseniaDAO {
             pstmt.setInt(1, idResenia);
             pstmt.executeUpdate();
             
-            // Obtener el ID de la película para actualizar su rating
+            // Obtener el ID de la pelicula para actualizar su rating
             String sqlPelicula = "SELECT ID_PELICULA FROM RESENIA WHERE ID = ?";
             try (PreparedStatement pstmtPelicula = conn.prepareStatement(sqlPelicula)) {
                 pstmtPelicula.setInt(1, idResenia);
@@ -95,19 +95,19 @@ public class ReseniaDAOJdbc implements ReseniaDAO {
     }
     
     private void actualizarRatingPromedio(Connection conn, int idPelicula) throws SQLException {
-        // Obtener la nueva calificación que se acaba de agregar
+        // Obtener la nueva calificacion que se acaba de agregar
         String sqlUltimaCalif = "SELECT CALIFICACION FROM RESENIA WHERE ID_PELICULA = ? AND APROBADO = 1 ORDER BY ID DESC LIMIT 1";
         
-        // Obtener valores actuales de la película
+        // Obtener valores actuales de la pelicula
         String sqlPelicula = "SELECT RATING_PROMEDIO, CANTIDAD_VOTOS FROM PELICULA WHERE ID = ?";
         
-        // Actualizar película
+        // Actualizar pelicula
         String sqlUpdate = "UPDATE PELICULA SET RATING_PROMEDIO = ?, CANTIDAD_VOTOS = ? WHERE ID = ?";
         
         try (PreparedStatement pstmtCalif = conn.prepareStatement(sqlUltimaCalif);
              PreparedStatement pstmtPelicula = conn.prepareStatement(sqlPelicula)) {
             
-            // Obtener nueva calificación
+            // Obtener nueva calificacion
             pstmtCalif.setInt(1, idPelicula);
             float nuevaCalificacion = 0;
             try (ResultSet rsCalif = pstmtCalif.executeQuery()) {
@@ -123,7 +123,7 @@ public class ReseniaDAOJdbc implements ReseniaDAO {
                     float promedioActual = rsPelicula.getFloat("RATING_PROMEDIO");
                     int cantidadVotos = rsPelicula.getInt("CANTIDAD_VOTOS");
                     
-                    // Cálculo incremental del promedio
+                    // Calculo incremental del promedio
                     float nuevoPromedio = (promedioActual * cantidadVotos + nuevaCalificacion) / (cantidadVotos + 1);
                     int nuevaCantidadVotos = cantidadVotos + 1;
                     
@@ -134,7 +134,7 @@ public class ReseniaDAOJdbc implements ReseniaDAO {
                         pstmtUpdate.setInt(3, idPelicula);
                         pstmtUpdate.executeUpdate();
                         
-                        System.out.println("✅ Rating actualizado para película ID " + idPelicula + 
+                        System.out.println("✅ Rating actualizado para pelicula ID " + idPelicula + 
                                          ": " + nuevoPromedio + " (" + nuevaCantidadVotos + " votos)");
                     }
                 }

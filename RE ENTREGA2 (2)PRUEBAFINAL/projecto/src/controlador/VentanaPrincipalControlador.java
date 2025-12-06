@@ -53,7 +53,7 @@ public class VentanaPrincipalControlador {
                                     Logica.registrarPrimerLogin(vista.getUsuario().getID_USUARIO());
                                 }
                                 
-                                // Crear la ventana de películas pero mantener la ventana de carga abierta
+                                // Crear la ventana de peliculas pero mantener la ventana de carga abierta
                                 PeliculasControlador.iniciarPeliculasConCallback(
                                     vista.getUsuario(), 
                                     peliculasActuales, 
@@ -61,7 +61,7 @@ public class VentanaPrincipalControlador {
                                     new Runnable() {
                                         @Override
                                         public void run() {
-                                            // Este callback se ejecuta cuando la ventana de películas está lista
+                                            // Este callback se ejecuta cuando la ventana de peliculas esta lista
                                             vista.dispose();
                                         }
                                     }

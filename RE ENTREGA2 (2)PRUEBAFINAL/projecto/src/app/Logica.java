@@ -277,20 +277,20 @@ public class Logica {
 
     public static List<Pelicula> obtenerTop10Peliculas() throws Exception {
         try {
-            // 1. Obtener todas las películas de la BD (con ratings actualizados)
+            // 1. Obtener todas las peliculas de la BD (con ratings actualizados)
             List<Pelicula> peliculasBD = peliculaDAO.listarTodos();
             
-            // 2. Cargar películas del CSV
+            // 2. Cargar peliculas del CSV
             List<Pelicula> peliculasCSV = utilidades.CargadorCSV.cargarPeliculasDesdeCSV();
             
-            // 3. Crear conjunto de títulos+años de BD para evitar duplicados
+            // 3. Crear conjunto de titulos+anos de BD para evitar duplicados
             java.util.Set<String> peliculasEnBD = new java.util.HashSet<>();
             for (Pelicula p : peliculasBD) {
                 String clave = p.getMetadatos().getTitulo() + "_" + p.getAnio();
                 peliculasEnBD.add(clave);
             }
             
-            // 4. Combinar: agregar películas del CSV que NO están en BD
+            // 4. Combinar: agregar peliculas del CSV que NO estan en BD
             List<Pelicula> todasPeliculas = new ArrayList<>(peliculasBD);
             for (Pelicula p : peliculasCSV) {
                 String clave = p.getMetadatos().getTitulo() + "_" + p.getAnio();

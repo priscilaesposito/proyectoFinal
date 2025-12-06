@@ -115,7 +115,7 @@ public class PeliculasVista extends JFrame {
                 BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)),
                 BorderFactory.createEmptyBorder(25, 40, 25, 40)));
 
-        // Panel superior con usuario y botón cerrar sesión
+        // Panel superior con usuario y boton cerrar sesion
         JPanel topRowPanel = new JPanel(new BorderLayout());
         topRowPanel.setBackground(Color.WHITE);
 
@@ -124,8 +124,8 @@ public class PeliculasVista extends JFrame {
         JLabel userLabel = new JLabel(nombreCompleto);
         userLabel.setFont(new Font("Arial", Font.BOLD, 15));
 
-        // Botón cerrar sesión a la derecha
-        logoutButton = new JButton("Cerrar Sesión");
+        // Boton cerrar sesion a la derecha
+        logoutButton = new JButton("Cerrar Sesion");
         logoutButton.setFont(new Font("Arial", Font.BOLD, 13));
         logoutButton.setBackground(new Color(0, 122, 255));
         logoutButton.setForeground(Color.WHITE);
@@ -137,12 +137,12 @@ public class PeliculasVista extends JFrame {
         topRowPanel.add(userLabel, BorderLayout.WEST);
         topRowPanel.add(logoutButton, BorderLayout.EAST);
 
-        // Panel inferior con título y buscador
+        // Panel inferior con titulo y buscador
         JPanel bottomRowPanel = new JPanel(new BorderLayout(30, 0));
         bottomRowPanel.setBackground(Color.WHITE);
         bottomRowPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 
-        // Título a la izquierda
+        // Titulo a la izquierda
         JLabel titleLabel = new JLabel("Bienvenido a la Plataforma de Streaming");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
 
@@ -198,7 +198,7 @@ public class PeliculasVista extends JFrame {
         peliculasPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
         // Mensaje de bienvenida
-        String mensajeSeccion = "Seguro viste alguna de estas películas, haznos saber que te pareció dejando una reseña";
+        String mensajeSeccion = "Seguro viste alguna de estas peliculas, haznos saber que te parecio dejando una resena";
         JLabel mensajeLabel = new JLabel(mensajeSeccion);
         mensajeLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         mensajeLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
@@ -214,7 +214,7 @@ public class PeliculasVista extends JFrame {
         headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         tablaPanel.add(headerPanel);
 
-        // Crear filas de películas
+        // Crear filas de peliculas
         for (Pelicula pelicula : peliculasActuales) {
             JPanel filaPanel = crearFilaPelicula(pelicula);
             filaPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -249,13 +249,13 @@ public class PeliculasVista extends JFrame {
         posterLabel.setFont(new Font("Arial", Font.BOLD, 13));
         headerPanel.add(posterLabel, gbc);
 
-        // Título con botones de ordenamiento
+        // Titulo con botones de ordenamiento
         gbc.gridx = 1;
         gbc.weightx = 0.15;
         JPanel tituloPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         tituloPanel.setBackground(Color.WHITE);
         
-        JLabel tituloLabel = new JLabel("Título");
+        JLabel tituloLabel = new JLabel("Titulo");
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 13));
         tituloPanel.add(tituloLabel);
         
@@ -281,7 +281,7 @@ public class PeliculasVista extends JFrame {
         
         headerPanel.add(tituloPanel, gbc);
 
-        // Género con botones de ordenamiento
+        // Genero con botones de ordenamiento
         gbc.gridx = 2;
         gbc.weightx = 0.15;
         JPanel generoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
@@ -320,7 +320,7 @@ public class PeliculasVista extends JFrame {
         resumenLabel.setFont(new Font("Arial", Font.BOLD, 13));
         headerPanel.add(resumenLabel, gbc);
 
-        // Botón
+        // Boton
         gbc.gridx = 4;
         gbc.weightx = 0.2;
         JLabel accionLabel = new JLabel("");
@@ -389,7 +389,7 @@ public class PeliculasVista extends JFrame {
         }
         filaPanel.add(posterLabel, gbc);
 
-        // Título
+        // Titulo
         gbc.gridx = 1;
         gbc.weightx = 0.15;
         gbc.insets = new Insets(5, 20, 5, 10);
@@ -398,7 +398,7 @@ public class PeliculasVista extends JFrame {
         tituloLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         filaPanel.add(tituloLabel, gbc);
 
-        // Género
+        // Genero
         gbc.gridx = 1;
         gbc.weightx = 0.15;
         gbc.insets = new Insets(5, 300, 5, 10);
@@ -407,7 +407,7 @@ public class PeliculasVista extends JFrame {
         generoLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         filaPanel.add(generoLabel, gbc);
 
-        // Resumen con límite de 60 caracteres por línea
+        // Resumen con limite de 60 caracteres por linea
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 0.5;
@@ -418,19 +418,19 @@ public class PeliculasVista extends JFrame {
             resumen = "No se encuentra disponible";
         }
         
-        // Limitar a 180 caracteres (3 líneas de 60)
+        // Limitar a 180 caracteres (3 lineas de 60)
         if (resumen.length() > 180) {
             resumen = resumen.substring(0, 177) + "...";
         }
         
-        // Usar HTML con ancho fijo para forzar saltos de línea cada 60 caracteres aproximadamente
+        // Usar HTML con ancho fijo para forzar saltos de linea cada 60 caracteres aproximadamente
         String resumenHtml = "<html><div style='width:400px;'>" + resumen + "</div></html>";
         JLabel resumenLabel = new JLabel(resumenHtml);
         resumenLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         resumenLabel.setVerticalAlignment(SwingConstants.TOP);
         filaPanel.add(resumenLabel, gbc);
 
-        // Botón Calificar (a la derecha del resumen)
+        // Boton Calificar (a la derecha del resumen)
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.weightx = 0.15;

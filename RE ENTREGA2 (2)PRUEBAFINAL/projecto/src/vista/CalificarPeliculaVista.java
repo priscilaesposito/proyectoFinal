@@ -49,7 +49,7 @@ public class CalificarPeliculaVista extends JDialog {
         ratingPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         ratingPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
-        JLabel calificacionLabel = new JLabel("Calificación:");
+        JLabel calificacionLabel = new JLabel("Calificacion:");
         calificacionLabel.setFont(new Font("Arial", Font.PLAIN, 15));
         ratingPanel.add(calificacionLabel);
 

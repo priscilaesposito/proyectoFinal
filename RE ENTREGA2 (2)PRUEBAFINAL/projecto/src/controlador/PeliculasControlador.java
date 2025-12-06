@@ -65,7 +65,7 @@ public class PeliculasControlador {
                         button.removeActionListener(al);
                     }
                     
-                    // Crear referencia final al botón para el ActionListener
+                    // Crear referencia final al boton para el ActionListener
                     final JButton finalButton = button;
                     
                     button.addActionListener(new ActionListener() {
@@ -73,8 +73,8 @@ public class PeliculasControlador {
                         public void actionPerformed(ActionEvent e) {
                             Pelicula pelicula = (Pelicula) finalButton.getClientProperty("pelicula");
                             if (pelicula != null) {
-                                System.out.println("Abriendo ventana de calificación para: " + pelicula.getMetadatos().getTitulo());
-                                // Abrir ventana emergente de calificación
+                                System.out.println("Abriendo ventana de calificacion para: " + pelicula.getMetadatos().getTitulo());
+                                // Abrir ventana emergente de calificacion
                                 boolean calificado = CalificarPeliculaVista.mostrar(
                                     vista, 
                                     pelicula, 
@@ -82,7 +82,7 @@ public class PeliculasControlador {
                                 );
                                 
                                 if (calificado) {
-                                    // Actualizar el botón en el EDT
+                                    // Actualizar el boton en el EDT
                                     SwingUtilities.invokeLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -94,7 +94,7 @@ public class PeliculasControlador {
                                     });
                                 }
                             } else {
-                                System.err.println("ERROR: No se encontró la película en el botón");
+                                System.err.println("ERROR: No se encontro la pelicula en el boton");
                             }
                         }
                     });
@@ -172,7 +172,7 @@ public class PeliculasControlador {
                             mostrarResultadoBusqueda(finalResultado);
                         } else {
                             JOptionPane.showMessageDialog(vista,
-                                    "Película no encontrada",
+                                    "Pelicula no encontrada",
                                     "Sin resultados",
                                     JOptionPane.INFORMATION_MESSAGE);
                         }
@@ -222,13 +222,13 @@ public class PeliculasControlador {
                 // Hacer visible la ventana
                 vista.setVisible(true);
                 
-                // Configurar eventos después de que todo esté renderizado
+                // Configurar eventos despues de que todo este renderizado
                 SwingUtilities.invokeLater(() -> {
                     controlador.configurarEventosCalificacion();
                     
-                    // Ejecutar callback cuando todo esté listo
+                    // Ejecutar callback cuando todo este listo
                     if (onReady != null) {
-                        // Pequeño delay adicional para asegurar que la ventana esté completamente renderizada
+                        // Pequeno delay adicional para asegurar que la ventana este completamente renderizada
                         Timer readyTimer = new Timer(200, e -> onReady.run());
                         readyTimer.setRepeats(false);
                         readyTimer.start();
@@ -238,7 +238,7 @@ public class PeliculasControlador {
         });
     }
     
-    // Hacer público el método para poder llamarlo desde fuera
+    // Hacer publico el metodo para poder llamarlo desde fuera
     public void reconfigurarEventos() {
         configurarEventosCalificacion();
     }

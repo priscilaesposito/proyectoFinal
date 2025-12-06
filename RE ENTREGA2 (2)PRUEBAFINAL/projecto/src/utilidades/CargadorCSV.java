@@ -62,7 +62,7 @@ public class CargadorCSV {
                     int anio = extraerAnio(datos[0]); // Release_Date (formato YYYY-MM-DD)
                     String poster = datos[8]; // Poster_Url
                     
-                    // Verificar si la película ya existe
+                    // Verificar si la pelicula ya existe
                     boolean existe = false;
                     try (PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
                         pstmtCheck.setString(1, titulo);
@@ -101,9 +101,9 @@ public class CargadorCSV {
                 }
             }
             
-            System.out.println("\n✅ Películas cargadas: " + contador);
+            System.out.println("\n✅ Peliculas cargadas: " + contador);
             if (yaExistentes > 0) {
-                System.out.println("⏭️  Películas ya existentes (no sobrescritas): " + yaExistentes);
+                System.out.println("⏭️  Peliculas ya existentes (no sobrescritas): " + yaExistentes);
             }
             
             
@@ -144,7 +144,7 @@ public class CargadorCSV {
         } catch (Exception e) {
             // Ignorar error
         }
-        return 2020; // Año por defecto
+        return 2020; // Ano por defecto
     }
     
     public static boolean existenPeliculasEnBD() {

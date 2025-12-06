@@ -45,7 +45,7 @@ public class VentanaPrincipalVista extends JFrame {
         mainPanel.add(spinnerLabel, gbc);
 
         gbc.gridy = 1;
-        loadingLabel = new JLabel("Cargando películas", SwingConstants.CENTER);
+        loadingLabel = new JLabel("Cargando peliculas", SwingConstants.CENTER);
         loadingLabel.setFont(new Font("Arial", Font.BOLD, 18));
         loadingLabel.setForeground(new Color(0, 122, 255));
         mainPanel.add(loadingLabel, gbc);
@@ -130,7 +130,7 @@ public class VentanaPrincipalVista extends JFrame {
      * Deshabilitada - texto fijo
      */
     private void iniciarAnimacion() {
-        // Animación deshabilitada - el texto permanece fijo como "Cargando películas"
+        // Animacion deshabilitada - el texto permanece fijo como "Cargando peliculas"
     }
 
     /**
