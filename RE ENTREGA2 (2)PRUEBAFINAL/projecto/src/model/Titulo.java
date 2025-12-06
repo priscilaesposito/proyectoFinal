@@ -11,14 +11,12 @@ public class Titulo {
     private Metadatos Metadatos;
     private Resenia LR;
 
-    // Constructor que inicializa las listas y objetos
     public Titulo() {
         this.generos = new LinkedList<>();
         this.paisesDisponible = new LinkedList<>();
         this.Metadatos = new Metadatos();
         this.LR = new Resenia();
     }
-
 
     public Resenia getListasyResenias() {
         return LR;
@@ -80,12 +78,11 @@ public class Titulo {
         return paisesDisponible;
     }
 
-    public void agregarAMiLista() {
-        // Logica para agregar a la lista de un usuario
+    public void setPaisesDisponible(LinkedList<String> paisesDisponible) {
+        this.paisesDisponible = paisesDisponible;
     }
 
-    public void reproducirContenido() {
-        // Logica para reproducir el contenido
+    public void setGeneros(LinkedList<String> generos) {
+        this.generos = generos;
     }
-
 }

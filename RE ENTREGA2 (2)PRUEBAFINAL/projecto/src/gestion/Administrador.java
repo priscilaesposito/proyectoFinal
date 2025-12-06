@@ -6,7 +6,6 @@ import java.util.List;
 
 import enumerativo.Genero;
 import model.Pelicula;
-import model.Titulo;
 import model.Usuario;
 import dao.PeliculaDAO;
 
@@ -24,30 +23,6 @@ public class Administrador extends Usuario {
     private PeliculaDAO peliD = new daoJDBC.PeliculaDAOjdbc();
 
     public Administrador() {
-    }
-
-    /**
-     * Da de baja un titulo del sistema.
-     *
-     * @param T Titulo a dar de baja.
-     */
-    public void darDeBaja(Titulo T) {
-    }
-
-    /**
-     * Da de alta un nuevo titulo en el sistema.
-     *
-     * @param T Titulo a dar de alta.
-     */
-    public void darAlta(Titulo T) {
-    }
-
-    /**
-     * Modifica la informacion de un titulo existente.
-     *
-     * @param T Titulo a modificar.
-     */
-    public void modificar(Titulo T) {
     }
 
     public void validarRegistroPelicula(Pelicula pelicula) {

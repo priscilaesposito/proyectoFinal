@@ -13,22 +13,6 @@ public class GestionUsuario {
     private DatosPersonalesDAO UDJ = new daoJDBC.DatosPersonalesDAOJdbc();
     private UsuarioDAO UD = new daoJDBC.UsuarioDAOjdbc();
 
-    public void configurarIdioma() {
-        // TODO: Implement configurarIdioma
-    }
-
-    public void configurarNombre() {
-        // TODO: Implement configurarNombr
-    }
-
-    public void configurarPreferencias() {
-        // TODO: Implement configurarPreferencias
-    }
-
-    public void suscribirse() {
-        // TODO: Implement suscribirse
-    }
-
     private boolean dniUnico(int dni) throws SQLException {
         return UDJ.existeDNI(dni);
     }
