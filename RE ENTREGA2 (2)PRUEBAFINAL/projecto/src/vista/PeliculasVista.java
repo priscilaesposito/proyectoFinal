@@ -14,7 +14,6 @@ import model.Pelicula;
 public class PeliculasVista extends JFrame {
 
     private Usuario usuario;
-    private boolean esPrimerLogin;
     private List<Pelicula> peliculasActuales;
 
     private JPanel mainPanel;
@@ -26,7 +25,6 @@ public class PeliculasVista extends JFrame {
     public PeliculasVista(Usuario usuario, List<Pelicula> peliculas, boolean esPrimerLogin) {
         this.usuario = usuario;
         this.peliculasActuales = peliculas;
-        this.esPrimerLogin = esPrimerLogin;
 
         inicializarComponentes();
         mostrarPeliculas();
