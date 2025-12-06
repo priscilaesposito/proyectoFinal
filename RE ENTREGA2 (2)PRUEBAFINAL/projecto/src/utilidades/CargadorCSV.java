@@ -20,7 +20,6 @@ public class CargadorCSV {
         System.out.println("Cargando peliculas desde movies_database.csv...");
         
         List<Pelicula> peliculasEnMemoria = new ArrayList<>();
-        PeliculaDAOjdbc peliculaDAO = new PeliculaDAOjdbc();
         
         try (BufferedReader br = new BufferedReader(new FileReader(CSV_PATH));
              Connection conn = Conexion.conectar()) {
@@ -29,6 +28,7 @@ public class CargadorCSV {
             boolean primeraLinea = true;
             int contador = 0;
             int yaExistentes = 0;
+            final int LIMITE_PELICULAS = 10;
             
             // SQL para verificar si existe la pelicula
             String sqlCheck = "SELECT COUNT(*) FROM PELICULA WHERE TITULO = ? AND ANIO = ?";
@@ -37,7 +37,7 @@ public class CargadorCSV {
             String sql = "INSERT INTO PELICULA (GENERO, TITULO, RESUMEN, DIRECTOR, DURACION, RATING_PROMEDIO, CANTIDAD_VOTOS, ANIO, POSTER) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null && contador < LIMITE_PELICULAS) {
                 // Saltar la primera linea si es cabecera
                 if (primeraLinea) {
                     primeraLinea = false;
@@ -105,18 +105,6 @@ public class CargadorCSV {
             if (yaExistentes > 0) {
                 System.out.println("⏭️  Peliculas ya existentes (no sobrescritas): " + yaExistentes);
             }
-            
-            
-            // Cargar todas las peliculas en memoria desde la BD
-            System.out.println("📥 Cargando peliculas en memoria...");
-            peliculasEnMemoria = peliculaDAO.listarTodos();
-            
-            // Ordenar por rating_promedio descendente usando mecanismo de Java
-            peliculasEnMemoria.sort((p1, p2) -> {
-                float rating1 = p1.getRatingPromedio();
-                float rating2 = p2.getRatingPromedio();
-                return Float.compare(rating2, rating1); // Descendente
-            });
             
             
         } catch (Exception e) {

@@ -14,14 +14,14 @@ public class Main {
             Conexion.conectar();
             BaseDeDatos.inicializarBaseDeDatos();
 
-            // Agregar shutdown hook para cerrar la conexion al salir
+            //cerrar la conexion al salir
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 System.out.println("Cerrando aplicacion...");
                 Conexion.desconectar();
             }));
 
             System.out.println("Iniciando interfaz grafica...");
-            // Iniciar interfaz grafica con el patron MVC
+            // Iniciar interfaz grafica
             LoginControlador.iniciarLogin();
 
         } catch (SQLException e) {

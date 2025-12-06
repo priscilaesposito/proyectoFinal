@@ -38,6 +38,15 @@ public class GestionUsuario {
      * @throws UsuarioInvalidoException si los datos del usuario son invalidos
      */
     public void validacionDatosPersonales(Usuario usuario) throws SQLException, UsuarioInvalidoException {
+        // Validar longitud del DNI (maximo 8 digitos)
+        String dniString = String.valueOf(usuario.getDNI());
+        if (dniString.length() > 8) {
+            throw new UsuarioInvalidoException(
+                    "El DNI no puede tener mas de 8 digitos.",
+                    "DNI",
+                    dniString);
+        }
+        
         // Validar unicidad de DNI
         if (dniUnico(usuario.getDNI())) {
             throw new UsuarioInvalidoException(
